@@ -80,6 +80,6 @@ module SimpleEnum #:nodoc:
 end
 
 # Tie stuff together.
-if Object.const_defined('ActiveRecord')
+if Object.const_defined?('ActiveRecord')
   ActiveRecord::Base.send(:include, SimpleEnum)
 end
