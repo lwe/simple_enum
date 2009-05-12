@@ -1,4 +1,9 @@
 module SimpleEnum #:nodoc:
+  
+  def self.included(base)
+    base.send :extend, ClassMethods
+  end
+  
   module ClassMethods #:nodoc:
     
     # Provides ability to create simple enumerations based on hashes or arrays, backed
