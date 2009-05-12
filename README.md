@@ -1,9 +1,10 @@
 SimpleEnum
 ==========
 
-**NOTE:** this code is not yet really production ready and setup as rails plugin is not yet working...
-
 SimpleEnum tries to bring an easy-to-use enum-like functionality to ActiveRecord.
+
+**NOTE**: this code seems to work very well for me, though I must admit I'm a RoR newbee, so maybe
+I've written code which could be rewritten :)
 
 Quick start
 -----------
@@ -41,6 +42,6 @@ Known issues
 
         @user = User.new params[:user]
         
-  do not work (yet?!) However setting the `_cd` field of course works as expected,
+    do not work (yet?!) However setting the `_cd` field of course works as expected,
   so for the user example above, if a `gender_cd` field exists with an integer value
   it's perfectly fine and even mass-assignments work.
