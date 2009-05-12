@@ -56,7 +56,9 @@ Wait, there's more
         
 * To make it easier to create dropdowns with values use:
 
-        <%= select(:user, :gender, @user.values_for_gender) %>
+        <%= select(:user, :gender_cd, @user.values_for_gender) %>
+    
+    **Important**: the integer field name must be used, in this example `gender_cd` **not** `gender`!
 
 Known issues
 ------------
