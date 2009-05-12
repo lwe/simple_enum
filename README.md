@@ -1,6 +1,8 @@
 SimpleEnum
 ==========
 
+**NOTE:** this code is not yet really production ready and setup as rails plugin is not yet working...
+
 SimpleEnum tries to bring an easy-to-use enum-like functionality to ActiveRecord.
 
 Quick start
