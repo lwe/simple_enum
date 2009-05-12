@@ -1,10 +1,22 @@
-module SimpleEnum #:nodoc:
+# SimpleEnum allows for cross-database, easy to use enum-like fields to be added to your
+# ActiveRecord models. It does not rely on database specific column types like <tt>ENUM</tt> (MySQL),
+# but instead on integer columns.
+#
+# Author:: Lukas Westermann
+# Copyright:: Copyright (c) 2009 Lukas Westermann (Zurich, Switzerland)
+# Licence:: MIT-Licence (http://www.opensource.org/licenses/mit-license.php)
+#
+# See the +as_enum+ documentation for more details.
+module SimpleEnum
   
-  def self.included(base)
+  # Current simple_enum version string
+  VERSION = '0.1.0'
+  
+  def self.included(base) #:nodoc:
     base.send :extend, ClassMethods
   end
   
-  module ClassMethods #:nodoc:
+  module ClassMethods
     
     # Provides ability to create simple enumerations based on hashes or arrays, backed
     # by integer columns.
