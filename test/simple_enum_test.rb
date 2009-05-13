@@ -1,24 +1,8 @@
 require 'test_helper'
 
-class Dummy < ActiveRecord::Base
-  as_enum :gender, [:male, :female]
-  as_enum :word, { :alpha => 'alpha', :beta => 'beta', :gamma => 'gamma'}
-  as_enum :didum, [ :foo, :bar, :foobar ], :column => 'other'
-end
-
 class SimpleEnumTest < ActiveSupport::TestCase  
   def setup
-    ActiveRecord::Base.connection.create_table :dummies, :force => true do |t|
-      t.column :name, :string
-      t.column :gender_cd, :integer
-      t.column :word_cd, :string, :limit => 5
-      t.column :other, :integer
-    end
-    
-    # fill db with some rows
-    Dummy.create({ :name => 'Anna',  :gender_cd => 1, :word_cd => 'alpha', :other => 0})
-    Dummy.create({ :name => 'Bella', :gender_cd => 1, :word_cd => 'beta', :other => 1})
-    Dummy.create({ :name => 'Chris', :gender_cd => 0, :word_cd => 'gamma', :other => 2})
+    reload_db
   end
   
   test "get the correct integer values when setting to symbol" do
@@ -65,5 +49,15 @@ class SimpleEnumTest < ActiveSupport::TestCase
     d.female!
     d.save!    
     assert_equal(true, Dummy.find(d.id).female?)
+  end
+  
+  test "add validation and test validations" do
+    Dummy.class_eval do; validates_as_enum :gender; end
+    
+    d = Dummy.new :gender_cd => 5 # invalid number :)
+    assert_equal(false, d.save)
+    d.gender_cd = 1
+    assert_equal(true, d.save)
+    assert_equal(:female, d.gender)
   end
 end

@@ -21,7 +21,7 @@ module SimpleEnum
     # Provides ability to create simple enumerations based on hashes or arrays, backed
     # by integer columns.
     #
-    # Columns are supposed to be suffixed by =_cd=, if not, use <tt>:column => 'the_column_name'</tt>,
+    # Columns are supposed to be suffixed by +_cd+, if not, use +:column => 'the_column_name'+,
     # so some example migrations:
     #
     #   add_column :users, :gender_cd, :integer
@@ -60,10 +60,16 @@ module SimpleEnum
     # that happen :) and I don't think it's a good idea to do so anyway.
     def as_enum(enum_cd, values, options = {})
       options = { :column => "#{enum_cd.to_s}_cd" }.merge(options)
-      options.assert_valid_keys(:column)
+      options.assert_valid_keys(:column, :whiny)
       
       # convert array to hash...
       values = Hash[*values.enum_with_index.to_a.flatten] unless values.respond_to?('invert')
+      
+      # store info away
+      write_inheritable_attribute(:enum_definitions, {}) if enum_definitions.nil?
+      enum_definitions[enum_cd] = { :name => enum_cd, :values => values,
+                                    :column => options[:column], :options => options }
+      enum_definitions[options[:column]] = enum_definitions[enum_cd]
       
       # generate getter       
       define_method(enum_cd.to_s) do
@@ -72,8 +78,8 @@ module SimpleEnum
       end
       
       # generate setter
-      define_method("#{enum_cd.to_s}=") do |new_value|            
-        write_attribute options[:column], values[new_value]
+      define_method("#{enum_cd.to_s}=") do |new_value|
+        write_attribute options[:column], values[new_value.to_sym]
       end
       
       # allow "simple" access to defined values-hash, e.g. in select helper.
@@ -93,10 +99,34 @@ module SimpleEnum
         end
       end
     end
+    
+    # Validates supplied attributes using the defined enumeration values.
+    #
+    # TODO: describe options
+    def validates_as_enum(*attr_names)
+      configuration = { :on => :save }
+      configuration.update(attr_names.extract_options!)      
+      attr_names.map! { |e| enum_definitions[e][:column] } # map to column name
+      
+      validates_each(attr_names, configuration) do |record, attr_name, value|
+        enum_def = enum_definitions[attr_name]
+        unless enum_def[:values].values.include?(value)
+          record.errors.add(enum_def[:name], :invalid_enum, :default => configuration[:message], :value => value)
+        end
+      end
+    end
+    
+    protected
+      # Returns enum definitions as defined by each call to
+      # +as_enum+.
+      def enum_definitions
+        read_inheritable_attribute(:enum_definitions)
+      end
   end
 end
 
-# Tie stuff together.
+# Tie stuff together and load translations
 if Object.const_defined?('ActiveRecord')
   ActiveRecord::Base.send(:include, SimpleEnum)
+  I18n.load_path << File.join(File.dirname(__FILE__), '..', 'locales', 'en.yml')  
 end
