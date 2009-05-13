@@ -1,0 +1,6 @@
+# english translation
+en:
+  activerecord:
+    errors:
+      messages:
+        invalid_enum: invalid option supplied.
