@@ -53,11 +53,8 @@ module SimpleEnum
     #
     # To access the key/value assocations in a helper like the select helper or similar use:
     #
-    #   <%= select(:user, :gender_cd, @user.values_for_gender)
+    #   <%= select(:user, :gender, @user.values_for_gender.keys)
     #
-    # Note that the form attribute used is not :gender, but :gender_cd, this is due
-    # to the fact that I don't know how to hack into the attributes= method to make
-    # that happen :) and I don't think it's a good idea to do so anyway.
     def as_enum(enum_cd, values, options = {})
       options = { :column => "#{enum_cd.to_s}_cd" }.merge(options)
       options.assert_valid_keys(:column, :whiny)
@@ -100,9 +97,26 @@ module SimpleEnum
       end
     end
     
-    # Validates supplied attributes using the defined enumeration values.
+    # Validates an +as_enum+ field based on the value of it's column.
     #
-    # TODO: describe options
+    # Model:
+    #    class User < ActiveRecord::Base
+    #      as_enum :gender, [ :male, :female ]
+    #      validates_as_enum :gender
+    #    end
+    #
+    # View:
+    #    <%= select(:user, :gender, @user.values_for_gender.keys) %>
+    #
+    # Configuration options:
+    # * <tt>:message</tt> - A custom error message (default: is <tt>[:activerecord, :errors, :messages, :invalid_enum]</tt>).
+    # * <tt>:on</tt> - Specifies when this validation is active (default is <tt>:save</tt>, other options <tt>:create</tt>, <tt>:update</tt>).
+    # * <tt>:if</tt> - Specifies a method, proc or string to call to determine if the validation should
+    #   occur (e.g. <tt>:if => :allow_validation</tt>, or <tt>:if => Proc.new { |user| user.signup_step > 2 }</tt>). The
+    #   method, proc or string should return or evaluate to a true or false value.
+    # * <tt>:unless</tt> - Specifies a method, proc or string to call to determine if the validation should
+    #   not occur (e.g. <tt>:unless => :skip_validation</tt>, or <tt>:unless => Proc.new { |user| user.signup_step <= 2 }</tt>). The
+    #   method, proc or string should return or evaluate to a true or false value.
     def validates_as_enum(*attr_names)
       configuration = { :on => :save }
       configuration.update(attr_names.extract_options!)      
