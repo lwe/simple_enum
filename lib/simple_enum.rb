@@ -119,7 +119,7 @@ module SimpleEnum
     protected
       # Returns enum definitions as defined by each call to
       # +as_enum+.
-      def enum_definitions
+      def enum_definitions #:nodoc:
         read_inheritable_attribute(:enum_definitions)
       end
   end
