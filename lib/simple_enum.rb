@@ -56,7 +56,7 @@ module SimpleEnum
     #   <%= select(:user, :gender, @user.values_for_gender.keys)
     #
     def as_enum(enum_cd, values, options = {})
-      options = { :column => "#{enum_cd.to_s}_cd" }.merge(options)
+      options = { :column => "#{enum_cd.to_s}_cd", :whiny => true }.merge(options)
       options.assert_valid_keys(:column, :whiny)
       
       # convert array to hash...
@@ -76,7 +76,9 @@ module SimpleEnum
       
       # generate setter
       define_method("#{enum_cd.to_s}=") do |new_value|
-        write_attribute options[:column], values[new_value.to_sym]
+        v = new_value.nil? ? nil : values[new_value.to_sym]        
+        raise(ArgumentError, "Invalid enumeration value: #{new_value}") if (options[:whiny] and v.nil? and !new_value.nil?)
+        write_attribute options[:column], v
       end
       
       # allow "simple" access to defined values-hash, e.g. in select helper.
