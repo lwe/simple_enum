@@ -108,5 +108,4 @@ Known issues/Open items
 -----------------------
   
 * Maybe the `:whiny` option should default to `false`, so that generally no exceptions are thrown if a user fakes a request?
-
-* Add an option to disable the generation of shortcut methods.
+* Make class independent of `ActiveRecord` where possible (so that atleast as_enum works!)
