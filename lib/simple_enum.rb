@@ -81,11 +81,28 @@ module SimpleEnum
     #   item = Item.new(:status => :active)
     #   item.state_inactive?       # => false
     #
+    # To disable the generation of the shortcut methods for all enumeration values, add <tt>:slim => true</tt> to
+    # the options.
+    #
+    #   class Address < ActiveRecord::Base
+    #     as_enum :canton, {:aargau => 'ag', ..., :wallis => 'vs', :zug => 'zg', :zurich => 'zh'}, :slim => true
+    #   end    
+    #
+    #   home = Address.new(:canton => :zurich, :street => 'Bahnhofstrasse 1', ...)
+    #   home.canton       # => :zurich
+    #   home.canton_cd    # => 'zh'
+    #   home.aargau!      # throws NoMethodError: undefined method `aargau!' 
+    #
+    # This is especially useful if there are (too) many enumeration values, or these shortcut methods
+    # are not required.
+    #
     # === Configuration options:
     # * <tt>:column</tt> - Specifies a custom column name, instead of the default suffixed <tt>_cd</tt> column
     # * <tt>:prefix</tt> - Define a prefix, which is prefixed to the shortcut methods (e.g. <tt><symbol>!</tt> and
     #   <tt><symbol>?</tt>), if it's set to <tt>true</tt> the enumeration name is used as a prefix, else a custom
     #   prefix (symbol or string) (default is <tt>nil</tt> => no prefix)
+    # * <tt>:slim</tt> - If set to <tt>true</tt> no shortcut methods for all enumeration values are being genereated
+    #   (default is <tt>nil</tt> => they are generated)
     # * <tt>:whiny</tt> - Boolean value which if set to <tt>true</tt> will throw an <tt>ArgumentError</tt>
     #   if an invalid value is passed to the setter (e.g. a value for which no enumeration exists). if set to
     #   <tt>false</tt> no exception is thrown and the internal value is set to <tt>nil</tt> (default is <tt>true</tt>)    

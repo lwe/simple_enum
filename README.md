@@ -82,6 +82,20 @@ Wait, there's more
         
     The `:prefix` option not only takes a boolean value as an argument, but instead can also be supplied a custom
     prefix (i.e. any string or symbol), so with `:prefix => 'foo'` all shortcut methods would look like: `foo_<symbol>...`
+    **Note**: if the `:slim => true` is defined, this option has no effect whatsoever (because no shortcut methods are generated).
+    
+* Sometimes it might be useful to disable the generation of the shortcut methods (`<symbol>?` and `<symbol>!`), to do so just
+  add the option `:slim => true`:
+  
+        class User < ActiveRecord::Base
+          as_enum :gender, [:male, :female], :slim => true
+        end
+
+        jane = User.new :gender => :female
+        jane.female? # => throws NoMethodError: undefined method `female?' 
+  
+    Yet the setter and getter for `gender`, as well as the `values_for_gender` methods are still available, only all shortcut
+    methods for each of the enumeration values are not generated.
   
 * As a default an `ArgumentError` is raised if the user tries to set the field to an invalid enumeration value, to change this
   behaviour use the `:whiny` option:
