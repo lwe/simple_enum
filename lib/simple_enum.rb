@@ -56,8 +56,8 @@ module SimpleEnum
     #   <%= select(:user, :gender, @user.values_for_gender.keys)
     #
     def as_enum(enum_cd, values, options = {})
-      options = { :column => "#{enum_cd.to_s}_cd", :whiny => true }.merge(options)
-      options.assert_valid_keys(:column, :whiny)
+      options = { :column => "#{enum_cd.to_s}_cd", :whiny => true, :prefix => false }.merge(options)
+      options.assert_valid_keys(:column, :whiny, :prefix)
       
       # convert array to hash...
       values = Hash[*values.enum_with_index.to_a.flatten] unless values.respond_to?('invert')
@@ -88,11 +88,12 @@ module SimpleEnum
       
       # create both, boolean operations and *bang* operations for each
       # enum "value"
+      prefix = options[:prefix] ? enum_cd.to_s + '_' : ''
       values.each do |k,cd|
-        define_method("#{k.to_s}?") do
+        define_method("#{prefix}#{k.to_s}?") do
           cd == read_attribute(options[:column])
         end
-        define_method("#{k.to_s}!") do
+        define_method("#{prefix}#{k.to_s}!") do
           write_attribute options[:column], cd
           k
         end
