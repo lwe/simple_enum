@@ -56,7 +56,7 @@ module SimpleEnum
     #   <%= select(:user, :gender, @user.values_for_gender.keys)
     #
     def as_enum(enum_cd, values, options = {})
-      options = { :column => "#{enum_cd.to_s}_cd", :whiny => true }.merge(options)
+      options = { :column => "#{enum_cd}_cd", :whiny => true }.merge(options)
       options.assert_valid_keys(:column, :whiny, :prefix)
       
       # convert array to hash...
@@ -75,26 +75,26 @@ module SimpleEnum
       end
       
       # generate setter
-      define_method("#{enum_cd.to_s}=") do |new_value|
+      define_method("#{enum_cd}=") do |new_value|
         v = new_value.nil? ? nil : values[new_value.to_sym]        
         raise(ArgumentError, "Invalid enumeration value: #{new_value}") if (options[:whiny] and v.nil? and !new_value.nil?)
         write_attribute options[:column], v
       end
       
       # allow "simple" access to defined values-hash, e.g. in select helper.
-      define_method("values_for_#{enum_cd.to_s}") do
+      define_method("values_for_#{enum_cd}") do
         values.clone
       end
       
       # create both, boolean operations and *bang* operations for each
       # enum "value"
-      prefix = options[:prefix] && "#{options[:prefix] == true ? enum_cd.to_s : options[:prefix]}_"
+      prefix = options[:prefix] && "#{options[:prefix] == true ? enum_cd : options[:prefix]}_"
             
       values.each do |k,cd|
-        define_method("#{prefix}#{k.to_s}?") do
+        define_method("#{prefix}#{k}?") do
           cd == read_attribute(options[:column])
         end
-        define_method("#{prefix}#{k.to_s}!") do
+        define_method("#{prefix}#{k}!") do
           write_attribute options[:column], cd
           k
         end
