@@ -112,17 +112,16 @@ module SimpleEnum
       
       # convert array to hash...
       values = Hash[*values.enum_with_index.to_a.flatten] unless values.respond_to?('invert')
+      values_inverted = values.invert
       
       # store info away
       write_inheritable_attribute(:enum_definitions, {}) if enum_definitions.nil?
-      enum_definitions[enum_cd] = { :name => enum_cd, :values => values,
-                                    :column => options[:column], :options => options }
-      enum_definitions[options[:column]] = enum_definitions[enum_cd]
+      enum_definitions[enum_cd] = enum_definitions[options[:column]] = { :name => enum_cd, :column => options[:column], :options => options }
       
       # generate getter       
       define_method("#{enum_cd}") do
         id = read_attribute options[:column]
-        values.invert[id]
+        values_inverted[id]
       end
       
       # generate setter
@@ -140,7 +139,12 @@ module SimpleEnum
       
       # allow access to defined values hash, e.g. in a select helper or finder method.
       class_variable_set :"@@SE_#{enum_cd.to_s.pluralize.upcase}", values
-      class_eval "def self.#{enum_cd.to_s.pluralize}; class_variable_get(:@@SE_#{enum_cd.to_s.pluralize.upcase}); end"
+      class_eval(<<-EOM, __FILE__, __LINE__ + 1)
+        def self.#{enum_cd.to_s.pluralize}(sym = nil)
+          return class_variable_get(:@@SE_#{enum_cd.to_s.pluralize.upcase}) if sym.nil?
+          class_variable_get(:@@SE_#{enum_cd.to_s.pluralize.upcase})[sym]
+        end
+      EOM
       
       # only create if :slim is not defined
       unless options[:slim]
@@ -148,13 +152,13 @@ module SimpleEnum
         # enum "value"
         prefix = options[:prefix] && "#{options[:prefix] == true ? enum_cd : options[:prefix]}_"
       
-        values.each do |k,cd|
-          define_method("#{prefix}#{k}?") do
-            cd == read_attribute(options[:column])
+        values.each do |sym,code|
+          define_method("#{prefix}#{sym}?") do
+            code == read_attribute(options[:column])
           end
-          define_method("#{prefix}#{k}!") do
-            write_attribute options[:column], cd
-            k
+          define_method("#{prefix}#{sym}!") do
+            write_attribute options[:column], code
+            sym
           end
         end
       end
@@ -187,7 +191,7 @@ module SimpleEnum
       
       validates_each(attr_names, configuration) do |record, attr_name, value|
         enum_def = enum_definitions[attr_name]
-        unless enum_def[:values].values.include?(value)
+        unless send(enum_def[:name].to_s.pluralize).values.include?(value)
           record.errors.add(enum_def[:name], :invalid_enum, :default => configuration[:message], :value => value)
         end
       end

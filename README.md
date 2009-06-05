@@ -57,7 +57,7 @@ Wait, there's more
         
 * To make it easier to create dropdowns with values use:
 
-        <%= select(:user, :gender, @user.values_for_gender.keys) %>
+        <%= select(:user, :gender, User.genders.keys) %>
         
 * It's possible to validate the internal enum values, just like any other ActiveRecord validation:
 
@@ -94,7 +94,7 @@ Wait, there's more
         jane = User.new :gender => :female
         jane.female? # => throws NoMethodError: undefined method `female?' 
   
-    Yet the setter and getter for `gender`, as well as the `values_for_gender` methods are still available, only all shortcut
+    Yet the setter and getter for `gender`, as well as the `User.genders` methods are still available, only all shortcut
     methods for each of the enumeration values are not generated.
   
 * As a default an `ArgumentError` is raised if the user tries to set the field to an invalid enumeration value, to change this
@@ -103,9 +103,18 @@ Wait, there's more
         class User < ActiveRecord::Base
           as_enum :gender, [:male, :female], :whiny => false
         end
-    
+
+Best practices
+--------------
+
+Searching for certain values by using the finder methods:
+
+    User.find :all, :conditions => { :gender_cd => User.genders[:male] }
+
 Known issues/Open items
 -----------------------
   
 * Maybe the `:whiny` option should default to `false`, so that generally no exceptions are thrown if a user fakes a request?
 * Make class independent of `ActiveRecord` where possible (so that atleast as_enum works!)
+* Remove the `values_for_...` method sometimes, it's already deprecated anyway (in favor of `Klass.<pluralized enum name>`)
+* Convert this README to rdoc format, so it can be included in rdoc generated documentation
