@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class SimpleEnumTest < ActiveSupport::TestCase  
+class PrefixesTest < ActiveSupport::TestCase  
   def setup
     reload_db
   end
