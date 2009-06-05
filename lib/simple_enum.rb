@@ -56,7 +56,7 @@ module SimpleEnum
     #
     # To access the key/value assocations in a helper like the select helper or similar use:
     #
-    #   <%= select(:user, :gender, @user.values_for_gender.keys)
+    #   <%= select(:user, :gender, User.genders.keys)
     #
     # The generated shortcut methods (like <tt>male?</tt> or <tt>female!</tt> etc.) can also be prefixed
     # using the <tt>:prefix</tt> option. If the value is <tt>true</tt>, the shortcut methods are prefixed
@@ -120,7 +120,7 @@ module SimpleEnum
       enum_definitions[options[:column]] = enum_definitions[enum_cd]
       
       # generate getter       
-      define_method(enum_cd.to_s) do
+      define_method("#{enum_cd}") do
         id = read_attribute options[:column]
         values.invert[id]
       end
@@ -132,13 +132,18 @@ module SimpleEnum
         write_attribute options[:column], v
       end
       
-      # allow "simple" access to defined values-hash, e.g. in select helper.
+      # DEPRECATED: allow "simple" access to defined values-hash, e.g. in select helper.
       define_method("values_for_#{enum_cd}") do
+        warn "DEPRECATION WARNING: `obj.values_for_#{enum_cd}` is deprecated. Please use `#{self.class}.#{enum_cd.to_s.pluralize}` instead (called from: #{caller.first})"
         values.clone
       end
-
+      
+      # allow access to defined values hash, e.g. in a select helper or finder method.
+      class_variable_set :"@@SE_#{enum_cd.to_s.pluralize.upcase}", values
+      class_eval "def self.#{enum_cd.to_s.pluralize}; class_variable_get(:@@SE_#{enum_cd.to_s.pluralize.upcase}); end"
+      
       # only create if :slim is not defined
-      unless options[:slim]      
+      unless options[:slim]
         # create both, boolean operations and *bang* operations for each
         # enum "value"
         prefix = options[:prefix] && "#{options[:prefix] == true ? enum_cd : options[:prefix]}_"
@@ -164,7 +169,7 @@ module SimpleEnum
     #    end
     #
     # View:
-    #    <%= select(:user, :gender, @user.values_for_gender.keys) %>
+    #    <%= select(:user, :gender, User.genders.keys) %>
     #
     # Configuration options:
     # * <tt>:message</tt> - A custom error message (default: is <tt>[:activerecord, :errors, :messages, :invalid_enum]</tt>).
