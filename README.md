@@ -80,8 +80,8 @@ Wait, there's more
         jane = User.new :gender => :female
         jane.gender_female? # => true
         
-  The `:prefix` option not only takes a boolean value as an argument, but instead can also be supplied a custom
-  prefix (i.e. any string or symbol), so with `:prefix => 'foo'` all shortcut methods would look like: `foo_<symbol>...`
+    The `:prefix` option not only takes a boolean value as an argument, but instead can also be supplied a custom
+    prefix (i.e. any string or symbol), so with `:prefix => 'foo'` all shortcut methods would look like: `foo_<symbol>...`
   
 * As a default an `ArgumentError` is raised if the user tries to set the field to an invalid enumeration value, to change this
   behaviour use the `:whiny` option:
