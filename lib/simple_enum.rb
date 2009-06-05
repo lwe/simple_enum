@@ -19,9 +19,9 @@ module SimpleEnum
   module ClassMethods
     
     # Provides ability to create simple enumerations based on hashes or arrays, backed
-    # by integer columns.
+    # by integer columns (but not limited to integer columns).
     #
-    # Columns are supposed to be suffixed by +_cd+, if not, use +:column => 'the_column_name'+,
+    # Columns are supposed to be suffixed by <tt>_cd</tt>, if not, use <tt>:column => 'the_column_name'</tt>,
     # so some example migrations:
     #
     #   add_column :users, :gender_cd, :integer
@@ -39,22 +39,56 @@ module SimpleEnum
     #     as_enum :status, { :active => 1, :inactive => 0, :archived => 2, :deleted => 3 }, :column => 'status'
     #   end
     #
-    # It automatically creates some useful methods:
+    # Now it's possible to access the enumeration and the internally stored value like:
     #
-    #   @user = User.new
-    #   @user.gender          # => nil
-    #   @user.gender = :male
-    #   @user.gender          # => :male
-    #   @user.gender_cd       # => 0
-    #   @user.male?           # => true
-    #   @user.female?         # => false
-    #   @user.female!         # => :female (set's gender to :female => gender_cd = 1)
-    #   @user.male?           # => false
+    #   john_doe = User.new
+    #   john_doe.gender          # => nil
+    #   john_doe.gender = :male
+    #   john_doe.gender          # => :male
+    #   john_doe.gender_cd       # => 0
+    #
+    # And to make life a tad easier: a few shortcut methods to work with the enumeration are also created.
+    # 
+    #   john_doe.male?           # => true
+    #   john_doe.female?         # => false
+    #   john_doe.female!         # => :female (set's gender to :female => gender_cd = 1)
+    #   john_doe.male?           # => false
     #
     # To access the key/value assocations in a helper like the select helper or similar use:
     #
     #   <%= select(:user, :gender, @user.values_for_gender.keys)
     #
+    # The generated shortcut methods (like <tt>male?</tt> or <tt>female!</tt> etc.) can also be prefixed
+    # using the <tt>:prefix</tt> option. If the value is <tt>true</tt>, the shortcut methods are prefixed
+    # with the name of the enumeration.
+    #
+    #   class User < ActiveRecord::Base
+    #     as_enum :gender, [:male, :female], :prefix => true
+    #   end
+    #
+    #   jane_doe = User.new
+    #   jane_doe.gender = :female   # this is still as-is
+    #   jane_doe.gender_cd          # => 1, and so it this
+    #
+    #   jane_doe.gender_female?     # => true (instead of jane_doe.female?)
+    #
+    # It is also possible to supply a custom prefix.
+    #
+    #   class Item < ActiveRecord::Base
+    #     as_enum :status, [:inactive, :active, :deleted], :prefix => :state
+    #   end
+    #
+    #   item = Item.new(:status => :active)
+    #   item.state_inactive?       # => false
+    #
+    # === Configuration options:
+    # * <tt>:column</tt> - Specifies a custom column name, instead of the default suffixed <tt>_cd</tt> column
+    # * <tt>:prefix</tt> - Define a prefix, which is prefixed to the shortcut methods (e.g. <tt><symbol>!</tt> and
+    #   <tt><symbol>?</tt>), if it's set to <tt>true</tt> the enumeration name is used as a prefix, else a custom
+    #   prefix (symbol or string) (default is <tt>nil</tt> => no prefix)
+    # * <tt>:whiny</tt> - Boolean value which if set to <tt>true</tt> will throw an <tt>ArgumentError</tt>
+    #   if an invalid value is passed to the setter (e.g. a value for which no enumeration exists). if set to
+    #   <tt>false</tt> no exception is thrown and the internal value is set to <tt>nil</tt> (default is <tt>true</tt>)    
     def as_enum(enum_cd, values, options = {})
       options = { :column => "#{enum_cd}_cd", :whiny => true }.merge(options)
       options.assert_valid_keys(:column, :whiny, :prefix)
