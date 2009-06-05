@@ -91,7 +91,7 @@ module SimpleEnum
     #   <tt>false</tt> no exception is thrown and the internal value is set to <tt>nil</tt> (default is <tt>true</tt>)    
     def as_enum(enum_cd, values, options = {})
       options = { :column => "#{enum_cd}_cd", :whiny => true }.merge(options)
-      options.assert_valid_keys(:column, :whiny, :prefix)
+      options.assert_valid_keys(:column, :whiny, :prefix, :slim)
       
       # convert array to hash...
       values = Hash[*values.enum_with_index.to_a.flatten] unless values.respond_to?('invert')
@@ -119,18 +119,21 @@ module SimpleEnum
       define_method("values_for_#{enum_cd}") do
         values.clone
       end
+
+      # only create if :slim is not defined
+      unless options[:slim]      
+        # create both, boolean operations and *bang* operations for each
+        # enum "value"
+        prefix = options[:prefix] && "#{options[:prefix] == true ? enum_cd : options[:prefix]}_"
       
-      # create both, boolean operations and *bang* operations for each
-      # enum "value"
-      prefix = options[:prefix] && "#{options[:prefix] == true ? enum_cd : options[:prefix]}_"
-            
-      values.each do |k,cd|
-        define_method("#{prefix}#{k}?") do
-          cd == read_attribute(options[:column])
-        end
-        define_method("#{prefix}#{k}!") do
-          write_attribute options[:column], cd
-          k
+        values.each do |k,cd|
+          define_method("#{prefix}#{k}?") do
+            cd == read_attribute(options[:column])
+          end
+          define_method("#{prefix}#{k}!") do
+            write_attribute options[:column], cd
+            k
+          end
         end
       end
     end
