@@ -56,7 +56,7 @@ module SimpleEnum
     #   <%= select(:user, :gender, @user.values_for_gender.keys)
     #
     def as_enum(enum_cd, values, options = {})
-      options = { :column => "#{enum_cd.to_s}_cd", :whiny => true, :prefix => false }.merge(options)
+      options = { :column => "#{enum_cd.to_s}_cd", :whiny => true }.merge(options)
       options.assert_valid_keys(:column, :whiny, :prefix)
       
       # convert array to hash...
@@ -88,7 +88,8 @@ module SimpleEnum
       
       # create both, boolean operations and *bang* operations for each
       # enum "value"
-      prefix = options[:prefix] ? enum_cd.to_s + '_' : ''
+      prefix = options[:prefix] && "#{options[:prefix] == true ? enum_cd.to_s : options[:prefix]}_"
+            
       values.each do |k,cd|
         define_method("#{prefix}#{k.to_s}?") do
           cd == read_attribute(options[:column])
