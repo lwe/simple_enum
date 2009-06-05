@@ -10,7 +10,7 @@
 module SimpleEnum
   
   # Current simple_enum version string
-  VERSION = '0.1.0'
+  VERSION = '0.2.0'
   
   def self.included(base) #:nodoc:
     base.send :extend, ClassMethods
