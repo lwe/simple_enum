@@ -1,5 +1,15 @@
 require 'test_helper'
 
+# Trap Kernel#warn to check that deprecated warning is added :)
+module Kernel
+  @@LAST_WARNING = nil
+  def warn(msg)
+    @@LAST_WARNING = msg
+  end
+  
+  def self.last_warning; @@LAST_WARNING; end
+end
+
 class ClassMethodsTest < ActiveSupport::TestCase  
   def setup
     reload_db
