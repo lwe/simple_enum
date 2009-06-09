@@ -121,7 +121,7 @@ module SimpleEnum
       options.assert_valid_keys(:column, :whiny, :prefix, :slim)
       
       # convert array to hash...
-      values = Hash[*values.enum_with_index.to_a.flatten] unless values.respond_to?('invert')
+      values = magically_convert_to_hash(values) unless values.respond_to?('invert')
       values_inverted = values.invert
       
       # store info away
@@ -148,7 +148,6 @@ module SimpleEnum
       end
       
       # allow access to defined values hash, e.g. in a select helper or finder method.
-      metaclass = class << self; self; end
       class_variable_set :"@@SE_#{enum_cd.to_s.pluralize.upcase}", values
       class_eval(<<-EOM, __FILE__, __LINE__ + 1)
         def self.#{enum_cd.to_s.pluralize}(sym = nil)
@@ -163,7 +162,9 @@ module SimpleEnum
         # enum "value"
         prefix = options[:prefix] && "#{options[:prefix] == true ? enum_cd : options[:prefix]}_"
       
-        values.each do |sym,code|                    
+        values.each do |sym,code|
+          sym = sym.to_param
+          
           define_method("#{prefix}#{sym}?") do
             code == read_attribute(options[:column])
           end
@@ -216,6 +217,17 @@ module SimpleEnum
       # +as_enum+.
       def enum_definitions #:nodoc:
         read_inheritable_attribute(:enum_definitions)
+      end
+      
+      # Magically convert supplied values to a hash, like <tt><symbol> => <id></tt>.
+      # Contains special handling for <tt>ActiveRecord</tt> result lists etc, to allow
+      # some cool stuff like: <tt>as_enum :foo, Foo.find(:all)</tt>.
+      #
+      # TODO: maybe extend Array to provide this kind of functionality!?
+      def magically_convert_to_hash(values)
+        values = values.enum_with_index.to_a unless values.first.is_a?(ActiveRecord::Base) or values.first.is_a?(Array)
+        values = values.map { |e| [e, e.id] } if values.first.is_a?(ActiveRecord::Base)
+        Hash[*values.flatten]
       end
   end
 end
