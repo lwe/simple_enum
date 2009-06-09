@@ -3,7 +3,8 @@ SimpleEnum
 
 SimpleEnum tries to bring an easy-to-use enum-like functionality to ActiveRecord.
 
-**NOTE**: this code seems to work very well for me, though I must admit I'm a RoR newbee, so your mileage may vary
+**NOTE**: a recent search on github for `enum` turned out, that there are many, many similar solutions.
+Yet, none seem to provide so many options, but I may be biased ;)
 
 Quick start
 -----------
@@ -34,6 +35,13 @@ Now it's possible to pull some neat tricks on the new column:
     jane.male?     # => false
     jane.gender    # => :female
     jane.gender_cd # => 1
+    
+There are even some neat tricks at class level, which might be
+useful in queries or similar situations:
+
+    User.genders            # => { :male => 0, :female => 1 }
+    User.genders(:male)     # => 0
+    User.female             # => 1
     
 Wait, there's more
 ------------------
@@ -70,7 +78,7 @@ Wait, there's more
     the standard `validates_each`-loop. This validation method does not check the value of `@user.gender`, but
     instead the value of `@user.gender_cd`.
     
-* If the shortcut methods (like `<symbol>?` or `<symbol>!`) conflict with something in your class, it's possible to
+* If the shortcut methods (like `<symbol>?`, `<symbol>!` or `Klass.<symbol>`) conflict with something in your class, it's possible to
   define a prefix:
   
         class User < ActiveRecord::Base
@@ -79,12 +87,13 @@ Wait, there's more
 
         jane = User.new :gender => :female
         jane.gender_female? # => true
+        User.gender_female  # => 1, this also works on the class methods
         
     The `:prefix` option not only takes a boolean value as an argument, but instead can also be supplied a custom
     prefix (i.e. any string or symbol), so with `:prefix => 'foo'` all shortcut methods would look like: `foo_<symbol>...`
     **Note**: if the `:slim => true` is defined, this option has no effect whatsoever (because no shortcut methods are generated).
     
-* Sometimes it might be useful to disable the generation of the shortcut methods (`<symbol>?` and `<symbol>!`), to do so just
+* Sometimes it might be useful to disable the generation of the shortcut methods (`<symbol>?`, `<symbol>!` and `Klass.<symbol>`), to do so just
   add the option `:slim => true`:
   
         class User < ActiveRecord::Base
@@ -93,6 +102,7 @@ Wait, there's more
 
         jane = User.new :gender => :female
         jane.female? # => throws NoMethodError: undefined method `female?' 
+        User.male    # => throws NoMethodError: undefined method `male' 
   
     Yet the setter and getter for `gender`, as well as the `User.genders` methods are still available, only all shortcut
     methods for each of the enumeration values are not generated.
@@ -109,7 +119,7 @@ Best practices
 
 Searching for certain values by using the finder methods:
 
-    User.find :all, :conditions => { :gender_cd => User.genders[:male] }
+    User.find :all, :conditions => { :gender_cd => User.female }
 
 Known issues/Open items
 -----------------------

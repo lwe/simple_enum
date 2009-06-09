@@ -54,6 +54,13 @@ module SimpleEnum
     #   john_doe.female!         # => :female (set's gender to :female => gender_cd = 1)
     #   john_doe.male?           # => false
     #
+    # Sometimes it's required to access the db-backed values, like e.g. in a query:
+    #
+    #   User.genders             # =>  { :male => 0, :female => 1}, values hash
+    #   User.genders(:male)      # => 0, value access (via hash)
+    #   User.female              # => 1, direct access
+    #   User.find :all, :conditions => { :gender_cd => User.female }  # => [...], list with all women
+    #
     # To access the key/value assocations in a helper like the select helper or similar use:
     #
     #   <%= select(:user, :gender, User.genders.keys)
@@ -80,6 +87,8 @@ module SimpleEnum
     #
     #   item = Item.new(:status => :active)
     #   item.state_inactive?       # => false
+    #   Item.state_deleted         # => 2
+    #   Item.status(:deleted)      # => 2, same as above...
     #
     # To disable the generation of the shortcut methods for all enumeration values, add <tt>:slim => true</tt> to
     # the options.
@@ -92,6 +101,7 @@ module SimpleEnum
     #   home.canton       # => :zurich
     #   home.canton_cd    # => 'zh'
     #   home.aargau!      # throws NoMethodError: undefined method `aargau!' 
+    #   Address.aargau    # throws NoMethodError: undefined method `aargau`
     #
     # This is especially useful if there are (too) many enumeration values, or these shortcut methods
     # are not required.
