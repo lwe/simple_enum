@@ -138,6 +138,7 @@ module SimpleEnum
       end
       
       # allow access to defined values hash, e.g. in a select helper or finder method.
+      metaclass = class << self; self; end
       class_variable_set :"@@SE_#{enum_cd.to_s.pluralize.upcase}", values
       class_eval(<<-EOM, __FILE__, __LINE__ + 1)
         def self.#{enum_cd.to_s.pluralize}(sym = nil)
@@ -152,7 +153,7 @@ module SimpleEnum
         # enum "value"
         prefix = options[:prefix] && "#{options[:prefix] == true ? enum_cd : options[:prefix]}_"
       
-        values.each do |sym,code|
+        values.each do |sym,code|                    
           define_method("#{prefix}#{sym}?") do
             code == read_attribute(options[:column])
           end
@@ -160,6 +161,9 @@ module SimpleEnum
             write_attribute options[:column], code
             sym
           end
+          
+          # allow class access to each value
+          metaclass.send(:define_method, "#{prefix}#{sym}", Proc.new { code })
         end
       end
     end

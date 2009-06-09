@@ -28,4 +28,56 @@ class ClassMethodsTest < ActiveSupport::TestCase
     
     assert_match /\ADEPRECATION WARNING.*values_for_gender.*genders/, Kernel.last_warning
   end
+  
+  test "generation of value shortcuts on class" do
+    g = Dummy.new
+    
+    assert_equal 0, Dummy.male
+    assert_equal 1, Dummy.female
+    assert_equal 'alpha', Dummy.alpha
+    assert_respond_to Dummy, :male
+    assert_respond_to Dummy, :female
+    assert_respond_to Dummy, :beta
+    assert_respond_to Dummy, :foobar            
+  end
+  
+  test "that no Klass.shortcut are created if :slim => true" do
+    with_slim = Class.new(ActiveRecord::Base) do
+      set_table_name 'dummy'
+      as_enum :gender, [:male, :female], :slim => true
+    end
+
+    assert !with_slim.respond_to?(:male)
+    assert !with_slim.respond_to?(:female)    
+    assert_respond_to with_slim, :genders
+  end
+  
+  test "that Klass.shortcut respect :prefix => true and are prefixed by \#{enum_cd}" do
+    with_prefix = Class.new(ActiveRecord::Base) do
+      set_table_name 'dummy'
+      as_enum :gender, [:male, :female], :prefix => true
+    end
+    
+    assert !with_prefix.respond_to?(:male)
+    assert !with_prefix.respond_to?(:female)    
+    assert_respond_to with_prefix, :gender_male
+    assert_respond_to with_prefix, :gender_female
+    assert_equal 0, with_prefix.gender_male
+    assert_respond_to with_prefix, :genders
+  end
+  
+  test "to ensure that Klass.shortcut also work with custom prefixes" do
+    with_custom_prefix = Class.new(ActiveRecord::Base) do
+      set_table_name 'dummy'
+      as_enum :gender, [:male, :female], :prefix => :g
+    end
+    
+    assert !with_custom_prefix.respond_to?(:male)
+    assert !with_custom_prefix.respond_to?(:female)    
+    assert !with_custom_prefix.respond_to?(:gender_female)        
+    assert_respond_to with_custom_prefix, :g_male
+    assert_respond_to with_custom_prefix, :g_female
+    assert_equal 1, with_custom_prefix.g_female    
+    assert_respond_to with_custom_prefix, :genders    
+  end
 end
