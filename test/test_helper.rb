@@ -1,6 +1,8 @@
 # Setup environment for both tests and IRB interactive console
 #
 
+$KCODE = 'u' # to make parameterize work...
+
 require 'rubygems'
 
 gem 'sqlite3-ruby'
@@ -17,7 +19,7 @@ RAILS_ENV  = 'test'
 ActiveRecord::Base.establish_connection({ :adapter => 'sqlite3', :database => ':memory:'})
 
 # load simple_enum
-require File.join(ROOT, 'lib', 'simple_enum')
+require File.join(ROOT, 'init')
 
 # load dummy class
 require File.join(ROOT, 'test', 'dummy')
@@ -39,10 +41,10 @@ def reload_db(fill = true)
   end
 end
 
-# do some magic to include/exclude stuff for IRB session vs. Unit Tests
+# do some magic to initialze DB for IRB session
 if Object.const_defined?('IRB')
-  reload_db # init DB for IRB
-else
-  require 'test/unit'
+  reload_db
+else # and load test classes when in test cases...
+  require 'test/unit'  
   require 'active_support/test_case'
 end
