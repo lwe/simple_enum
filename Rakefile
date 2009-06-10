@@ -16,7 +16,7 @@ end
 desc 'Start IRB console with loaded test/test_helper.rb.'
 task :console do |t|
   chdir File.dirname(__FILE__)
-  exec 'irb -r test/test_helper'
+  exec 'irb -Ilib/ -r test/test_helper'
 end
 
 desc 'Generate documentation for the simple_enum plugin.'
