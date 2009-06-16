@@ -34,6 +34,11 @@ def reload_db(options = {})
     t.column :other, :integer
   end
   
+  # Create ref-data table and fill with records
+  ActiveRecord::Base.connection.create_table :genders, :force => true do |t|
+    t.column :name, :string
+  end  
+  
   if options[:fill]
     # fill db with some rows
     Dummy.create({ :name => 'Anna',  :gender_cd => 1, :word_cd => 'alpha', :other => 0})
@@ -41,12 +46,7 @@ def reload_db(options = {})
     Dummy.create({ :name => 'Chris', :gender_cd => 0, :word_cd => 'gamma', :other => 2})
   end
   
-  if options[:genders]
-    # Create ref-data table and fill with records
-    ActiveRecord::Base.connection.create_table :genders, :force => true do |t|
-      t.column :name, :string
-    end
-    
+  if options[:genders]    
     male = Gender.new({ :name => 'male' })
     male.id = 0;
     male.save!
@@ -59,7 +59,7 @@ end
 
 # do some magic to initialze DB for IRB session
 if Object.const_defined?('IRB')
-  reload_db
+  reload_db :fill => true, :genders => true
 else # and load test classes when in test cases...
   require 'test/unit'  
   require 'active_support/test_case'
