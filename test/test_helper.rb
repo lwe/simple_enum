@@ -22,7 +22,7 @@ ActiveRecord::Base.establish_connection({ :adapter => 'sqlite3', :database => ':
 require File.join(ROOT, 'init')
 
 # load dummy class
-require File.join(ROOT, 'test', 'dummy')
+require File.join(ROOT, 'test', 'models')
 
 # Reload database
 def reload_db(options = {})
