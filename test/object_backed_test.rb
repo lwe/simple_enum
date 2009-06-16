@@ -34,9 +34,8 @@ class ObjectBackedTest < ActiveSupport::TestCase
   
   test "db backed objects, using method described in 'Advanced Rails Recipes - Recipe 61: Look Up Constant Data Efficiently'" do
     # "cache" as defined in ARR#61
-    genders = Gender.find(:all).map do |g|
-      [g, g.id]
-    end
+    genders = Gender.find(:all)
+    # works without mapping... .map { |g| [g, g.id] }
     
     # use cached array of values
     with_db_obj = Class.new(ActiveRecord::Base) do
@@ -49,5 +48,23 @@ class ObjectBackedTest < ActiveSupport::TestCase
     assert_respond_to with_db_obj, :female
     assert_respond_to with_db_obj, :male
     assert_equal 0, with_db_obj.male
+  end
+  
+  test "that accessing keys and values of each enumeration value works as expected" do
+    genders = Gender.find(:all, :order => :id)
+    
+    male = genders.first
+    female = genders.last
+    
+    with_db_obj = Class.new(ActiveRecord::Base) do
+      set_table_name 'dummies'
+      as_enum :gender, genders
+    end
+    
+    assert_same male.id, with_db_obj.male
+    assert_same male, with_db_obj.male(true)
+    
+    assert_same :male, Dummy.male(true)
+    assert_same 0, Dummy.male
   end
 end

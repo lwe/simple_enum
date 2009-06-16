@@ -165,8 +165,8 @@ module SimpleEnum
         # enum "value"
         prefix = options[:prefix] && "#{options[:prefix] == true ? enum_cd : options[:prefix]}_"
       
-        values.each do |sym,code|
-          sym = sym.to_enum_sym
+        values.each do |k,code|
+          sym = k.to_enum_sym
           
           define_method("#{prefix}#{sym}?") do
             code == read_attribute(options[:column])
@@ -177,7 +177,7 @@ module SimpleEnum
           end
           
           # allow class access to each value
-          metaclass.send(:define_method, "#{prefix}#{sym}", Proc.new { code })
+          metaclass.send(:define_method, "#{prefix}#{sym}", Proc.new { |*args| args.first ? k : code })
         end
       end
     end
