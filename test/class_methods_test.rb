@@ -1,15 +1,5 @@
 require 'test_helper'
 
-# Trap Kernel#warn to check that deprecated warning is added :)
-module Kernel
-  @@LAST_WARNING = nil
-  def warn(msg)
-    @@LAST_WARNING = msg
-  end
-  
-  def self.last_warning; @@LAST_WARNING; end
-end
-
 class ClassMethodsTest < ActiveSupport::TestCase  
   def setup
     reload_db
@@ -23,10 +13,17 @@ class ClassMethodsTest < ActiveSupport::TestCase
   end
   
   test "that inst.values_for_... is deprecated (by trapping Kernel\#warn)" do
-    g = Dummy.new
+    # ensure that warn() is trapped
+    trapped_warn_dummy = Class.new(Dummy) do
+      @@LAST_WARNING = nil
+      def warn(msg); @@LAST_WARNING = msg; end;
+      def self.last_warning; @@LAST_WARNING; end      
+    end
+    
+    g = trapped_warn_dummy.new
     g.values_for_gender
     
-    assert_match /\ADEPRECATION WARNING.*values_for_gender.*genders/, Kernel.last_warning
+    assert_match /\ADEPRECATION WARNING.*values_for_gender.*genders/, trapped_warn_dummy.last_warning
   end
   
   test "generation of value shortcuts on class" do
