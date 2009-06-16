@@ -25,7 +25,8 @@ require File.join(ROOT, 'init')
 require File.join(ROOT, 'test', 'dummy')
 
 # Reload database
-def reload_db(fill = true)
+def reload_db(options = {})
+  options = { :fill => true, :genders => false }.merge(options)
   ActiveRecord::Base.connection.create_table :dummies, :force => true do |t|
     t.column :name, :string
     t.column :gender_cd, :integer
@@ -33,11 +34,26 @@ def reload_db(fill = true)
     t.column :other, :integer
   end
   
-  if fill
+  if options[:fill]
     # fill db with some rows
     Dummy.create({ :name => 'Anna',  :gender_cd => 1, :word_cd => 'alpha', :other => 0})
     Dummy.create({ :name => 'Bella', :gender_cd => 1, :word_cd => 'beta', :other => 1})
     Dummy.create({ :name => 'Chris', :gender_cd => 0, :word_cd => 'gamma', :other => 2})
+  end
+  
+  if options[:genders]
+    # Create ref-data table and fill with records
+    ActiveRecord::Base.connection.create_table :genders, :force => true do |t|
+      t.column :name, :string
+    end
+    
+    male = Gender.new({ :name => 'male' })
+    male.id = 0;
+    male.save!
+    
+    female = Gender.new({ :name => 'female' })
+    female.id = 1;
+    female.save!
   end
 end
 

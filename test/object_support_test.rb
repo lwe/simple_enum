@@ -1,4 +1,4 @@
-class WithoutShortcutsTest < ActiveSupport::TestCase
+class ObjectSupportTest < ActiveSupport::TestCase
   
   test "ensure that symbols stay symbols" do
     assert_same :sym, :sym.to_enum_sym
