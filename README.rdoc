@@ -122,8 +122,15 @@ Searching for certain values by using the finder methods:
 
     User.find :all, :conditions => { :gender_cd => User.female }
     
-Working with database backed values, the only requirement to enable this is that <em>a)</em> either a field name +name+ exists
-or <em>b)</em> a custom method to convert an object to a symbol named +to_enum_sym+ (for general uses overriding +to_enum+ is perfectly fine):
+Working with database backed values, now assuming that there exists a +genders+ table:
+
+    class Person < ActiveRecord::Base
+      as_enum :gender, Gender.find(:all).map { |g| [g.name.to_sym, g.id] } # map to array of symbols
+    end
+    
+Working with object backed values, the only requirement to enable this is that <em>a)</em> either a field name +name+ exists
+or <em>b)</em> a custom method to convert an object to a symbolized form named +to_enum_sym+ (for general uses overriding
++to_enum+ is perfectly fine) exists:
 
     class Status < ActiveRecord::Base
       # this has a column named :name
