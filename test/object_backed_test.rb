@@ -1,8 +1,5 @@
 require 'test_helper'
 
-class Gender < ActiveRecord::Base
-end
-
 class ObjectBackedTest < ActiveSupport::TestCase  
   def setup
     reload_db :genders => true    
