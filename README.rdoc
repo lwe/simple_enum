@@ -138,11 +138,11 @@ or <em>b)</em> a custom method to convert an object to a symbol named +to_enum_s
     # Status object as the value so...
     
     t = BankTransaction.new(:status_cd = 1)
-    t.status # => #<Status id: 1, name: "active">
+    t.status # => #<Status id: 1, name: "pending">
     
     # and pulling fun tricks:
-    BankTransaction.active # => 1
-    BankTransaction.active(true) # => #<Status id: 1, name: "active">
+    BankTransaction.pending # => 1
+    BankTransaction.pending(true) # => #<Status id: 1, name: "pending">
 
 == Known issues/Open items
 
