@@ -121,12 +121,33 @@ useful when creating queries, displaying option elements or similar:
 Searching for certain values by using the finder methods:
 
     User.find :all, :conditions => { :gender_cd => User.female }
+    
+Working with database backed values, the only requirement to enable this is that _a)_ either a field name +name+ exists
+or _b)_ a custom method to convert an object to a symbol named +to_enum_sym+ (for general uses overriding +to_enum+ is perfectly fine):
+
+    class Status < ActiveRecord::Base
+      # this has a column named :name
+      STATUSES = self.find(:all, :order => :name)
+    end
+    
+    class BankTransaction < ActiveRecord::Base
+      as_enum :status, Status.STATUSES
+    end
+    
+    # what happens now? the id's of Status now serve as enumeration key and the
+    # Status object as the value so...
+    
+    t = BankTransaction.new(:status_cd = 1)
+    t.status # => #<Status id: 1, name: "active">
+    
+    # and pulling fun tricks:
+    BankTransaction.active # => 1
+    BankTransaction.active(true) # => #<Status id: 1, name: "active">
 
 == Known issues/Open items
 
-* Make objects working as symbols, needs a method to convert objects to symbols...  
-* Maybe the +:whiny+ option should default to +false+, so that generally no exceptions are thrown if a user fakes a request?
-* Remove the +values_for_...+ method sometimes, it's already deprecated anyway (in favor of <tt>Klass.<pluralized enum name></tt>)
+* Maybe the <tt>:whiny</tt> option should default to <tt>false</tt>, so that generally no exceptions are thrown if a user fakes a request?
+* Remove the <tt>values_for_...</tt> method sometimes, it's already deprecated anyway (in favor of <tt>Klass.<pluralized enum name></tt>)
 
 == Licence & Copyright
 Copyright (c) 2009 by Lukas Westermann, Licenced under MIT Licence (see LICENCE file)
