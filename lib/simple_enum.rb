@@ -1,3 +1,9 @@
+
+require 'simple_enum/array_support'
+require 'simple_enum/object_support'
+require 'simple_enum/validation'
+require 'simple_enum/version'
+
 # SimpleEnum allows for cross-database, easy to use enum-like fields to be added to your
 # ActiveRecord models. It does not rely on database specific column types like <tt>ENUM</tt> (MySQL),
 # but instead on integer columns.
@@ -8,10 +14,7 @@
 #
 # See the +as_enum+ documentation for more details.
 module SimpleEnum
-  
-  # Current simple_enum version string
-  VERSION = '0.2.0'
-  
+    
   def self.included(base) #:nodoc:
     base.send :extend, ClassMethods
   end
@@ -121,7 +124,7 @@ module SimpleEnum
       options.assert_valid_keys(:column, :whiny, :prefix, :slim)
       
       # convert array to hash...
-      values = magically_convert_to_hash(values) unless values.respond_to?('invert')
+      values = values.to_hash_magic unless values.respond_to?('invert')
       values_inverted = values.invert
       
       # store info away
@@ -146,8 +149,8 @@ module SimpleEnum
         warn "DEPRECATION WARNING: `obj.values_for_#{enum_cd}` is deprecated. Please use `#{self.class}.#{enum_cd.to_s.pluralize}` instead (called from: #{caller.first})"
         values.clone
       end
-      
-      # allow access to defined values hash, e.g. in a select helper or finder method.
+
+      # allow access to defined values hash, e.g. in a select helper or finder method.      
       class_variable_set :"@@SE_#{enum_cd.to_s.pluralize.upcase}", values
       class_eval(<<-EOM, __FILE__, __LINE__ + 1)
         def self.#{enum_cd.to_s.pluralize}(sym = nil)
@@ -163,7 +166,7 @@ module SimpleEnum
         prefix = options[:prefix] && "#{options[:prefix] == true ? enum_cd : options[:prefix]}_"
       
         values.each do |sym,code|
-          sym = sym.to_param
+          sym = sym.to_enum_sym
           
           define_method("#{prefix}#{sym}?") do
             code == read_attribute(options[:column])
@@ -178,62 +181,23 @@ module SimpleEnum
         end
       end
     end
-    
-    # Validates an +as_enum+ field based on the value of it's column.
-    #
-    # Model:
-    #    class User < ActiveRecord::Base
-    #      as_enum :gender, [ :male, :female ]
-    #      validates_as_enum :gender
-    #    end
-    #
-    # View:
-    #    <%= select(:user, :gender, User.genders.keys) %>
-    #
-    # Configuration options:
-    # * <tt>:message</tt> - A custom error message (default: is <tt>[:activerecord, :errors, :messages, :invalid_enum]</tt>).
-    # * <tt>:on</tt> - Specifies when this validation is active (default is <tt>:save</tt>, other options <tt>:create</tt>, <tt>:update</tt>).
-    # * <tt>:if</tt> - Specifies a method, proc or string to call to determine if the validation should
-    #   occur (e.g. <tt>:if => :allow_validation</tt>, or <tt>:if => Proc.new { |user| user.signup_step > 2 }</tt>). The
-    #   method, proc or string should return or evaluate to a true or false value.
-    # * <tt>:unless</tt> - Specifies a method, proc or string to call to determine if the validation should
-    #   not occur (e.g. <tt>:unless => :skip_validation</tt>, or <tt>:unless => Proc.new { |user| user.signup_step <= 2 }</tt>). The
-    #   method, proc or string should return or evaluate to a true or false value.
-    def validates_as_enum(*attr_names)
-      configuration = { :on => :save }
-      configuration.update(attr_names.extract_options!)      
-      attr_names.map! { |e| enum_definitions[e][:column] } # map to column name
-      
-      validates_each(attr_names, configuration) do |record, attr_name, value|
-        enum_def = enum_definitions[attr_name]
-        unless send(enum_def[:name].to_s.pluralize).values.include?(value)
-          record.errors.add(enum_def[:name], :invalid_enum, :default => configuration[:message], :value => value)
-        end
-      end
-    end
+
+    include Validation
     
     protected
       # Returns enum definitions as defined by each call to
       # +as_enum+.
       def enum_definitions #:nodoc:
         read_inheritable_attribute(:enum_definitions)
-      end
-      
-      # Magically convert supplied values to a hash, like <tt><symbol> => <id></tt>.
-      # Contains special handling for <tt>ActiveRecord</tt> result lists etc, to allow
-      # some cool stuff like: <tt>as_enum :foo, Foo.find(:all)</tt>.
-      #
-      # TODO: maybe extend Array to provide this kind of functionality!?
-      def magically_convert_to_hash(values)
-        values = values.enum_with_index.to_a unless values.first.is_a?(ActiveRecord::Base) or values.first.is_a?(Array)
-        values = values.map { |e| [e, e.id] } if values.first.is_a?(ActiveRecord::Base)
-        Hash[*values.flatten]
-      end
+      end      
   end
 end
 
-# Tie stuff together and load translations
+# Tie stuff together and load translations if ActiveRecord is defined
 if Object.const_defined?('ActiveRecord')
+  Object.send(:include, SimpleEnum::ObjectSupport)
+  Array.send(:include, SimpleEnum::ArraySupport)
+    
   ActiveRecord::Base.send(:include, SimpleEnum)
-  I18n.load_path << File.join(File.dirname(__FILE__), '..', 'locales', 'en.yml')  
+  I18n.load_path << File.join(File.dirname(__FILE__), '..', 'locales', 'en.yml')
 end
