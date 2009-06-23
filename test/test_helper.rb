@@ -21,9 +21,6 @@ ActiveRecord::Base.establish_connection({ :adapter => 'sqlite3', :database => ':
 # load simple_enum
 require File.join(ROOT, 'init')
 
-# set upcase to false
-SimpleEnum.compat_mode!
-
 # load dummy class
 require File.join(ROOT, 'test', 'models')
 

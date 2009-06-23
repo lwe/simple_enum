@@ -18,17 +18,11 @@ module SimpleEnum
   
   @@default_options = {
     :whiny => true,
-    :upcase => true,
-    :slim => :class
+    :upcase => false
   }
   
   def self.default_options; @@default_options; end
-  
-  def self.compat_mode!
-    default_options[:upcase] = false
-    default_options.delete(:slim)
-  end
-    
+      
   def self.included(base) #:nodoc:
     base.send :extend, ClassMethods
   end
