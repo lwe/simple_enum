@@ -39,7 +39,7 @@ module SimpleEnum
       } 
     end
     
-    def self.included(base) #:nodoc:
+    def included(base) #:nodoc:
       base.send :extend, ClassMethods
     end
   end
