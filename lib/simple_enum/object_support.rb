@@ -19,7 +19,7 @@ module SimpleEnum
     #    end
     #
     # *Note*: to provide better looking methods values for +name+
-    # are +parametereize('_')+'d, so it might be a good idea to do
+    # are <tt>parametereize('_')</tt>'d, so it might be a good idea to do
     # the same thing in a custom +to_enum_sym+ method, like (for the
     # example above):
     #

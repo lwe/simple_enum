@@ -9,7 +9,7 @@ module SimpleEnum
       v = enum_with_index.to_a unless first.is_a?(ActiveRecord::Base) or first.is_a?(Array)
       v = map { |e| [e, e.id] } if first.is_a?(ActiveRecord::Base)
       v ||= self
-      Hash[*v.flatten]      
+      Hash[*v.flatten]
     end
   end
 end
