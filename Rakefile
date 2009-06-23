@@ -19,6 +19,16 @@ task :console do |t|
   exec 'irb -Ilib/ -r test/test_helper'
 end
 
+desc 'Report code statistics for library and tests'
+task :stats do |t|
+  require 'code_statistics'
+  dirs = {
+    'Libraries' => 'lib',
+    'Unit tests' => 'test'
+  }.map { |name,dir| [name, File.join(File.dirname(__FILE__), dir)] }
+  CodeStatistics.new(*dirs).to_s
+end
+
 desc 'Generate documentation for the simple_enum plugin.'
 Rake::RDocTask.new(:rdoc) do |rdoc|
   rdoc.rdoc_dir = 'doc'
