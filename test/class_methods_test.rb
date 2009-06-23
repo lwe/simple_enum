@@ -40,7 +40,7 @@ class ClassMethodsTest < ActiveSupport::TestCase
   
   test "that no Klass.shortcut are created if :slim => true" do
     with_slim = Class.new(ActiveRecord::Base) do
-      set_table_name 'dummy'
+      set_table_name 'dummies'
       as_enum :gender, [:male, :female], :slim => true
     end
 
@@ -49,9 +49,26 @@ class ClassMethodsTest < ActiveSupport::TestCase
     assert_respond_to with_slim, :genders
   end
   
+  test "that no Klass.shortcut's are created if :slim => :class, though instance shortcuts are" do
+    with_slim_class = Class.new(ActiveRecord::Base) do
+      set_table_name 'dummies'
+      as_enum :gender, [:male, :female], :slim => :class
+    end
+
+    jane = with_slim_class.new
+    
+    assert_respond_to jane, :male!
+    assert_respond_to jane, :female!
+    assert !with_slim_class.respond_to?(:male)
+    assert !with_slim_class.respond_to?(:female)    
+    assert_respond_to with_slim_class, :genders
+    assert_same 0, with_slim_class.genders.male
+    assert_same 1, with_slim_class.genders[:female]
+  end
+  
   test "that Klass.shortcut respect :prefix => true and are prefixed by \#{enum_cd}" do
     with_prefix = Class.new(ActiveRecord::Base) do
-      set_table_name 'dummy'
+      set_table_name 'dummies'
       as_enum :gender, [:male, :female], :prefix => true
     end
     
@@ -65,7 +82,7 @@ class ClassMethodsTest < ActiveSupport::TestCase
   
   test "to ensure that Klass.shortcut also work with custom prefixes" do
     with_custom_prefix = Class.new(ActiveRecord::Base) do
-      set_table_name 'dummy'
+      set_table_name 'dummies'
       as_enum :gender, [:male, :female], :prefix => :g
     end
     
@@ -76,5 +93,16 @@ class ClassMethodsTest < ActiveSupport::TestCase
     assert_respond_to with_custom_prefix, :g_female
     assert_equal 1, with_custom_prefix.g_female    
     assert_respond_to with_custom_prefix, :genders    
+  end
+  
+  test "new :upcase option for those guys picky with coding guidelines etc." do
+    with_upcase = Class.new(ActiveRecord::Base) do
+      set_table_name 'dummies'
+      as_enum :gender, [:male, :female], :upcase => true
+    end
+    
+    assert_respond_to with_upcase, :GENDERS
+    assert_same 0, with_upcase.GENDERS.male
+    assert_same 1, with_upcase.GENDERS[:female]
   end
 end
