@@ -1,10 +1,3 @@
-
-require 'simple_enum/array_support'
-require 'simple_enum/object_support'
-require 'simple_enum/enum_hash'
-require 'simple_enum/validation'
-require 'simple_enum/version'
-
 # SimpleEnum allows for cross-database, easy to use enum-like fields to be added to your
 # ActiveRecord models. It does not rely on database specific column types like <tt>ENUM</tt> (MySQL),
 # but instead on integer columns.
@@ -14,21 +7,44 @@ require 'simple_enum/version'
 # Licence:: MIT-Licence (http://www.opensource.org/licenses/mit-license.php)
 #
 # See the +as_enum+ documentation for more details.
+
+require 'simple_enum/array_support'
+require 'simple_enum/enum_hash'
+require 'simple_enum/object_support'
+require 'simple_enum/validation'
+require 'simple_enum/version'
+
+# Base module which gets included in <tt>ActiveRecord::Base</tt>. See documentation
+# of +SimpleEnum::ClassMethods+ for more details.
 module SimpleEnum
-  
-  @@default_options = {
-    :whiny => true,
-    :upcase => false
-  }
-  
-  def self.default_options; @@default_options; end
-      
-  def self.included(base) #:nodoc:
-    base.send :extend, ClassMethods
+
+  class << self
+    
+    # Provides configurability to SimpleEnum, allows to override some defaults which are
+    # defined for all uses of +as_enum+. Most options from +as_enum+ are available, such as:
+    # * <tt>:prefix</tt> - Define a prefix, which is prefixed to the shortcut methods (e.g. <tt><symbol>!</tt> and
+    #   <tt><symbol>?</tt>), if it's set to <tt>true</tt> the enumeration name is used as a prefix, else a custom
+    #   prefix (symbol or string) (default is <tt>nil</tt> => no prefix)
+    # * <tt>:slim</tt> - If set to <tt>true</tt> no shortcut methods for all enumeration values are being generated, if
+    #   set to <tt>:class</tt> only class-level shortcut methods are disabled (default is <tt>nil</tt> => they are generated)
+    # * <tt>:upcase</tt> - If set to +true+ the <tt>Klass.foos</tt> is named <tt>Klass.FOOS</tt>, why? To better suite some
+    #   coding-styles (default is +false+ => downcase)
+    # * <tt>:whiny</tt> - Boolean value which if set to <tt>true</tt> will throw an <tt>ArgumentError</tt>
+    #   if an invalid value is passed to the setter (e.g. a value for which no enumeration exists). if set to
+    #   <tt>false</tt> no exception is thrown and the internal value is set to <tt>nil</tt> (default is <tt>true</tt>)
+    def default_options
+      @@default_options ||= {
+        :whiny => true,
+        :upcase => false
+      } 
+    end
+    
+    def self.included(base) #:nodoc:
+      base.send :extend, ClassMethods
+    end
   end
   
   module ClassMethods
-    
     # Provides ability to create simple enumerations based on hashes or arrays, backed
     # by integer columns (but not limited to integer columns).
     #
@@ -124,34 +140,36 @@ module SimpleEnum
     #   prefix (symbol or string) (default is <tt>nil</tt> => no prefix)
     # * <tt>:slim</tt> - If set to <tt>true</tt> no shortcut methods for all enumeration values are being generated, if
     #   set to <tt>:class</tt> only class-level shortcut methods are disabled (default is <tt>nil</tt> => they are generated)
+    # * <tt>:upcase</tt> - If set to +true+ the <tt>Klass.foos</tt> is named <tt>Klass.FOOS</tt>, why? To better suite some
+    #   coding-styles (default is +false+ => downcase)
     # * <tt>:whiny</tt> - Boolean value which if set to <tt>true</tt> will throw an <tt>ArgumentError</tt>
     #   if an invalid value is passed to the setter (e.g. a value for which no enumeration exists). if set to
     #   <tt>false</tt> no exception is thrown and the internal value is set to <tt>nil</tt> (default is <tt>true</tt>)
     def as_enum(enum_cd, values, options = {})
       options = SimpleEnum.default_options.merge({ :column => "#{enum_cd}_cd" }).merge(options)
       options.assert_valid_keys(:column, :whiny, :prefix, :slim, :upcase)
-      
+    
       # convert array to hash...
       values = SimpleEnum::EnumHash.new(values)
       values_inverted = values.invert
-      
+    
       # store info away
       write_inheritable_attribute(:enum_definitions, {}) if enum_definitions.nil?
       enum_definitions[enum_cd] = enum_definitions[options[:column]] = { :name => enum_cd, :column => options[:column], :options => options }
-      
+    
       # generate getter       
       define_method("#{enum_cd}") do
         id = read_attribute options[:column]
         values_inverted[id]
       end
-      
+    
       # generate setter
       define_method("#{enum_cd}=") do |new_value|
         v = new_value.nil? ? nil : values[new_value.to_sym]        
         raise(ArgumentError, "Invalid enumeration value: #{new_value}") if (options[:whiny] and v.nil? and !new_value.nil?)
         write_attribute options[:column], v
       end
-      
+    
       # DEPRECATED: allow "simple" access to defined values-hash, e.g. in select helper.
       define_method("values_for_#{enum_cd}") do
         warn "DEPRECATION WARNING: `obj.values_for_#{enum_cd}` is deprecated. Please use `#{self.class}.#{enum_cd.to_s.pluralize}` instead (called from: #{caller.first})"
@@ -168,16 +186,16 @@ module SimpleEnum
           class_variable_get(:@@SE_#{self_name.upcase})[sym]
         end
       EOM
-      
+    
       # only create if :slim is not defined
       if options[:slim] != true
         # create both, boolean operations and *bang* operations for each
         # enum "value"
         prefix = options[:prefix] && "#{options[:prefix] == true ? enum_cd : options[:prefix]}_"
-      
+    
         values.each do |k,code|
           sym = k.to_enum_sym
-          
+        
           define_method("#{prefix}#{sym}?") do
             code == read_attribute(options[:column])
           end
@@ -185,7 +203,7 @@ module SimpleEnum
             write_attribute options[:column], code
             sym
           end
-          
+        
           # allow class access to each value
           unless options[:slim] === :class
             metaclass.send(:define_method, "#{prefix}#{sym}", Proc.new { |*args| args.first ? k : code })
@@ -195,13 +213,13 @@ module SimpleEnum
     end
 
     include Validation
-    
+  
     protected
       # Returns enum definitions as defined by each call to
       # +as_enum+.
       def enum_definitions #:nodoc:
         read_inheritable_attribute(:enum_definitions)
-      end      
+      end
   end
 end
 
