@@ -96,8 +96,7 @@ useful when creating queries, displaying option elements or similar:
   The <tt>:prefix</tt> option not only takes a boolean value as an argument, but instead can also be supplied a custom
   prefix (i.e. any string or symbol), so with <tt>:prefix => 'foo'</tt> all shortcut methods would look like: <tt>foo_<symbol>...</tt>
   *Note*: if the <tt>:slim => true</tt> is defined, this option has no effect whatsoever (because no shortcut methods are generated).
-* Sometimes it might be useful to disable the generation of the shortcut methods (<tt><symbol>?</tt>, <tt><symbol>!</tt> and <tt>Klass.<symbol></tt>), to do so just
-  add the option <tt>:slim => true</tt>:
+* Sometimes it might be useful to disable the generation of the shortcut methods (<tt><symbol>?</tt>, <tt><symbol>!</tt> and <tt>Klass.<symbol></tt>), to do so just add the option <tt>:slim => true</tt>:
   
         class User < ActiveRecord::Base
           as_enum :gender, [:male, :female], :slim => true
@@ -108,7 +107,21 @@ useful when creating queries, displaying option elements or similar:
         User.male    # => throws NoMethodError: undefined method `male' 
   
   Yet the setter and getter for <tt>gender</tt>, as well as the <tt>User.genders</tt> methods are still available, only all shortcut
-  methods for each of the enumeration values are not generated.  
+  methods for each of the enumeration values are not generated.
+  
+  It's also possible to set <tt>:slim => :class</tt> which only disabled the generation of any class-level shortcut method, because those
+  are also available via the enhanced enumeration hash:
+  
+        class Message < ActiveRecord::Base
+          as_enum :status, { :unread => 0, :read => 1, :archived => 99}, :slim => :class
+        end
+        
+        msg = Message.new :body => 'Hello World!', status_cd => 0
+        msg.read?                  # => false
+        msg.status                 # => :unread
+        Message.unread             # => throws NoMethodError: undefined method `unread`
+        Message.statuses.archived  # => 99
+        
 * As a default an <tt>ArgumentError</tt> is raised if the user tries to set the field to an invalid enumeration value, to change this
   behaviour use the <tt>:whiny</tt> option:
   
@@ -144,7 +157,8 @@ or <em>b)</em> a custom method to convert an object to a symbolized form named +
     # what happens now? the id's of Status now serve as enumeration key and the
     # Status object as the value so...
     
-    t = BankTransaction.new(:status_cd = 1)
+    t = BankTransaction.new
+    t.pending!
     t.status # => #<Status id: 1, name: "pending">
     
     # and pulling fun tricks:

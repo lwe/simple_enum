@@ -1,6 +1,7 @@
 
 require 'simple_enum/array_support'
 require 'simple_enum/object_support'
+require 'simple_enum/enum_hash'
 require 'simple_enum/validation'
 require 'simple_enum/version'
 
@@ -14,6 +15,19 @@ require 'simple_enum/version'
 #
 # See the +as_enum+ documentation for more details.
 module SimpleEnum
+  
+  @@default_options = {
+    :whiny => true,
+    :upcase => true,
+    :slim => :class
+  }
+  
+  def self.default_options; @@default_options; end
+  
+  def self.compat_mode!
+    default_options[:upcase] = false
+    default_options.delete(:slim)
+  end
     
   def self.included(base) #:nodoc:
     base.send :extend, ClassMethods
@@ -114,17 +128,17 @@ module SimpleEnum
     # * <tt>:prefix</tt> - Define a prefix, which is prefixed to the shortcut methods (e.g. <tt><symbol>!</tt> and
     #   <tt><symbol>?</tt>), if it's set to <tt>true</tt> the enumeration name is used as a prefix, else a custom
     #   prefix (symbol or string) (default is <tt>nil</tt> => no prefix)
-    # * <tt>:slim</tt> - If set to <tt>true</tt> no shortcut methods for all enumeration values are being genereated
-    #   (default is <tt>nil</tt> => they are generated)
+    # * <tt>:slim</tt> - If set to <tt>true</tt> no shortcut methods for all enumeration values are being generated, if
+    #   set to <tt>:class</tt> only class-level shortcut methods are disabled (default is <tt>nil</tt> => they are generated)
     # * <tt>:whiny</tt> - Boolean value which if set to <tt>true</tt> will throw an <tt>ArgumentError</tt>
     #   if an invalid value is passed to the setter (e.g. a value for which no enumeration exists). if set to
-    #   <tt>false</tt> no exception is thrown and the internal value is set to <tt>nil</tt> (default is <tt>true</tt>)    
+    #   <tt>false</tt> no exception is thrown and the internal value is set to <tt>nil</tt> (default is <tt>true</tt>)
     def as_enum(enum_cd, values, options = {})
-      options = { :column => "#{enum_cd}_cd", :whiny => true }.merge(options)
-      options.assert_valid_keys(:column, :whiny, :prefix, :slim)
+      options = SimpleEnum.default_options.merge({ :column => "#{enum_cd}_cd" }).merge(options)
+      options.assert_valid_keys(:column, :whiny, :prefix, :slim, :upcase)
       
       # convert array to hash...
-      values = values.to_hash_magic unless values.respond_to?('invert')
+      values = SimpleEnum::EnumHash.new(values)
       values_inverted = values.invert
       
       # store info away
@@ -151,16 +165,18 @@ module SimpleEnum
       end
 
       # allow access to defined values hash, e.g. in a select helper or finder method.      
-      class_variable_set :"@@SE_#{enum_cd.to_s.pluralize.upcase}", values
+      self_name = enum_cd.to_s.pluralize   
+      self_name.upcase! if options[:upcase]   
+      class_variable_set :"@@SE_#{self_name.upcase}", values
       class_eval(<<-EOM, __FILE__, __LINE__ + 1)
-        def self.#{enum_cd.to_s.pluralize}(sym = nil)
-          return class_variable_get(:@@SE_#{enum_cd.to_s.pluralize.upcase}) if sym.nil?
-          class_variable_get(:@@SE_#{enum_cd.to_s.pluralize.upcase})[sym]
+        def self.#{self_name}(sym = nil)
+          return class_variable_get(:@@SE_#{self_name.upcase}) if sym.nil?
+          class_variable_get(:@@SE_#{self_name.upcase})[sym]
         end
       EOM
       
       # only create if :slim is not defined
-      unless options[:slim]
+      if options[:slim] != true
         # create both, boolean operations and *bang* operations for each
         # enum "value"
         prefix = options[:prefix] && "#{options[:prefix] == true ? enum_cd : options[:prefix]}_"
@@ -177,7 +193,9 @@ module SimpleEnum
           end
           
           # allow class access to each value
-          metaclass.send(:define_method, "#{prefix}#{sym}", Proc.new { |*args| args.first ? k : code })
+          unless options[:slim] === :class
+            metaclass.send(:define_method, "#{prefix}#{sym}", Proc.new { |*args| args.first ? k : code })
+          end
         end
       end
     end
