@@ -50,6 +50,7 @@ useful when creating queries, displaying option elements or similar:
     User.genders            # => { :male => 0, :female => 1 }
     User.genders(:male)     # => 0, same as User.male
     User.female             # => 1
+    User.genders.female     # => 1, same as User.female or User.genders(:female)
 
 == Wait, there's more!
 * Too tired of always adding the integer values? Try:
@@ -109,7 +110,7 @@ useful when creating queries, displaying option elements or similar:
   Yet the setter and getter for <tt>gender</tt>, as well as the <tt>User.genders</tt> methods are still available, only all shortcut
   methods for each of the enumeration values are not generated.
   
-  It's also possible to set <tt>:slim => :class</tt> which only disabled the generation of any class-level shortcut method, because those
+  It's also possible to set <tt>:slim => :class</tt> which only disables the generation of any class-level shortcut method, because those
   are also available via the enhanced enumeration hash:
   
         class Message < ActiveRecord::Base
@@ -117,10 +118,11 @@ useful when creating queries, displaying option elements or similar:
         end
         
         msg = Message.new :body => 'Hello World!', status_cd => 0
-        msg.read?                  # => false
-        msg.status                 # => :unread
-        Message.unread             # => throws NoMethodError: undefined method `unread`
-        Message.statuses.archived  # => 99
+        msg.read?                      # => false; shortuct methods on instance are still enabled
+        msg.status                     # => :unread
+        Message.unread                 # => throws NoMethodError: undefined method `unread`
+        Message.statuses.unread        # => 0
+        Message.statuses.unread(true)  # => :unread
         
 * As a default an <tt>ArgumentError</tt> is raised if the user tries to set the field to an invalid enumeration value, to change this
   behaviour use the <tt>:whiny</tt> option:
@@ -128,6 +130,12 @@ useful when creating queries, displaying option elements or similar:
         class User < ActiveRecord::Base
           as_enum :gender, [:male, :female], :whiny => false
         end
+        
+* To define any option globally, like setting <tt>:whiny</tt> to +false+, or globally enable <tt>:prefix</tt>; all default options
+  are stored in <tt>SimpleEnum.default_options</tt>, this hash can be easily changed in your initializers or wherever:
+
+        # e.g. setting :prefix => true (globally)
+        SimpleEnum.default_options[:prefix] = true
 
 == Best practices
 
@@ -155,20 +163,21 @@ or <em>b)</em> a custom method to convert an object to a symbolized form named +
     end
     
     # what happens now? the id's of Status now serve as enumeration key and the
-    # Status object as the value so...
-    
+    # Status object as the value so...    
     t = BankTransaction.new
     t.pending!
     t.status # => #<Status id: 1, name: "pending">
+        
+    # and it's also possible to access the objects/values using:
+    BankTransaction.statuses(:pending) # => 1, access by symbol (not) the object!
+    BankTransaction.statuses.pending   # => 1
+    BankTransaction.statuses.pending(true) # => #<Status id: 1, name: "pending">
     
-    # and pulling fun tricks:
-    BankTransaction.pending # => 1
-    BankTransaction.pending(true) # => #<Status id: 1, name: "pending">
-
 == Known issues/Open items
 
 * Maybe the <tt>:whiny</tt> option should default to <tt>false</tt>, so that generally no exceptions are thrown if a user fakes a request?
 * Remove the <tt>values_for_...</tt> method sometimes, it's already deprecated anyway (in favor of <tt>Klass.<pluralized enum name></tt>)
+* Clean-up code and tests -> bring down LOC ;) (but maintain Code LOC vs. Test LOC ratio which is currently 1:2.9)
 
 == Licence & Copyright
 Copyright (c) 2009 by Lukas Westermann, Licenced under MIT Licence (see LICENCE file)
