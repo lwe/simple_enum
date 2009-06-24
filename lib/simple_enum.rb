@@ -33,7 +33,7 @@ module SimpleEnum
     #   if an invalid value is passed to the setter (e.g. a value for which no enumeration exists). if set to
     #   <tt>false</tt> no exception is thrown and the internal value is set to <tt>nil</tt> (default is <tt>true</tt>)
     def default_options
-      @@default_options ||= {
+      @default_options ||= {
         :whiny => true,
         :upcase => false
       } 
@@ -217,7 +217,7 @@ module SimpleEnum
     protected
       # Returns enum definitions as defined by each call to
       # +as_enum+.
-      def enum_definitions #:nodoc:
+      def enum_definitions
         read_inheritable_attribute(:enum_definitions)
       end
   end
