@@ -176,7 +176,6 @@ or <em>b)</em> a custom method to convert an object to a symbolized form named +
 == Known issues/Open items
 
 * Maybe the <tt>:whiny</tt> option should default to <tt>false</tt>, so that generally no exceptions are thrown if a user fakes a request?
-* Remove the <tt>values_for_...</tt> method sometimes, it's already deprecated anyway (in favor of <tt>Klass.<pluralized enum name></tt>)
 * Clean-up code and tests -> bring down LOC ;) (but maintain Code LOC vs. Test LOC ratio which is currently 1:2.9)
 
 == Licence & Copyright

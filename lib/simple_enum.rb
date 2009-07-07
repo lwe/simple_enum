@@ -170,12 +170,6 @@ module SimpleEnum
         write_attribute options[:column], v
       end
     
-      # DEPRECATED: allow "simple" access to defined values-hash, e.g. in select helper.
-      define_method("values_for_#{enum_cd}") do
-        warn "DEPRECATION WARNING: `obj.values_for_#{enum_cd}` is deprecated. Please use `#{self.class}.#{enum_cd.to_s.pluralize}` instead (called from: #{caller.first})"
-        values.clone
-      end
-
       # allow access to defined values hash, e.g. in a select helper or finder method.      
       self_name = enum_cd.to_s.pluralize   
       self_name.upcase! if options[:upcase]   
