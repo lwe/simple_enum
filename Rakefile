@@ -65,4 +65,5 @@ end
 desc 'Clean up generated files.'
 task :clean do |t|
   FileUtils.rm_rf "doc"
+  FileUtils.rm_rf "pkg"  
 end
