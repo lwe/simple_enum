@@ -2,7 +2,7 @@
 
 Gem::Specification.new do |s|
   s.name = %q{simple_enum}
-  s.version = "0.2.0"
+  s.version = "0.3.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Lukas Westermann"]
@@ -25,6 +25,7 @@ Gem::Specification.new do |s|
      "lib/simple_enum/validation.rb",
      "lib/simple_enum/version.rb",
      "locales/en.yml",
+     "simple_enum.gemspec",
      "test/array_conversions_test.rb",
      "test/class_methods_test.rb",
      "test/enum_hash_test.rb",
