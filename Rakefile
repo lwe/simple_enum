@@ -23,6 +23,19 @@ Rake::RDocTask.new(:rdoc) do |rdoc|
   rdoc.rdoc_files.include('LICENCE');
 end
 
+begin
+  require 'jeweler'
+  Jeweler::Tasks.new do |gemspec|
+    gemspec.name = "simple_enum"
+    gemspec.summary = "Simple enum-like field support for ActiveRecord (including validations and i18n)"
+    gemspec.email = "lukas.westermann@gmail.com"
+    gemspec.homepage = "http://github.com/lwe/simple_enum"
+    gemspec.authors = ["Lukas Westermann"]
+  end
+rescue LoadError
+  puts "Jeweler not available. Install it with: sudo gem install technicalpickles-jeweler -s http://gems.github.com"
+end
+
 namespace :metrics do
   desc 'Report code statistics for library and tests to shell.'
   task :stats do |t|
