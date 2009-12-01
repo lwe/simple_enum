@@ -179,6 +179,12 @@ module SimpleEnum
           return class_variable_get(:@@SE_#{self_name.upcase}) if sym.nil?
           class_variable_get(:@@SE_#{self_name.upcase})[sym]
         end
+        
+        def self.#{self_name}_for_select(&block)
+          self.#{self_name}.map do |k,v| 
+            [block_given? ? yield(k,v) : self.human_enum_name(#{self_name.inspect}, k), v]
+          end.sort { |a,b| a[1] <=> b[1] }
+        end
       EOM
     
       # only create if :slim is not defined
@@ -207,6 +213,15 @@ module SimpleEnum
     end
 
     include Validation
+    
+    def human_enum_name(enum, key, options = {})
+      defaults = self_and_descendants_from_active_record.map { |klass| :"#{klass.name.underscore}.#{enum}.#{key}" }
+      defaults << :"#{enum}.#{key}"
+      defaults << options.delete(:default) if options[:default]
+      defaults << "#{key}".humanize
+      options[:count] ||= 1
+      I18n.translate(defaults.shift, options.merge(:default => defaults.flatten, :scope => [:activerecord, :enums]))
+    end
   
     protected
       # Returns enum definitions as defined by each call to

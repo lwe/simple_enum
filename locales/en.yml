@@ -4,3 +4,11 @@ en:
     errors:
       messages:
         invalid_enum: invalid option supplied.
+    enums:
+      dummy:
+        genders:
+          female: Girl
+        didums:
+          foo:
+            one: Foo
+            other: Foos

@@ -91,4 +91,11 @@ class ClassMethodsTest < ActiveSupport::TestCase
     assert_same 0, with_upcase.GENDERS.male
     assert_same 1, with_upcase.GENDERS[:female]
   end
+  
+  test "that the human_enum_name method returns translated/humanized values" do
+    assert_equal :male.to_s.humanize, Dummy.human_enum_name(:genders, :male)
+    assert_equal "Girl", Dummy.human_enum_name(:genders, :female)
+    assert_equal "Foo", Dummy.human_enum_name(:didums, :foo)
+    assert_equal "Foos", Dummy.human_enum_name(:didums, :foo, :count => 5)
+  end
 end
