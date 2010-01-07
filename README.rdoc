@@ -124,6 +124,9 @@ useful when creating queries, displaying option elements or similar:
         Message.statuses.unread        # => 0
         Message.statuses.unread(true)  # => :unread
         
+        # or useful for IN queries
+        Messages.statuses(:unread, :read) # => [0, 1]
+        
 * As a default an <tt>ArgumentError</tt> is raised if the user tries to set the field to an invalid enumeration value, to change this
   behaviour use the <tt>:whiny</tt> option:
   
