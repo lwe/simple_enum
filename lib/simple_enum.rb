@@ -175,9 +175,10 @@ module SimpleEnum
       self_name.upcase! if options[:upcase]   
       class_variable_set :"@@SE_#{self_name.upcase}", values
       class_eval(<<-EOM, __FILE__, __LINE__ + 1)
-        def self.#{self_name}(sym = nil)
-          return class_variable_get(:@@SE_#{self_name.upcase}) if sym.nil?
-          class_variable_get(:@@SE_#{self_name.upcase})[sym]
+        def self.#{self_name}(*args)
+          return @@SE_#{self_name.upcase} if args.first.nil?          
+          return @@SE_#{self_name.upcase}[args.first] if args.size == 1
+          args.inject([]) { |ary, sym| ary << @@SE_#{self_name.upcase}[sym]; ary }
         end
         
         def self.#{self_name}_for_select(&block)

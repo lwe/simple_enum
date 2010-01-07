@@ -11,6 +11,11 @@ class ClassMethodsTest < ActiveSupport::TestCase
     assert_nil Dummy.genders(:inexistent)
     assert_nil Dummy.genders[:inexistent]
   end
+  
+  test "that Klass.genders(:sym_a, :sym_b) returns an array of values, useful for IN clauses" do
+    assert_equal [0, 1], Dummy.genders(:male, :female)
+    assert_equal [1, 0], Dummy.genders(:female, :male)
+  end
     
   test "generation of value shortcuts on class" do
     g = Dummy.new
