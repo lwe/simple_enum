@@ -165,8 +165,8 @@ module SimpleEnum
     
       # generate setter
       define_method("#{enum_cd}=") do |new_value|
-        v = new_value.nil? ? nil : values[new_value.to_sym]        
-        raise(ArgumentError, "Invalid enumeration value: #{new_value}") if (options[:whiny] and v.nil? and !new_value.nil?)
+        v = new_value.blank? ? nil : values[new_value.to_sym]
+        raise(ArgumentError, "Invalid enumeration value: #{new_value}") if (options[:whiny] and v.nil? and !new_value.blank?)
         write_attribute options[:column], v
       end
     

@@ -77,12 +77,16 @@ class SimpleEnumTest < ActiveSupport::TestCase
     
     d = not_whiny.new :gender => :foo
     assert_nil(d.gender)
+    d.gender = ''
+    assert_nil(d.gender)
   end
   
   test "ensure that setting to 'nil' works if :whiny => true and :whiny => false" do
     d = Dummy.new :gender => :male    
     assert_equal(:male, d.gender)
     d.gender = nil
+    assert_nil(d.gender)
+    d.gender = ''
     assert_nil(d.gender)
     
     not_whiny_again = Class.new(Dummy) do
@@ -92,6 +96,8 @@ class SimpleEnumTest < ActiveSupport::TestCase
     d = not_whiny_again.new :gender => :male
     assert_equal(:male, d.gender)
     d.gender = nil
-    assert_nil(d.gender)    
+    assert_nil(d.gender)
+    d.gender = ''
+    assert_nil(d.gender)
   end
 end
