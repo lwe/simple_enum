@@ -103,4 +103,10 @@ class ClassMethodsTest < ActiveSupport::TestCase
     assert_equal "Foo", Dummy.human_enum_name(:didums, :foo)
     assert_equal "Foos", Dummy.human_enum_name(:didums, :foo, :count => 5)
   end
+
+  test "enum_for_select class method" do
+    for_select = Dummy.genders_for_select
+    assert_equal ["Girl", :female], for_select.first
+    assert_equal ["Male", :male], for_select.last
+  end
 end

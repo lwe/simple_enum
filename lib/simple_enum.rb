@@ -182,9 +182,9 @@ module SimpleEnum
         end
         
         def self.#{self_name}_for_select(&block)
-          self.#{self_name}.map do |k,v| 
-            [block_given? ? yield(k,v) : self.human_enum_name(#{self_name.inspect}, k), v]
-          end.sort { |a,b| a[1] <=> b[1] }
+          self.#{self_name}.map do |k,v|
+            [block_given? ? yield(k,v) : self.human_enum_name(#{self_name.inspect}, k), k]
+          end.sort
         end
       EOM
     
