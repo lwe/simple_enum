@@ -11,7 +11,12 @@ class ClassMethodsTest < ActiveSupport::TestCase
     assert_nil Dummy.genders(:inexistent)
     assert_nil Dummy.genders[:inexistent]
   end
-  
+
+  test "GENDERS constant created" do
+    assert_equal [0, 1], Dummy::GENDERS.values.sort
+    assert_equal %w{female male}, Dummy::GENDERS.keys.map(&:to_s).sort
+  end
+
   test "that Klass.genders(:sym_a, :sym_b) returns an array of values, useful for IN clauses" do
     assert_equal [0, 1], Dummy.genders(:male, :female)
     assert_equal [1, 0], Dummy.genders(:female, :male)

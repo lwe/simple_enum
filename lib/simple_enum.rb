@@ -173,12 +173,14 @@ module SimpleEnum
       # allow access to defined values hash, e.g. in a select helper or finder method.      
       self_name = enum_cd.to_s.pluralize   
       self_name.upcase! if options[:upcase]   
-      class_variable_set :"@@SE_#{self_name.upcase}", values
+      
       class_eval(<<-EOM, __FILE__, __LINE__ + 1)
+        #{self_name.upcase} = values
+
         def self.#{self_name}(*args)
-          return @@SE_#{self_name.upcase} if args.first.nil?          
-          return @@SE_#{self_name.upcase}[args.first] if args.size == 1
-          args.inject([]) { |ary, sym| ary << @@SE_#{self_name.upcase}[sym]; ary }
+          return #{self_name.upcase} if args.first.nil?          
+          return #{self_name.upcase}[args.first] if args.size == 1
+          args.inject([]) { |ary, sym| ary << #{self_name.upcase}[sym]; ary }
         end
         
         def self.#{self_name}_for_select(&block)
