@@ -165,26 +165,28 @@ module SimpleEnum
     
       # generate setter
       define_method("#{enum_cd}=") do |new_value|
-        v = new_value.nil? ? nil : values[new_value.to_sym]        
-        raise(ArgumentError, "Invalid enumeration value: #{new_value}") if (options[:whiny] and v.nil? and !new_value.nil?)
+        v = new_value.blank? ? nil : values[new_value.to_sym]
+        raise(ArgumentError, "Invalid enumeration value: #{new_value}") if (options[:whiny] and v.nil? and !new_value.blank?)
         write_attribute options[:column], v
       end
     
       # allow access to defined values hash, e.g. in a select helper or finder method.      
       self_name = enum_cd.to_s.pluralize   
       self_name.upcase! if options[:upcase]   
-      class_variable_set :"@@SE_#{self_name.upcase}", values
+      
       class_eval(<<-EOM, __FILE__, __LINE__ + 1)
+        #{self_name.upcase} = values
+
         def self.#{self_name}(*args)
-          return @@SE_#{self_name.upcase} if args.first.nil?          
-          return @@SE_#{self_name.upcase}[args.first] if args.size == 1
-          args.inject([]) { |ary, sym| ary << @@SE_#{self_name.upcase}[sym]; ary }
+          return #{self_name.upcase} if args.first.nil?          
+          return #{self_name.upcase}[args.first] if args.size == 1
+          args.inject([]) { |ary, sym| ary << #{self_name.upcase}[sym]; ary }
         end
         
         def self.#{self_name}_for_select(&block)
-          self.#{self_name}.map do |k,v| 
-            [block_given? ? yield(k,v) : self.human_enum_name(#{self_name.inspect}, k), v]
-          end.sort { |a,b| a[1] <=> b[1] }
+          self.#{self_name}.map do |k,v|
+            [block_given? ? yield(k,v) : self.human_enum_name(#{self_name.inspect}, k), k]
+          end.sort
         end
       EOM
     
