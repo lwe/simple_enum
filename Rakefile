@@ -26,15 +26,20 @@ end
 begin
   require 'jeweler'
   Jeweler::Tasks.new do |gemspec|
+    require File.join(File.dirname(__FILE__), 'lib', 'simple_enum')
+    
     gemspec.name = "simple_enum"
+    gemspec.version = SimpleEnum::VERSION
     gemspec.summary = "Simple enum-like field support for ActiveRecord (including validations and i18n)"
     gemspec.email = "lukas.westermann@gmail.com"
     gemspec.homepage = "http://github.com/lwe/simple_enum"
-    gemspec.authors = ["Lukas Westermann"]
+    gemspec.authors = ["Lukas Westermann"] # ask & add "Dmitry Polushkin"
+    
+    gemspec.files.reject! { |file| file =~ /\.gemspec$/ } # kinda redundant
   end
   Jeweler::GemcutterTasks.new  
 rescue LoadError
-  puts "Jeweler not available. Install it with: sudo gem install technicalpickles-jeweler -s http://gems.github.com"
+  puts "Jeweler not available. Install it with: sudo gem install jeweler"
 end
 
 namespace :metrics do
