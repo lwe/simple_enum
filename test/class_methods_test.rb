@@ -13,8 +13,8 @@ class ClassMethodsTest < ActiveSupport::TestCase
   end
 
   test "GENDERS constant created" do
-    assert_equal [0, 1], Dummy::GENDERS.values.sort
-    assert_equal %w{female male}, Dummy::GENDERS.keys.map(&:to_s).sort
+    assert_equal [0, 1], Dummy.genders.values.sort
+    assert_equal %w{female male}, Dummy.genders.keys.map(&:to_s).sort
   end
 
   test "that Klass.genders(:sym_a, :sym_b) returns an array of values, useful for IN clauses" do
