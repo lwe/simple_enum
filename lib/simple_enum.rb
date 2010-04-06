@@ -12,11 +12,13 @@ require 'simple_enum/array_support'
 require 'simple_enum/enum_hash'
 require 'simple_enum/object_support'
 require 'simple_enum/validation'
-require 'simple_enum/version'
 
 # Base module which gets included in <tt>ActiveRecord::Base</tt>. See documentation
 # of +SimpleEnum::ClassMethods+ for more details.
 module SimpleEnum
+
+  # +SimpleEnum+ version string.
+  VERSION = "1.0.1".freeze
 
   class << self
     
