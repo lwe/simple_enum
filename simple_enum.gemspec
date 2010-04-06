@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{simple_enum}
-  s.version = "1.0.0"
+  s.version = "1.0.1"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Lukas Westermann"]
-  s.date = %q{2010-01-07}
+  s.date = %q{2010-04-06}
   s.email = %q{lukas.westermann@gmail.com}
   s.extra_rdoc_files = [
     "README.rdoc"
@@ -19,14 +19,12 @@ Gem::Specification.new do |s|
      "LICENCE",
      "README.rdoc",
      "Rakefile",
-     "VERSION.yml",
      "init.rb",
      "lib/simple_enum.rb",
      "lib/simple_enum/array_support.rb",
      "lib/simple_enum/enum_hash.rb",
      "lib/simple_enum/object_support.rb",
      "lib/simple_enum/validation.rb",
-     "lib/simple_enum/version.rb",
      "locales/en.yml",
      "test/array_conversions_test.rb",
      "test/class_methods_test.rb",
@@ -44,7 +42,7 @@ Gem::Specification.new do |s|
   s.homepage = %q{http://github.com/lwe/simple_enum}
   s.rdoc_options = ["--charset=UTF-8"]
   s.require_paths = ["lib"]
-  s.rubygems_version = %q{1.3.5}
+  s.rubygems_version = %q{1.3.6}
   s.summary = %q{Simple enum-like field support for ActiveRecord (including validations and i18n)}
   s.test_files = [
     "test/array_conversions_test.rb",
