@@ -8,7 +8,6 @@
 #
 # See the +as_enum+ documentation for more details.
 
-require 'simple_enum/array_support'
 require 'simple_enum/enum_hash'
 require 'simple_enum/object_support'
 require 'simple_enum/validation'
@@ -240,7 +239,6 @@ end
 # Tie stuff together and load translations if ActiveRecord is defined
 if Object.const_defined?('ActiveRecord')
   Object.send(:include, SimpleEnum::ObjectSupport)
-  Array.send(:include, SimpleEnum::ArraySupport)
     
   ActiveRecord::Base.send(:include, SimpleEnum)
   I18n.load_path << File.join(File.dirname(__FILE__), '..', 'locales', 'en.yml')
