@@ -210,7 +210,11 @@ module SimpleEnum
         
           # allow class access to each value
           unless options[:slim] === :class
-            metaclass.send(:define_method, "#{prefix}#{sym}", Proc.new { |*args| args.first ? k : code })
+            if self.respond_to? :singleton_class
+              singleton_class.send(:define_method, "#{prefix}#{sym}", Proc.new { |*args| args.first ? k : code })
+            else
+              metaclass.send(:define_method, "#{prefix}#{sym}", Proc.new { |*args| args.first ? k : code })
+            end
           end
         end
       end
@@ -219,7 +223,7 @@ module SimpleEnum
     include Validation
     
     def human_enum_name(enum, key, options = {})
-      defaults = self_and_descendants_from_active_record.map { |klass| :"#{klass.name.underscore}.#{enum}.#{key}" }
+      defaults = ([self] + subclasses).map { |klass| :"#{klass.name.underscore}.#{enum}.#{key}" }
       defaults << :"#{enum}.#{key}"
       defaults << options.delete(:default) if options[:default]
       defaults << "#{key}".humanize

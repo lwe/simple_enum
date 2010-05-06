@@ -52,10 +52,7 @@ class SimpleEnumTest < ActiveSupport::TestCase
   end
   
   test "add validation and test validations" do
-    Dummy.class_eval do; validates_as_enum :gender; end
-    #with_validation = Class.new(Dummy) do
-    #  validates_as_enum :gender
-    #end
+    Dummy.class_eval { validates_as_enum :gender }
     
     d = Dummy.new :gender_cd => 5 # invalid number :)
     assert_equal(false, d.save)
