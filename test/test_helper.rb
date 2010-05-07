@@ -1,11 +1,9 @@
 # Setup environment for both tests and IRB interactive console
 #
 
-$KCODE = 'u' # to make parameterize work...
+$KCODE = 'u' unless RUBY_VERSION =~ /^1\.9/ # to make parameterize work...
 
 require 'rubygems'
-
-gem 'sqlite3-ruby'
 
 require 'active_support'
 require 'active_record'
@@ -16,7 +14,9 @@ RAILS_ROOT = ROOT
 RAILS_ENV  = 'test'
 
 # create database connection (in memory db!)
-ActiveRecord::Base.establish_connection({ :adapter => 'sqlite3', :database => ':memory:'})
+ActiveRecord::Base.establish_connection({
+  :adapter => RUBY_PLATFORM =~ /java/ ? 'jdbcsqlite3' : 'sqlite3',
+  :database => ':memory:'})
 
 # load simple_enum
 require File.join(ROOT, 'init')
