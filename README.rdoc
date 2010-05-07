@@ -180,6 +180,11 @@ or <em>b)</em> a custom method to convert an object to a symbolized form named +
 
 * Maybe the <tt>:whiny</tt> option should default to <tt>false</tt>, so that generally no exceptions are thrown if a user fakes a request?
 * Clean-up code and tests -> bring down LOC ;) (but maintain Code LOC vs. Test LOC ratio which is currently 1:2.9)
+* Make `:slim => true` the default option...?
+
+== Contributors
+
+* tarsolya - implemented all the ruby 1.9 and rails 3 goodness!
 
 == Licence & Copyright
 Copyright (c) 2009 by Lukas Westermann, Licenced under MIT Licence (see LICENCE file)
