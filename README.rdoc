@@ -1,7 +1,7 @@
 = SimpleEnum - unobtrusive enum-like fields for ActiveRecord
 
 A Rails plugin which brings easy-to-use enum-like functionality to
-ActiveRecord models.
+ActiveRecord models (now compatible with rails 3, ruby 1.9 and jruby).
 
 *Note*: a recent search on github for `enum` turned out, that there are many, many similar solutions.
 Yet, none seem to provide so many options, but I may be biased ;)
