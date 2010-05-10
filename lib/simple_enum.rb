@@ -17,7 +17,7 @@ require 'simple_enum/validation'
 module SimpleEnum
 
   # +SimpleEnum+ version string.
-  VERSION = "1.0.1".freeze
+  VERSION = "1.1.0".freeze
 
   class << self
     
