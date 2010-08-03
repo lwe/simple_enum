@@ -223,7 +223,7 @@ module SimpleEnum
     include Validation
     
     def human_enum_name(enum, key, options = {})
-      defaults = ([self] + subclasses).map { |klass| :"#{klass.name.underscore}.#{enum}.#{key}" }
+      defaults = ([self] + descendants).map { |klass| :"#{klass.name.underscore}.#{enum}.#{key}" }
       defaults << :"#{enum}.#{key}"
       defaults << options.delete(:default) if options[:default]
       defaults << "#{key}".humanize
