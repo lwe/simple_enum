@@ -2,6 +2,9 @@ require 'rake'
 require 'rake/testtask'
 require 'rake/rdoctask'
 
+# kinda ensure simple_enum is on load path
+$: << File.join(File.dirname(__FILE__), 'lib')
+
 desc 'Default: run unit tests.'
 task :default => :test
 
@@ -26,7 +29,8 @@ end
 begin
   require 'jeweler'
   Jeweler::Tasks.new do |gemspec|
-    require File.join(File.dirname(__FILE__), 'lib', 'simple_enum')
+    require 'rubygems'
+    require 'simple_enum'
     
     gemspec.name = "simple_enum"
     gemspec.version = SimpleEnum::VERSION
