@@ -242,9 +242,11 @@ module SimpleEnum
 end
 
 # Tie stuff together and load translations if ActiveRecord is defined
-if Object.const_defined?('ActiveRecord')
-  Object.send(:include, SimpleEnum::ObjectSupport)
-    
-  ActiveRecord::Base.send(:include, SimpleEnum)
-  I18n.load_path << File.join(File.dirname(__FILE__), '..', 'locales', 'en.yml')
-end
+Object.send(:include, SimpleEnum::ObjectSupport)
+
+# because we depend on AR and i18n
+require 'active_record'
+require 'i18n'
+ 
+ActiveRecord::Base.send(:include, SimpleEnum)
+I18n.load_path << File.join(File.dirname(__FILE__), '..', 'locales', 'en.yml')
