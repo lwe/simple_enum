@@ -4,7 +4,9 @@
 $KCODE = 'u' unless RUBY_VERSION =~ /^1\.9/ # to make parameterize work...
 
 require 'rubygems'
+require 'bundler/setup'
 
+require 'test/unit'
 require 'active_support'
 require 'active_record'
 

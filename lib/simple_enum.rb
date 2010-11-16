@@ -176,24 +176,23 @@ module SimpleEnum
       end
     
       # allow access to defined values hash, e.g. in a select helper or finder method.      
-      self_name = enum_cd.to_s.pluralize   
-      self_name.upcase! if options[:upcase]   
+      attr_name = enum_cd.to_s.pluralize
+      enum_attr = :"#{attr_name.downcase}_enum_hash"
+      write_inheritable_attribute(enum_attr, values)
       
-      class_eval(<<-EOM, __FILE__, __LINE__ + 1)
-        @#{self_name} = values
-
-        def self.#{self_name}(*args)
-          return @#{self_name} if args.first.nil?          
-          return @#{self_name}[args.first] if args.size == 1
-          args.inject([]) { |ary, sym| ary << @#{self_name}[sym]; ary }
+      class_eval(<<-RUBY, __FILE__, __LINE__ + 1)
+        def self.#{attr_name}(*args)
+          return read_inheritable_attribute(#{enum_attr.inspect}) if args.first.nil?
+          return read_inheritable_attribute(#{enum_attr.inspect})[args.first] if args.size == 1
+          args.inject([]) { |ary, sym| ary << read_inheritable_attribute(#{enum_attr.inspect})[sym]; ary }
         end
         
-        def self.#{self_name}_for_select(&block)
-          self.#{self_name}.map do |k,v|
-            [block_given? ? yield(k,v) : self.human_enum_name(#{self_name.inspect}, k), k]
+        def self.#{attr_name}_for_select(&block)
+          self.#{attr_name}.map do |k,v|
+            [block_given? ? yield(k,v) : self.human_enum_name(#{attr_name.inspect}, k), k]
           end.sort
         end
-      EOM
+      RUBY
     
       # only create if :slim is not defined
       if options[:slim] != true
@@ -214,11 +213,7 @@ module SimpleEnum
         
           # allow class access to each value
           unless options[:slim] === :class
-            if self.respond_to? :singleton_class
-              singleton_class.send(:define_method, "#{prefix}#{sym}", Proc.new { |*args| args.first ? k : code })
-            else
-              metaclass.send(:define_method, "#{prefix}#{sym}", Proc.new { |*args| args.first ? k : code })
-            end
+            singleton_class.send(:define_method, "#{prefix}#{sym}", Proc.new { |*args| args.first ? k : code })
           end
         end
       end

@@ -6,3 +6,8 @@ end
 
 class Gender < ActiveRecord::Base
 end
+
+# Used to test STI stuff
+class SpecificDummy < Dummy
+  set_table_name 'dummies'
+end
