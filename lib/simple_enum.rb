@@ -153,6 +153,8 @@ module SimpleEnum
     def as_enum(enum_cd, values, options = {})
       options = SimpleEnum.default_options.merge({ :column => "#{enum_cd}_cd" }).merge(options)
       options.assert_valid_keys(:column, :whiny, :prefix, :slim, :upcase)
+
+      metaclass = (class << self; self; end)
     
       # convert array to hash...
       values = SimpleEnum::EnumHash.new(values)
@@ -213,7 +215,7 @@ module SimpleEnum
         
           # allow class access to each value
           unless options[:slim] === :class
-            singleton_class.send(:define_method, "#{prefix}#{sym}", Proc.new { |*args| args.first ? k : code })
+            metaclass.send(:define_method, "#{prefix}#{sym}", Proc.new { |*args| args.first ? k : code })
           end
         end
       end
