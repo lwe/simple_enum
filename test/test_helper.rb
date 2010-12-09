@@ -9,6 +9,8 @@ require 'bundler/setup'
 require 'test/unit'
 require 'active_support'
 require 'active_record'
+require 'active_support/version'
+require 'active_record/version'
 
 # setup fake rails env
 ROOT       = File.join(File.dirname(__FILE__), '..')
@@ -25,6 +27,9 @@ require File.join(ROOT, 'init')
 
 # load dummy class
 require File.join(ROOT, 'test', 'models')
+
+# Test environment info
+puts "Testing against: activesupport-#{ActiveSupport::VERSION::STRING}, activerecord-#{ActiveRecord::VERSION::STRING}"
 
 # Reload database
 def reload_db(options = {})
