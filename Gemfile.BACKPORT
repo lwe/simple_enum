@@ -1,7 +1,7 @@
 source :rubygems
 
-gem "activesupport", "~> 2.3.8", :require => "active_support"
-gem "activerecord",  "~> 2.3.8", :require => "active_record"
+gem "activesupport", "2.3.8", :require => "active_support"
+gem "activerecord",  "2.3.8", :require => "active_record"
 
 gem "sqlite3-ruby", :require => "sqlite3", :platforms => :ruby
 gem "jdbc-sqlite3", :require => "jdbcsqlite3", :platforms => :jruby
