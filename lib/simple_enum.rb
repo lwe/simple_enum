@@ -191,7 +191,7 @@ module SimpleEnum
         
         def self.#{attr_name}_for_select(&block)
           self.#{attr_name}.map do |k,v|
-            [block_given? ? yield(k,v) : self.human_enum_name(#{attr_name.inspect}, k), k]
+            [block_given? ? yield(k,v) : self.human_enum_name(#{attr_name.inspect}, k), v]
           end
         end
       RUBY
