@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{simple_enum}
-  s.version = "1.3.1"
+  s.version = "1.3.2"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Lukas Westermann"]
-  s.date = %q{2010-12-09}
+  s.date = %q{2011-03-08}
   s.email = %q{lukas.westermann@gmail.com}
   s.extra_rdoc_files = [
     "README.rdoc"
@@ -44,7 +44,7 @@ Gem::Specification.new do |s|
   s.homepage = %q{http://github.com/lwe/simple_enum}
   s.rdoc_options = ["--charset=UTF-8"]
   s.require_paths = ["lib"]
-  s.rubygems_version = %q{1.3.7}
+  s.rubygems_version = %q{1.4.1}
   s.summary = %q{Simple enum-like field support for ActiveRecord (including validations and i18n)}
   s.test_files = [
     "test/array_conversions_test.rb",
@@ -61,7 +61,6 @@ Gem::Specification.new do |s|
   ]
 
   if s.respond_to? :specification_version then
-    current_version = Gem::Specification::CURRENT_SPECIFICATION_VERSION
     s.specification_version = 3
 
     if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
