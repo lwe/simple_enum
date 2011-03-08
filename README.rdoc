@@ -133,7 +133,15 @@ useful when creating queries, displaying option elements or similar:
         class User < ActiveRecord::Base
           as_enum :gender, [:male, :female], :whiny => false
         end
-        
+
+* Need translated keys et al in your forms? SimpleEnum provides a <tt><enum>_for_select</tt> method:
+
+       # on the gender field
+       <%= select("user", "gender", User.genders_for_select) %>
+       
+       # or on the '_cd' field
+       <%= select("user", "gender_cd", User.genders_for_select(:value))
+
 * To define any option globally, like setting <tt>:whiny</tt> to +false+, or globally enable <tt>:prefix</tt>; all default options
   are stored in <tt>SimpleEnum.default_options</tt>, this hash can be easily changed in your initializers or wherever:
 
@@ -187,6 +195,7 @@ or <em>b)</em> a custom method to convert an object to a symbolized form named +
 * dmitry - bugfixes and other improvements
 * tarsolya - implemented all the ruby 1.9 and rails 3 goodness!
 * dbalatero - rails 2.3.5 bugfix
+* johnthethird - feature for <tt>_for_select</tt> to return the values
 
 == Licence & Copyright
 Copyright (c) 2009 by Lukas Westermann, Licenced under MIT Licence (see LICENCE file)

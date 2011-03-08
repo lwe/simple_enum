@@ -189,9 +189,9 @@ module SimpleEnum
           args.inject([]) { |ary, sym| ary << read_inheritable_attribute(#{enum_attr.inspect})[sym]; ary }
         end
         
-        def self.#{attr_name}_for_select(&block)
+        def self.#{attr_name}_for_select(attr = :key, &block)
           self.#{attr_name}.map do |k,v|
-            [block_given? ? yield(k,v) : self.human_enum_name(#{attr_name.inspect}, k), v]
+            [block_given? ? yield(k,v) : self.human_enum_name(#{attr_name.inspect}, k), attr == :value ? v : k]
           end
         end
       RUBY
