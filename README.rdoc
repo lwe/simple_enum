@@ -141,6 +141,16 @@ useful when creating queries, displaying option elements or similar:
        
        # or on the '_cd' field
        <%= select("user", "gender_cd", User.genders_for_select(:value))
+       
+  Translations need to be stored like:
+  
+       de:
+         activerecord:
+           enums:
+             user:              # the Model, as User.class.name.underscore
+               genders:         # pluralized version of :gender
+                 male: männlich
+                 female: weiblich
 
 * To define any option globally, like setting <tt>:whiny</tt> to +false+, or globally enable <tt>:prefix</tt>; all default options
   are stored in <tt>SimpleEnum.default_options</tt>, this hash can be easily changed in your initializers or wherever:
