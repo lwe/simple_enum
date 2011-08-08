@@ -36,9 +36,9 @@ any fancy metaclass or similar.
     jane.male?     # => false
     jane.gender    # => :female
     jane.gender_cd # => 1
-    
+
 Easily switch to another value using the bang methods.
-    
+
     joe = User.new
     joe.male!     # => :male
     joe.gender    # => :male
@@ -68,11 +68,11 @@ useful when creating queries, displaying option elements or similar:
         class User < ActiveRecord::Base
           as_enum :gender, [:male, :female], :column => 'sex'
         end
-        
+
 * To make it easier to create dropdowns with values use:
 
         <%= select(:user, :gender, User.genders.keys) %>
-        
+
 * It's possible to validate the internal enum values, just like any other ActiveRecord validation:
 
         class User < ActiveRecord::Base
@@ -85,7 +85,7 @@ useful when creating queries, displaying option elements or similar:
   instead the value of <tt>@user.gender_cd</tt>.
 * If the shortcut methods (like <tt><symbol>?</tt>, <tt><symbol>!</tt> or <tt>Klass.<symbol></tt>) conflict with something in your class, it's possible to
   define a prefix:
-  
+
         class User < ActiveRecord::Base
           as_enum :gender, [:male, :female], :prefix => true
         end
@@ -93,43 +93,43 @@ useful when creating queries, displaying option elements or similar:
         jane = User.new :gender => :female
         jane.gender_female? # => true
         User.gender_female  # => 1, this also works on the class methods
-        
+
   The <tt>:prefix</tt> option not only takes a boolean value as an argument, but instead can also be supplied a custom
   prefix (i.e. any string or symbol), so with <tt>:prefix => 'foo'</tt> all shortcut methods would look like: <tt>foo_<symbol>...</tt>
   *Note*: if the <tt>:slim => true</tt> is defined, this option has no effect whatsoever (because no shortcut methods are generated).
 * Sometimes it might be useful to disable the generation of the shortcut methods (<tt><symbol>?</tt>, <tt><symbol>!</tt> and <tt>Klass.<symbol></tt>), to do so just add the option <tt>:slim => true</tt>:
-  
+
         class User < ActiveRecord::Base
           as_enum :gender, [:male, :female], :slim => true
         end
 
         jane = User.new :gender => :female
-        jane.female? # => throws NoMethodError: undefined method `female?' 
-        User.male    # => throws NoMethodError: undefined method `male' 
-  
+        jane.female? # => throws NoMethodError: undefined method `female?'
+        User.male    # => throws NoMethodError: undefined method `male'
+
   Yet the setter and getter for <tt>gender</tt>, as well as the <tt>User.genders</tt> methods are still available, only all shortcut
   methods for each of the enumeration values are not generated.
-  
+
   It's also possible to set <tt>:slim => :class</tt> which only disables the generation of any class-level shortcut method, because those
   are also available via the enhanced enumeration hash:
-  
+
         class Message < ActiveRecord::Base
           as_enum :status, { :unread => 0, :read => 1, :archived => 99}, :slim => :class
         end
-        
+
         msg = Message.new :body => 'Hello World!', status_cd => 0
         msg.read?                      # => false; shortuct methods on instance are still enabled
         msg.status                     # => :unread
         Message.unread                 # => throws NoMethodError: undefined method `unread`
         Message.statuses.unread        # => 0
         Message.statuses.unread(true)  # => :unread
-        
+
         # or useful for IN queries
         Messages.statuses(:unread, :read) # => [0, 1]
-        
+
 * As a default an <tt>ArgumentError</tt> is raised if the user tries to set the field to an invalid enumeration value, to change this
   behaviour use the <tt>:whiny</tt> option:
-  
+
         class User < ActiveRecord::Base
           as_enum :gender, [:male, :female], :whiny => false
         end
@@ -138,12 +138,12 @@ useful when creating queries, displaying option elements or similar:
 
        # on the gender field
        <%= select("user", "gender", User.genders_for_select) %>
-       
+
        # or on the '_cd' field
        <%= select("user", "gender_cd", User.genders_for_select(:value))
-       
+
   Translations need to be stored like:
-  
+
        de:
          activerecord:
            enums:
@@ -163,13 +163,13 @@ useful when creating queries, displaying option elements or similar:
 Searching for certain values by using the finder methods:
 
     User.find :all, :conditions => { :gender_cd => User.female }
-    
+
 Working with database backed values, now assuming that there exists a +genders+ table:
 
     class Person < ActiveRecord::Base
       as_enum :gender, Gender.find(:all).map { |g| [g.name.to_sym, g.id] } # map to array of symbols
     end
-    
+
 Working with object backed values, the only requirement to enable this is that <em>a)</em> either a field name +name+ exists
 or <em>b)</em> a custom method to convert an object to a symbolized form named +to_enum_sym+ (for general uses overriding
 +to_enum+ is perfectly fine) exists:
@@ -178,22 +178,22 @@ or <em>b)</em> a custom method to convert an object to a symbolized form named +
       # this has a column named :name
       STATUSES = self.find(:all, :order => :name)
     end
-    
+
     class BankTransaction < ActiveRecord::Base
-      as_enum :status, Status.STATUSES
+      as_enum :status, Status::STATUSES
     end
-    
+
     # what happens now? the id's of Status now serve as enumeration key and the
-    # Status object as the value so...    
+    # Status object as the value so...
     t = BankTransaction.new
     t.pending!
     t.status # => #<Status id: 1, name: "pending">
-        
+
     # and it's also possible to access the objects/values using:
     BankTransaction.statuses(:pending) # => 1, access by symbol (not) the object!
     BankTransaction.statuses.pending   # => 1
     BankTransaction.statuses.pending(true) # => #<Status id: 1, name: "pending">
-    
+
 == Known issues/Open items
 
 * Maybe the <tt>:whiny</tt> option should default to <tt>false</tt>, so that generally no exceptions are thrown if a user fakes a request?
