@@ -15,8 +15,7 @@ class ObjectBackedTest < ActiveSupport::TestCase
     end
     
     # create new class by using simple_obj
-    with_object = Class.new(ActiveRecord::Base) do
-      set_table_name 'dummies'      
+    with_object = anonymous_dummy do
       as_enum :gender, { simple_obj.new('Male') => 0, simple_obj.new('Female') => 1 }      
     end
     
@@ -35,8 +34,7 @@ class ObjectBackedTest < ActiveSupport::TestCase
     # works without mapping... .map { |g| [g, g.id] }
     
     # use cached array of values
-    with_db_obj = Class.new(ActiveRecord::Base) do
-      set_table_name 'dummies'
+    with_db_obj = anonymous_dummy do
       as_enum :gender, genders
     end
     
@@ -53,8 +51,7 @@ class ObjectBackedTest < ActiveSupport::TestCase
     male = genders.first
     female = genders.last
     
-    with_db_obj = Class.new(ActiveRecord::Base) do
-      set_table_name 'dummies'
+    with_db_obj = anonymous_dummy do
       as_enum :gender, genders
     end
     

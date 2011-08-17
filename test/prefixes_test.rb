@@ -6,8 +6,7 @@ class PrefixesTest < ActiveSupport::TestCase
   end
 
   test "set :prefix => true and ensure that 'gender' is prefixed to <symbol>? and <symbol>! methods" do
-    with_prefix = Class.new(ActiveRecord::Base) do
-      set_table_name 'dummies'
+    with_prefix = anonymous_dummy do
       as_enum :gender, [:male, :female], :prefix => true
     end
     
@@ -22,8 +21,7 @@ class PrefixesTest < ActiveSupport::TestCase
   end
   
   test "set :prefix => 'didum' and ensure that 'didum' is prefix to <symbol>? and <symbol>! methods" do
-    with_string_prefix = Class.new(ActiveRecord::Base) do
-      set_table_name 'dummies'
+    with_string_prefix = anonymous_dummy do
       as_enum :gender, [:male, :female], :prefix => 'didum'
     end
     

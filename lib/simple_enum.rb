@@ -8,9 +8,9 @@
 #
 # See the +as_enum+ documentation for more details.
 
-# because we depend on AR and i18n
-require 'active_record'
+# because we depend on i18n and activesupport
 require 'i18n'
+require 'active_support'
 
 require 'simple_enum/enum_hash'
 require 'simple_enum/object_support'
@@ -242,5 +242,28 @@ end
 # Tie stuff together and load translations if ActiveRecord is defined
 Object.send(:include, SimpleEnum::ObjectSupport)
 
-ActiveRecord::Base.send(:include, SimpleEnum)
+# include in AR
+
+ActiveRecord::Base.send(:include, SimpleEnum) if defined?(ActiveRecord)
+
+if defined?(Mongoid)
+  # little wrapper so set field
+  module SimpleEnum
+    module Mongoid
+      include SimpleEnum::ClassMethods
+    
+      def as_enum(enum_cd, values, options = {})
+        options = SimpleEnum.default_options.merge({ :column => "#{enum_cd}_cd" }).merge(options)
+        options.assert_valid_keys(:column, :whiny, :prefix, :slim, :upcase)
+
+        field options[:column]      
+        super
+      end
+    end
+  end
+  
+  # include in Mongoid
+  Mongoid::Document::ClassMethods.send(:include, SimpleEnum::Mongoid) if defined?(Mongoid)
+end
+
 I18n.load_path << File.join(File.dirname(__FILE__), '..', 'locales', 'en.yml')

@@ -1,13 +1,12 @@
 require 'test_helper'
 
-class SlimDummy < ActiveRecord::Base
-  set_table_name 'dummies'
-  as_enum :gender, [:male, :female], :slim => true
-end
-
 class WithoutShortcutsTest < ActiveSupport::TestCase  
   def setup
     reload_db
+    
+    named_dummy('SlimDummy') do
+      as_enum :gender, [:male, :female], :slim => true
+    end
   end
 
   test "that no shortcut methods are generated if :slim => true" do

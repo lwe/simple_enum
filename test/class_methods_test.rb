@@ -40,11 +40,9 @@ class ClassMethodsTest < ActiveSupport::TestCase
   end
   
   test "that no Klass.shortcut are created if :slim => true" do
-    class Dummy1 < ActiveRecord::Base
-      set_table_name 'dummies'
+    with_slim = named_dummy('Dummy1') do
       as_enum :gender, [:male, :female], :slim => true
     end
-    with_slim = Dummy1
 
     assert !with_slim.respond_to?(:male)
     assert !with_slim.respond_to?(:female)    
@@ -52,11 +50,9 @@ class ClassMethodsTest < ActiveSupport::TestCase
   end
   
   test "that no Klass.shortcut's are created if :slim => :class, though instance shortcuts are" do
-    class Dummy2 < ActiveRecord::Base
-      set_table_name 'dummies'
+    with_slim_class = named_dummy('Dummy2') do
       as_enum :gender, [:male, :female], :slim => :class
-    end
-    with_slim_class = Dummy2
+    end      
     
     jane = with_slim_class.new
     
@@ -70,11 +66,9 @@ class ClassMethodsTest < ActiveSupport::TestCase
   end
   
   test "that Klass.shortcut respect :prefix => true and are prefixed by \#{enum_cd}" do
-    class Dummy3 < ActiveRecord::Base
-      set_table_name 'dummies'
-      as_enum :gender, [:male, :female], :prefix => true
+    with_prefix = named_dummy('Dummy3') do
+      as_enum :gender, [:male, :female], :prefix => true      
     end
-    with_prefix = Dummy3
     
     assert !with_prefix.respond_to?(:male)
     assert !with_prefix.respond_to?(:female)    
@@ -85,11 +79,9 @@ class ClassMethodsTest < ActiveSupport::TestCase
   end
   
   test "to ensure that Klass.shortcut also work with custom prefixes" do
-    class Dummy4 < ActiveRecord::Base
-      set_table_name 'dummies'
+    with_custom_prefix = named_dummy('Dummy4') do
       as_enum :gender, [:male, :female], :prefix => :g
-    end
-    with_custom_prefix = Dummy4
+    end      
     
     assert !with_custom_prefix.respond_to?(:male)
     assert !with_custom_prefix.respond_to?(:female)    
