@@ -20,11 +20,8 @@ require 'simple_enum/validation'
 # of +SimpleEnum::ClassMethods+ for more details.
 module SimpleEnum
 
-  # +SimpleEnum+ version string.
-  VERSION = "1.3.2".freeze
-
   class << self
-    
+
     # Provides configurability to SimpleEnum, allows to override some defaults which are
     # defined for all uses of +as_enum+. Most options from +as_enum+ are available, such as:
     # * <tt>:prefix</tt> - Define a prefix, which is prefixed to the shortcut methods (e.g. <tt><symbol>!</tt> and
@@ -41,14 +38,14 @@ module SimpleEnum
       @default_options ||= {
         :whiny => true,
         :upcase => false
-      } 
+      }
     end
-    
+
     def included(base) #:nodoc:
       base.send :extend, ClassMethods
     end
   end
-  
+
   module ClassMethods
     # Provides ability to create simple enumerations based on hashes or arrays, backed
     # by integer columns (but not limited to integer columns).
@@ -58,7 +55,7 @@ module SimpleEnum
     #
     #   add_column :users, :gender_cd, :integer
     #   add_column :users, :status, :integer # and a custom column...
-    #      
+    #
     # and then in your model:
     #
     #   class User < ActiveRecord::Base
@@ -80,7 +77,7 @@ module SimpleEnum
     #   john_doe.gender_cd       # => 0
     #
     # And to make life a tad easier: a few shortcut methods to work with the enumeration are also created.
-    # 
+    #
     #   john_doe.male?           # => true
     #   john_doe.female?         # => false
     #   john_doe.female!         # => :female (set's gender to :female => gender_cd = 1)
@@ -127,12 +124,12 @@ module SimpleEnum
     #
     #   class Address < ActiveRecord::Base
     #     as_enum :canton, {:aargau => 'ag', ..., :wallis => 'vs', :zug => 'zg', :zurich => 'zh'}, :slim => true
-    #   end    
+    #   end
     #
     #   home = Address.new(:canton => :zurich, :street => 'Bahnhofstrasse 1', ...)
     #   home.canton       # => :zurich
     #   home.canton_cd    # => 'zh'
-    #   home.aargau!      # throws NoMethodError: undefined method `aargau!' 
+    #   home.aargau!      # throws NoMethodError: undefined method `aargau!'
     #   Address.aargau    # throws NoMethodError: undefined method `aargau`
     #
     # This is especially useful if there are (too) many enumeration values, or these shortcut methods
@@ -155,56 +152,56 @@ module SimpleEnum
       options.assert_valid_keys(:column, :whiny, :prefix, :slim, :upcase)
 
       metaclass = (class << self; self; end)
-    
+
       # convert array to hash...
       values = SimpleEnum::EnumHash.new(values)
       values_inverted = values.invert
-    
+
       # store info away
       write_inheritable_attribute(:enum_definitions, {}) if enum_definitions.nil?
       enum_definitions[enum_cd] = enum_definitions[options[:column]] = { :name => enum_cd, :column => options[:column], :options => options }
-    
-      # generate getter       
+
+      # generate getter
       define_method("#{enum_cd}") do
         id = read_attribute options[:column]
         values_inverted[id]
       end
-    
+
       # generate setter
       define_method("#{enum_cd}=") do |new_value|
         v = new_value.blank? ? nil : values[new_value.to_sym]
         raise(ArgumentError, "Invalid enumeration value: #{new_value}") if (options[:whiny] and v.nil? and !new_value.blank?)
         write_attribute options[:column], v
       end
-    
-      # allow access to defined values hash, e.g. in a select helper or finder method.      
+
+      # allow access to defined values hash, e.g. in a select helper or finder method.
       attr_name = enum_cd.to_s.pluralize
       enum_attr = :"#{attr_name.downcase}_enum_hash"
       write_inheritable_attribute(enum_attr, values)
-      
+
       class_eval(<<-RUBY, __FILE__, __LINE__ + 1)
         def self.#{attr_name}(*args)
           return read_inheritable_attribute(#{enum_attr.inspect}) if args.first.nil?
           return read_inheritable_attribute(#{enum_attr.inspect})[args.first] if args.size == 1
           args.inject([]) { |ary, sym| ary << read_inheritable_attribute(#{enum_attr.inspect})[sym]; ary }
         end
-        
+
         def self.#{attr_name}_for_select(attr = :key, &block)
           self.#{attr_name}.map do |k,v|
             [block_given? ? yield(k,v) : self.human_enum_name(#{attr_name.inspect}, k), attr == :value ? v : k]
           end
         end
       RUBY
-    
+
       # only create if :slim is not defined
       if options[:slim] != true
         # create both, boolean operations and *bang* operations for each
         # enum "value"
         prefix = options[:prefix] && "#{options[:prefix] == true ? enum_cd : options[:prefix]}_"
-    
+
         values.each do |k,code|
           sym = k.to_enum_sym
-        
+
           define_method("#{prefix}#{sym}?") do
             code == read_attribute(options[:column])
           end
@@ -212,7 +209,7 @@ module SimpleEnum
             write_attribute options[:column], code
             sym
           end
-        
+
           # allow class access to each value
           unless options[:slim] === :class
             metaclass.send(:define_method, "#{prefix}#{sym}", Proc.new { |*args| args.first ? k : code })
@@ -222,7 +219,7 @@ module SimpleEnum
     end
 
     include Validation
-    
+
     def human_enum_name(enum, key, options = {})
       klasses = self.respond_to?(:descendants) ? descendants : ancestors
       defaults = ([self] + klasses).map { |klass| :"#{klass.name.underscore}.#{enum}.#{key}" }
@@ -232,7 +229,7 @@ module SimpleEnum
       options[:count] ||= 1
       I18n.translate(defaults.shift, options.merge(:default => defaults.flatten, :scope => [:activerecord, :enums]))
     end
-  
+
     protected
       # Returns enum definitions as defined by each call to
       # +as_enum+.
@@ -244,6 +241,6 @@ end
 
 # Tie stuff together and load translations if ActiveRecord is defined
 Object.send(:include, SimpleEnum::ObjectSupport)
- 
+
 ActiveRecord::Base.send(:include, SimpleEnum)
 I18n.load_path << File.join(File.dirname(__FILE__), '..', 'locales', 'en.yml')
