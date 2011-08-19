@@ -9,30 +9,32 @@ require 'bundler/setup'
 require 'test/unit'
 require 'active_support'
 require 'active_support/version'
+require 'active_record'
+require 'mongoid'
+require 'minitest/autorun'
 
 # setup fake rails env
 ROOT       = File.join(File.dirname(__FILE__), '..')
 RAILS_ROOT = ROOT
 RAILS_ENV  = 'test'
 
+# load simple enum
+require 'simple_enum'
 
-SIMPLE_ENUM_ORM = (ENV['SIMPLE_ENUM_ORM'] || :active_record).to_sym
+# load orms
+ORM = ENV['ORM'] || 'activerecord'
 
-Bundler.require(:default, SIMPLE_ENUM_ORM)
+def mongoid?; return ORM == 'mongoid';end
+def activerecord?; return ORM == 'activerecord';end
 
-# load orm specific helpers
-require File.join(ROOT, 'test', 'orm', SIMPLE_ENUM_ORM.to_s, 'init')
+require 'orm/common'
+require "orm/#{ORM}"
 
+# setup db
 setup_db
 
-# load simple_enum
-require File.join(ROOT, 'init')
-
-# load dummy class
-require File.join(ROOT, 'test', 'orm', SIMPLE_ENUM_ORM.to_s, 'models')
-
 # Test environment info
-puts "Testing against: activesupport-#{ActiveSupport::VERSION::STRING}, #{SIMPLE_ENUM_ORM.to_s}-#{orm_version}"
+puts "Testing against: activesupport-#{ActiveSupport::VERSION::STRING}, #{ORM.to_s}-#{orm_version}"
 
 # do some magic to initialze DB for IRB session
 if Object.const_defined?('IRB')

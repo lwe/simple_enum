@@ -1,3 +1,31 @@
+require 'mongoid/version'
+
+def orm_version
+  Mongoid::VERSION
+end
+
+def setup_db
+  # create database connection
+  Mongoid.configure do |config|
+    config.master = Mongo::Connection.new('127.0.0.1', 27017).db("simple-enum-test-suite")
+    config.use_utc = true
+    config.include_root_in_json = true
+  end  
+end
+
+
+# Reload database
+def reload_db(options = {})
+ 
+  # clear collections except system
+  Mongoid.master.collections.select do |collection|
+    collection.name !~ /system/
+  end.each(&:drop)
+  
+  fill_db(options)
+end
+
+# models
 def anonymous_dummy(&block)
   Class.new do
     include Mongoid::Document 
@@ -24,15 +52,17 @@ end
 
 class Dummy
   include Mongoid::Document 
-  self.collection_name = 'dummies'  
+
   as_enum :gender, [:male, :female]
   as_enum :word, { :alpha => 'alpha', :beta => 'beta', :gamma => 'gamma'}
   as_enum :didum, [ :foo, :bar, :foobar ], :column => 'other'  
   
-  def method_missing(m, *args, &block)
-    p "METHOD MISSING #{m.inspect}"
-
+  before_save :check_typed
+  
+  def check_typed
+    attributes['_type'] = nil unless (self.hereditary? || self.polymorphic?)
   end
+  
 end
 
 class Gender
@@ -42,8 +72,4 @@ class Gender
 end
 
 # Used to test STI stuff
-class SpecificDummy < Dummy
-  include Mongoid::Document 
-  self.collection_name = 'dummies'
-end
-
+class SpecificDummy < Dummy;end

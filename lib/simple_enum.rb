@@ -177,6 +177,7 @@ module SimpleEnum
       # allow access to defined values hash, e.g. in a select helper or finder method.
       attr_name = enum_cd.to_s.pluralize
       enum_attr = :"#{attr_name.downcase}_enum_hash"
+
       write_inheritable_attribute(enum_attr, values)
 
       class_eval(<<-RUBY, __FILE__, __LINE__ + 1)
@@ -256,7 +257,7 @@ if defined?(Mongoid)
         options = SimpleEnum.default_options.merge({ :column => "#{enum_cd}_cd" }).merge(options)
         options.assert_valid_keys(:column, :whiny, :prefix, :slim, :upcase)
 
-        field options[:column]      
+        field options[:column]
         super
       end
     end

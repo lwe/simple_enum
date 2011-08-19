@@ -1,11 +1,11 @@
 require 'test_helper'
 
-class PrefixesTest < ActiveSupport::TestCase  
+class PrefixesTest < MiniTest::Unit::TestCase
   def setup
     reload_db
   end
 
-  test "set :prefix => true and ensure that 'gender' is prefixed to <symbol>? and <symbol>! methods" do
+  def test_that_gender_is_prefixed_in_getters_and_setters
     with_prefix = anonymous_dummy do
       as_enum :gender, [:male, :female], :prefix => true
     end
@@ -20,7 +20,7 @@ class PrefixesTest < ActiveSupport::TestCase
     assert !d.respond_to?(:male!)
   end
   
-  test "set :prefix => 'didum' and ensure that 'didum' is prefix to <symbol>? and <symbol>! methods" do
+  def test_that_custom_prefix_is_applied_to_getters_and_setters
     with_string_prefix = anonymous_dummy do
       as_enum :gender, [:male, :female], :prefix => 'didum'
     end

@@ -9,12 +9,7 @@ def fill_db(options={})
   end
 
   if options[:genders]    
-    male = Gender.new({ :name => 'male' })
-    male.id = 0;
-    male.save!
-
-    female = Gender.new({ :name => 'female' })
-    female.id = 1;
-    female.save!
+    @male   = Gender.create!({ :name => 'male' })
+    @female = Gender.create!({ :name => 'female' })
   end
 end

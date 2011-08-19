@@ -1,12 +1,12 @@
 require 'test_helper'
 
-class FindersTest < ActiveSupport::TestCase  
+class FindersTest < MiniTest::Unit::TestCase
   def setup
     reload_db
   end
 
-  test "find all where :gender = :female" do
-    girls = Dummy.find :all, :conditions => { :gender_cd => Dummy.genders[:female] }, :order => 'name ASC'
+  def test_find_all_female_genders
+    girls = Dummy.where(:gender_cd => Dummy.genders[:female]).sort { |a,b| a.name <=> b.name }
     
     assert_equal 2, girls.length
     
@@ -15,8 +15,8 @@ class FindersTest < ActiveSupport::TestCase
     assert_equal true, girls.first.female?
   end
   
-  test "find all where :word is 'gamma'" do
-    gammas = Dummy.find :all, :conditions => { :word_cd => Dummy.words(:gamma) }
+  def test_find_all_gamma_words
+    gammas = Dummy.where(:word_cd => Dummy.words(:gamma)).all
     
     assert_equal 1, gammas.length
     assert_equal 'Chris', gammas.first.name
@@ -25,15 +25,19 @@ class FindersTest < ActiveSupport::TestCase
     assert_equal :gamma, gammas.first.word
   end
   
-  test "find with string conditions for all :didum = :foo" do
-    foos = Dummy.find :all, :conditions => ['other = ?', Dummy.didums(:foo)]
+  def test_find_all_with_attribute_didum_equal_to_foo
+    skip('Not available in Mongoid') if mongoid?
+    
+    foos = Dummy.where('other = ?', Dummy.didums(:foo)).all   
     
     assert_equal 1, foos.length
     assert_equal false, foos.first.foobar?
   end
   
-  test "find using insecure inline string conditions" do
-    men = Dummy.find :all, :conditions => "gender_cd = #{Dummy.genders(:male)}"
+  def test_find_using_insecure_inline_string_conditions
+    skip('Not available in Mongoid') if mongoid?
+    
+    men = Dummy.where("gender_cd = #{Dummy.genders(:male)}").all
     
     assert_equal 1, men.length
     assert_equal true, men.first.male?

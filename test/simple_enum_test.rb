@@ -1,47 +1,50 @@
 require 'test_helper'
 
-class SimpleEnumTest < ActiveSupport::TestCase  
+class SimpleEnumTest < MiniTest::Unit::TestCase
   def setup
     reload_db
   end
   
-  test "get the correct integer values when setting to symbol" do
+  def test_getting_the_correct_integer_values_when_setting_to_symbol
     d = Dummy.new
     d.gender = :male
     assert_equal(0, d.gender_cd)
   end
   
-  test "get the correct symbol when setting the integer value" do
+  def test_getting_the_correct_symbold_when_setting_the_integer_value
     d = Dummy.new
     d.gender_cd = 1
     assert_equal(:female, d.gender)
   end
   
-  test "verify that <symbol>? returns correct result" do
+  def test_that_checker_returns_correct_result
     d = Dummy.new
     d.gender = :male
     assert_equal(true, d.male?)
     assert_equal(false, d.female?)
   end
   
-  test "get symbol when rows are fetched from db" do
+  def test_getting_symbol_when_data_is_fetched_from_datasource
     # Anna
-    assert_equal(:female, Dummy.find(1).gender)
-    assert_equal(:alpha, Dummy.find(1).word)
-    assert_equal(:foo, Dummy.find(1).didum)
+    
+    dummies = Dummy.all
+    
+    assert_equal(:female, dummies[0].gender)
+    assert_equal(:alpha, dummies[0].word)
+    assert_equal(:foo, dummies[0].didum)
     
     # Bella
-    assert_equal(true, Dummy.find(2).female?)
-    assert_equal(true, Dummy.find(2).beta?)
-    assert_equal(:bar, Dummy.find(2).didum)
+    assert_equal(true, dummies[1].female?)
+    assert_equal(true, dummies[1].beta?)
+    assert_equal(:bar, dummies[1].didum)
 
     # Chris
-    assert_equal(false, Dummy.find(3).female?)
-    assert_equal(:gamma, Dummy.find(3).word)
-    assert_equal(:foobar, Dummy.find(3).didum)    
+    assert_equal(false, dummies[2].female?)
+    assert_equal(:gamma, dummies[2].word)
+    assert_equal(:foobar, dummies[2].didum)    
   end
   
-  test "create and save new record then test symbols" do
+  def test_creating_and_saving_a_new_datasource_object_then_test_symbols
     d = Dummy.create({ :name => 'Dummy', :gender_cd => 0 }) # :gender => male
     assert_equal(true, d.male?)
     
@@ -51,7 +54,7 @@ class SimpleEnumTest < ActiveSupport::TestCase
     assert_equal(true, Dummy.find(d.id).female?)
   end
   
-  test "add validation and test validations" do
+  def test_add_validation_and_test_validations
     Dummy.class_eval { validates_as_enum :gender }
     
     d = Dummy.new :gender_cd => 5 # invalid number :)
@@ -61,13 +64,13 @@ class SimpleEnumTest < ActiveSupport::TestCase
     assert_equal(:female, d.gender)
   end
   
-  test "raises ArgumentError if invalid symbol is passed" do
-    assert_raise ArgumentError do
+  def test_that_argumenterror_is_raised_if_invalid_symbol_is_passed
+    assert_raises ArgumentError do
       Dummy.new :gender => :foo
     end
   end
   
-  test "raises NO ArgumentError if :whiny => false is defined" do
+  def test_that_no_argumenterror_is_raised_if_whiny_is_false
     not_whiny = Class.new(Dummy) do
       as_enum :gender, [:male, :female], :whiny => false
     end
@@ -78,7 +81,7 @@ class SimpleEnumTest < ActiveSupport::TestCase
     assert_nil(d.gender)
   end
   
-  test "ensure that setting to 'nil' works if :whiny => true and :whiny => false" do
+  def test_that_setting_to_nil_works_if_whiny_is_true_or_false
     d = Dummy.new :gender => :male    
     assert_equal(:male, d.gender)
     d.gender = nil
