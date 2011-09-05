@@ -9,7 +9,6 @@
 # See the +as_enum+ documentation for more details.
 
 # because we depend on AR and i18n
-require 'active_record'
 require 'i18n'
 
 require 'simple_enum/enum_hash'
@@ -242,5 +241,5 @@ end
 # Tie stuff together and load translations if ActiveRecord is defined
 Object.send(:include, SimpleEnum::ObjectSupport)
 
-ActiveRecord::Base.send(:include, SimpleEnum)
+ActiveRecord::Base.send(:include, SimpleEnum) if defined?(ActiveRecord)
 I18n.load_path << File.join(File.dirname(__FILE__), '..', 'locales', 'en.yml')
