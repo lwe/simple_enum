@@ -1,3 +1,5 @@
+require File.expand_path('../test_helper', __FILE__)
+
 class ObjectSupportTest < ActiveSupport::TestCase
   
   test "ensure that symbols stay symbols" do
