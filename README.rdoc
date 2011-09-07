@@ -3,15 +3,17 @@
 A Rails plugin which brings easy-to-use enum-like functionality to
 ActiveRecord models (now compatible with rails 3, ruby 1.9 and jruby).
 
+Since version 1.4, simple_enum is no longer compatible with activerecord 2.x, use
+version 1.3.2 instead: <https://github.com/lwe/simple_enum/tree/v1.3.2>.
+
 *Note*: a recent search on github for `enum` turned out, that there are many, many similar solutions.
-Yet, none seem to provide so many options, but I may be biased ;)
 
 == Quick start
 
 Add this to a model:
 
     class User < ActiveRecord::Base
-      as_enum :gender, {:female => 1, :male => 0}
+      as_enum :gender, :female => 1, :male => 0
     end
 
 Then create the new column using migrations:
@@ -114,7 +116,7 @@ useful when creating queries, displaying option elements or similar:
   are also available via the enhanced enumeration hash:
 
         class Message < ActiveRecord::Base
-          as_enum :status, { :unread => 0, :read => 1, :archived => 99}, :slim => :class
+          as_enum :status, { :unread => 0, :read => 1, :archived => 99 }, :slim => :class
         end
 
         msg = Message.new :body => 'Hello World!', status_cd => 0
@@ -162,12 +164,12 @@ useful when creating queries, displaying option elements or similar:
 
 Searching for certain values by using the finder methods:
 
-    User.find :all, :conditions => { :gender_cd => User.female }
+    User.where(:gender_cd => User.female)
 
 Working with database backed values, now assuming that there exists a +genders+ table:
 
     class Person < ActiveRecord::Base
-      as_enum :gender, Gender.find(:all).map { |g| [g.name.to_sym, g.id] } # map to array of symbols
+      as_enum :gender, Gender.all.map { |g| [g.name.to_sym, g.id] } # map to array of symbols
     end
 
 Working with object backed values, the only requirement to enable this is that <em>a)</em> either a field name +name+ exists
@@ -176,7 +178,7 @@ or <em>b)</em> a custom method to convert an object to a symbolized form named +
 
     class Status < ActiveRecord::Base
       # this has a column named :name
-      STATUSES = self.find(:all, :order => :name)
+      STATUSES = self.order(:name)
     end
 
     class BankTransaction < ActiveRecord::Base
