@@ -12,21 +12,16 @@ require 'active_record'
 require 'active_support/version'
 require 'active_record/version'
 
-# setup fake rails env
-ROOT       = File.join(File.dirname(__FILE__), '..')
-RAILS_ROOT = ROOT
-RAILS_ENV  = 'test'
-
 # create database connection (in memory db!)
 ActiveRecord::Base.establish_connection({
   :adapter => RUBY_PLATFORM =~ /java/ ? 'jdbcsqlite3' : 'sqlite3',
   :database => ':memory:'})
 
 # load simple_enum
-require File.join(ROOT, 'init')
+require 'simple_enum'
 
 # load dummy class
-require File.join(ROOT, 'test', 'models')
+require File.join(File.dirname(__FILE__), 'models')
 
 # Test environment info
 puts "Testing against: activesupport-#{ActiveSupport::VERSION::STRING}, activerecord-#{ActiveRecord::VERSION::STRING}"
@@ -40,24 +35,24 @@ def reload_db(options = {})
     t.column :word_cd, :string, :limit => 5
     t.column :other, :integer
   end
-  
+
   # Create ref-data table and fill with records
   ActiveRecord::Base.connection.create_table :genders, :force => true do |t|
     t.column :name, :string
-  end  
-  
+  end
+
   if options[:fill]
     # fill db with some rows
     Dummy.create({ :name => 'Anna',  :gender_cd => 1, :word_cd => 'alpha', :other => 0})
     Dummy.create({ :name => 'Bella', :gender_cd => 1, :word_cd => 'beta', :other => 1})
     Dummy.create({ :name => 'Chris', :gender_cd => 0, :word_cd => 'gamma', :other => 2})
   end
-  
-  if options[:genders]    
+
+  if options[:genders]
     male = Gender.new({ :name => 'male' })
     male.id = 0;
     male.save!
-    
+
     female = Gender.new({ :name => 'female' })
     female.id = 1;
     female.save!
@@ -68,6 +63,6 @@ end
 if Object.const_defined?('IRB')
   reload_db :fill => true, :genders => true
 else # and load test classes when in test cases...
-  require 'test/unit'  
+  require 'test/unit'
   require 'active_support/test_case'
 end
