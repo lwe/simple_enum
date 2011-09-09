@@ -1,0 +1,17 @@
+# english translation
+en:
+  activerecord:
+    errors:
+      models:
+        simple_enum_test/validated_computer:
+          attributes:
+            operating_system:
+              invalid_enum: y u no os?
+    enums:
+      dummy:
+        genders:
+          female: Girl
+        didums:
+          foo:
+            one: Foo
+            other: Foos

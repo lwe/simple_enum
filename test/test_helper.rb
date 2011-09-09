@@ -26,6 +26,9 @@ require File.join(File.dirname(__FILE__), 'models')
 # Test environment info
 puts "Testing against: activesupport-#{ActiveSupport::VERSION::STRING}, activerecord-#{ActiveRecord::VERSION::STRING}"
 
+# Add test locales
+I18n.load_path << File.join(File.dirname(__FILE__), 'locales.yml')
+
 # Reload database
 def reload_db(options = {})
   options = { :fill => true, :genders => false }.merge(options)
