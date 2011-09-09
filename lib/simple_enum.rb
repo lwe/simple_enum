@@ -229,12 +229,12 @@ module SimpleEnum
       I18n.translate(defaults.shift, options.merge(:default => defaults.flatten, :scope => [:activerecord, :enums]))
     end
 
-    protected
-      # Returns enum definitions as defined by each call to
-      # +as_enum+.
-      def enum_definitions
-        read_inheritable_attribute(:enum_definitions)
-      end
+
+    # Returns enum definitions as defined by each call to
+    # +as_enum+.
+    def enum_definitions
+      read_inheritable_attribute(:enum_definitions)
+    end
   end
 end
 
