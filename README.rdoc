@@ -203,7 +203,7 @@ or <em>b)</em> a custom method to convert an object to a symbolized form named +
 
 * dmitry - bugfixes and other improvements
 * tarsolya - implemented all the ruby 1.9 and rails 3 goodness!
-* dbalatero - rails 2.3.5 bugfix
+* dbalatero - rails 2.3.5 bugfix & validator fixes
 * johnthethird - feature for <tt>_for_select</tt> to return the values
 
 == Licence & Copyright
