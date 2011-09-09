@@ -41,11 +41,14 @@ module SimpleEnum
     end
 
     def included(base) #:nodoc:
+      base.send :class_attribute, :enum_definitions, :instance_write => false, :instance_reader => false
+      base.enum_definitions = {}
       base.send :extend, ClassMethods
     end
   end
 
   module ClassMethods
+
     # Provides ability to create simple enumerations based on hashes or arrays, backed
     # by integer columns (but not limited to integer columns).
     #
@@ -157,8 +160,8 @@ module SimpleEnum
       values_inverted = values.invert
 
       # store info away
-      write_inheritable_attribute(:enum_definitions, {}) if enum_definitions.nil?
-      enum_definitions[enum_cd] = enum_definitions[options[:column]] = { :name => enum_cd, :column => options[:column], :options => options }
+      self.enum_definitions = {} if self.enum_definitions.nil?
+      self.enum_definitions[enum_cd] = self.enum_definitions[options[:column]] = { :name => enum_cd, :column => options[:column], :options => options }
 
       # generate getter
       define_method("#{enum_cd}") do
@@ -176,13 +179,14 @@ module SimpleEnum
       # allow access to defined values hash, e.g. in a select helper or finder method.
       attr_name = enum_cd.to_s.pluralize
       enum_attr = :"#{attr_name.downcase}_enum_hash"
-      write_inheritable_attribute(enum_attr, values)
 
       class_eval(<<-RUBY, __FILE__, __LINE__ + 1)
+        class_attribute #{enum_attr.inspect}, :instance_write => false, :instance_reader => false
+
         def self.#{attr_name}(*args)
-          return read_inheritable_attribute(#{enum_attr.inspect}) if args.first.nil?
-          return read_inheritable_attribute(#{enum_attr.inspect})[args.first] if args.size == 1
-          args.inject([]) { |ary, sym| ary << read_inheritable_attribute(#{enum_attr.inspect})[sym]; ary }
+          return #{enum_attr} if args.first.nil?
+          return #{enum_attr}[args.first] if args.size == 1
+          args.inject([]) { |ary, sym| ary << #{enum_attr}[sym]; ary }
         end
 
         def self.#{attr_name}_for_select(attr = :key, &block)
@@ -191,6 +195,9 @@ module SimpleEnum
           end
         end
       RUBY
+
+      # write values
+      self.send "#{enum_attr}=", values
 
       # only create if :slim is not defined
       if options[:slim] != true
@@ -227,13 +234,6 @@ module SimpleEnum
       defaults << "#{key}".humanize
       options[:count] ||= 1
       I18n.translate(defaults.shift, options.merge(:default => defaults.flatten, :scope => [:activerecord, :enums]))
-    end
-
-
-    # Returns enum definitions as defined by each call to
-    # +as_enum+.
-    def enum_definitions
-      read_inheritable_attribute(:enum_definitions)
     end
   end
 end
