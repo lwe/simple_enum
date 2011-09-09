@@ -143,6 +143,30 @@ class SimpleEnumTest < ActiveSupport::TestCase
     assert_equal(1, computer.errors[:manufacturer].size)
   end
 
+  test "default error messages using translations" do
+    class ValidatedComputer < Computer
+      set_table_name 'computers'
+      validates_as_enum :manufacturer
+      validates_as_enum :operating_system
+    end
+
+    computer = ValidatedComputer.new
+    assert !computer.save, "save should return false"
+    assert_equal "invalid option supplied.", computer.errors[:manufacturer].first
+    assert_equal "y u no os?", computer.errors[:operating_system].first
+  end
+
+  test "allow setting custom error via :message" do
+    class ValidateMessageComputer < Computer
+      set_table_name 'computers'
+      validates_as_enum :manufacturer, :message => "invalid manufacturer"
+    end
+
+    computer = ValidateMessageComputer.new
+    assert !computer.valid?, "valid? should return false"
+    assert_equal "invalid manufacturer", computer.errors[:manufacturer].first
+  end
+
   test "raises ArgumentError if invalid symbol is passed" do
     assert_raise ArgumentError do
       Dummy.new :gender => :foo
