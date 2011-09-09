@@ -207,4 +207,4 @@ or <em>b)</em> a custom method to convert an object to a symbolized form named +
 * johnthethird - feature for <tt>_for_select</tt> to return the values
 
 == Licence & Copyright
-Copyright (c) 2009 by Lukas Westermann, Licenced under MIT Licence (see LICENCE file)
+Copyright (c) 2011 by Lukas Westermann, Licenced under MIT Licence (see LICENCE file)
