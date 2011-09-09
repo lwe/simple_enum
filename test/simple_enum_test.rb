@@ -44,23 +44,101 @@ class SimpleEnumTest < ActiveSupport::TestCase
   test "create and save new record then test symbols" do
     d = Dummy.create({ :name => 'Dummy', :gender_cd => 0 }) # :gender => male
     assert_equal(true, d.male?)
-    
+
     # change :gender_cd to 1
     d.female!
-    d.save!    
+    d.save!
     assert_equal(true, Dummy.find(d.id).female?)
   end
-  
-  test "add validation and test validations" do
-    Dummy.class_eval { validates_as_enum :gender }
-    
-    d = Dummy.new :gender_cd => 5 # invalid number :)
-    assert_equal(false, d.save)
-    d.gender_cd = 1
-    assert_equal(true, d.save)
-    assert_equal(:female, d.gender)
+
+  test "validation :if" do
+    class ValidateIfComputer < Computer
+      set_table_name 'computers'
+
+      validates_as_enum :manufacturer, :if => lambda { |computer|
+        computer.name == "Fred"
+      }
+    end
+
+    computer = ValidateIfComputer.new(:manufacturer_cd => 48328432)
+
+    computer.name = nil
+    assert_equal(true, computer.save)
+
+    computer.name = "Fred"
+    assert_equal(false, computer.save)
   end
-  
+
+  test "validation :unless" do
+    class ValidateUnlessComputer < Computer
+      set_table_name 'computers'
+
+      validates_as_enum :manufacturer, :unless => lambda { |computer|
+        computer.name == "Unless"
+      }
+    end
+
+    computer = ValidateUnlessComputer.new(:manufacturer_cd => 48328432)
+
+    computer.name = nil
+    assert_equal(false, computer.save)
+    assert_equal(1, computer.errors[:manufacturer].size)
+
+    computer.name = "Unless"
+    assert_equal(true, computer.save)
+  end
+
+  test "validation :on => :update" do
+    class ValidateOnUpdateComputer < Computer
+      set_table_name 'computers'
+
+      validates_as_enum :manufacturer, :on => :update
+    end
+
+    computer = ValidateOnUpdateComputer.new(:manufacturer_cd => nil)
+    assert_equal(true, computer.save)
+
+    computer.name = 'Something else'
+    assert_equal(false, computer.save)
+    assert_equal(1, computer.errors[:manufacturer].size)
+  end
+
+  test "validation :on => :create" do
+    class ValidateOnCreateComputer < Computer
+      set_table_name 'computers'
+
+      validates_as_enum :manufacturer, :on => :create
+    end
+
+    computer = ValidateOnCreateComputer.new(:manufacturer_cd => nil)
+    assert_equal(false, computer.save)
+    assert_equal(1, computer.errors[:manufacturer].size)
+
+    computer.manufacturer = :apple
+    assert_equal(true, computer.save)
+
+    computer.manufacturer = nil
+    assert_equal(true, computer.save)
+  end
+
+  test "validation :allow_nil" do
+    class ValidateAllowNilComputer < Computer
+      set_table_name 'computers'
+
+      validates_as_enum :manufacturer, :allow_nil => true
+    end
+
+    computer = ValidateAllowNilComputer.new(:manufacturer_cd => nil)
+    assert_equal(true, computer.save)
+
+    computer.manufacturer = :apple
+    assert_equal(true, computer.save)
+
+    computer.manufacturer_cd = 84321483219
+    assert_equal(false, computer.save)
+    assert_equal(1, computer.errors[:manufacturer].size)
+  end
+
   test "raises ArgumentError if invalid symbol is passed" do
     assert_raise ArgumentError do
       Dummy.new :gender => :foo
