@@ -162,6 +162,15 @@ useful when creating queries, displaying option elements or similar:
 
 == Best practices
 
+Do not use the same name for the enum as for the column, note that this mode of use is
+deprecated starting with version 1.4.1, e.g.
+
+    # BAD
+    as_enum :status, [:active, :inactive, :archived], :column => "status"
+
+    # GOOD
+    as_enum :project_status, [:active, :inactive, :archived], :column => "status"
+
 Searching for certain values by using the finder methods:
 
     User.where(:gender_cd => User.female)

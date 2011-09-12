@@ -15,6 +15,8 @@ require 'simple_enum/enum_hash'
 require 'simple_enum/object_support'
 require 'simple_enum/validation'
 
+require 'active_support/deprecation'
+
 # Base module which gets included in <tt>ActiveRecord::Base</tt>. See documentation
 # of +SimpleEnum::ClassMethods+ for more details.
 module SimpleEnum
@@ -33,6 +35,8 @@ module SimpleEnum
     # * <tt>:whiny</tt> - Boolean value which if set to <tt>true</tt> will throw an <tt>ArgumentError</tt>
     #   if an invalid value is passed to the setter (e.g. a value for which no enumeration exists). if set to
     #   <tt>false</tt> no exception is thrown and the internal value is set to <tt>nil</tt> (default is <tt>true</tt>)
+    # * <tt>:dirty</tt> - Boolean value which if set to <tt>true</tt> generates <tt>..._was</tt> and <tt>..._changed?</tt>
+    #   methods for the enum, which delegate to the internal column.
     def default_options
       @default_options ||= {
         :whiny => true,
@@ -67,7 +71,7 @@ module SimpleEnum
     #   # or use a hash:
     #
     #   class User < ActiveRecord::Base
-    #     as_enum :status, { :active => 1, :inactive => 0, :archived => 2, :deleted => 3 }, :column => 'status'
+    #     as_enum :user_status, { :active => 1, :inactive => 0, :archived => 2, :deleted => 3 }, :column => 'status'
     #   end
     #
     # Now it's possible to access the enumeration and the internally stored value like:
@@ -149,6 +153,8 @@ module SimpleEnum
     # * <tt>:whiny</tt> - Boolean value which if set to <tt>true</tt> will throw an <tt>ArgumentError</tt>
     #   if an invalid value is passed to the setter (e.g. a value for which no enumeration exists). if set to
     #   <tt>false</tt> no exception is thrown and the internal value is set to <tt>nil</tt> (default is <tt>true</tt>)
+    # * <tt>:dirty</tt> - Boolean value which if set to <tt>true</tt> generates <tt>..._was</tt> and <tt>..._changed?</tt>
+    #   methods for the enum, which delegate to the internal column (default is <tt>false</tt>)
     def as_enum(enum_cd, values, options = {})
       options = SimpleEnum.default_options.merge({ :column => "#{enum_cd}_cd" }).merge(options)
       options.assert_valid_keys(:column, :whiny, :prefix, :slim, :upcase, :dirty)
@@ -163,6 +169,9 @@ module SimpleEnum
       self.enum_definitions = {} if self.enum_definitions.nil?
       self.enum_definitions[enum_cd] = self.enum_definitions[options[:column]] = { :name => enum_cd, :column => options[:column], :options => options }
 
+      # display deprecation warning if enum_cd == column
+      ActiveSupport::Deprecation.warn "[simple_enum] use different names for #{enum_cd}'s name and column name (support for this will be dropped in 1.5)" if enum_cd.to_s == options[:column].to_s
+
       # generate getter
       define_method("#{enum_cd}") do
         id = read_attribute options[:column]
@@ -176,8 +185,8 @@ module SimpleEnum
         write_attribute options[:column], v
       end
 
-      unless options[:dirty] === false
-        # support dirty attributes by delegating to column
+      # support dirty attributes by delegating to column, currently opt-in
+      if options[:dirty]
         define_method("#{enum_cd}_changed?") do
           self.send("#{options[:column]}_changed?")
         end

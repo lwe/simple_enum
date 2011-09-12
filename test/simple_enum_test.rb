@@ -203,4 +203,20 @@ class SimpleEnumTest < ActiveSupport::TestCase
     d.gender = ''
     assert_nil(d.gender)
   end
+
+  test "deprecation warning when using enum name == column name" do
+    original_behavior = ActiveSupport::Deprecation.behavior
+    begin
+      expected = 0
+      ActiveSupport::Deprecation.silenced = false
+      ActiveSupport::Deprecation.behavior = Proc.new { |msg, cb| expected += 1 if msg =~ /\[simple_enum\].+gender_cd/ }
+      invalid_dummy = Class.new(ActiveRecord::Base) do
+        as_enum :gender_cd, [:male, :female], :column => "gender_cd"
+      end
+
+      assert expected == 1, "deprecation message not displayed"
+    ensure
+      ActiveSupport::Deprecation.behavior = original_behavior
+    end
+  end
 end
