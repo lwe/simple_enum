@@ -176,6 +176,11 @@ module SimpleEnum
         write_attribute options[:column], v
       end
 
+      # support dirty attributes by delegating to column
+      define_method("#{enum_cd}_changed?") do
+        self.send("#{options[:column]}_changed?")
+      end
+
       # allow access to defined values hash, e.g. in a select helper or finder method.
       attr_name = enum_cd.to_s.pluralize
       enum_attr = :"#{attr_name.downcase}_enum_hash"
