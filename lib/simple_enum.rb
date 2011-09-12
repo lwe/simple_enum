@@ -151,7 +151,7 @@ module SimpleEnum
     #   <tt>false</tt> no exception is thrown and the internal value is set to <tt>nil</tt> (default is <tt>true</tt>)
     def as_enum(enum_cd, values, options = {})
       options = SimpleEnum.default_options.merge({ :column => "#{enum_cd}_cd" }).merge(options)
-      options.assert_valid_keys(:column, :whiny, :prefix, :slim, :upcase)
+      options.assert_valid_keys(:column, :whiny, :prefix, :slim, :upcase, :dirty)
 
       metaclass = (class << self; self; end)
 
@@ -176,9 +176,15 @@ module SimpleEnum
         write_attribute options[:column], v
       end
 
-      # support dirty attributes by delegating to column
-      define_method("#{enum_cd}_changed?") do
-        self.send("#{options[:column]}_changed?")
+      unless options[:dirty] === false
+        # support dirty attributes by delegating to column
+        define_method("#{enum_cd}_changed?") do
+          self.send("#{options[:column]}_changed?")
+        end
+
+        define_method("#{enum_cd}_was") do
+          values_inverted[self.send("#{options[:column]}_was")]
+        end
       end
 
       # allow access to defined values hash, e.g. in a select helper or finder method.
