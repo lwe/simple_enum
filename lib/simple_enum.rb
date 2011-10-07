@@ -198,7 +198,6 @@ module SimpleEnum
         def human_#{attr_name}
           self.human_enum_name(#{attr_name.inspect}, self.#{enum_cd})
         end
-      end
       RUBY
 
       # only create if :slim is not defined
