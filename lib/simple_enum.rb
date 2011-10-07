@@ -174,6 +174,10 @@ module SimpleEnum
         write_attribute options[:column], v
       end
       
+      define_method("human_#{enum_cd}") do
+        "#{attr_name.inspect}, #{self.send(enum_cd)}"
+      end
+      
       # allow access to defined values hash, e.g. in a select helper or finder method.
       attr_name = enum_cd.to_s.pluralize
       enum_attr = :"#{attr_name.downcase}_enum_hash"
@@ -191,12 +195,6 @@ module SimpleEnum
           self.#{attr_name}.map do |k,v|
             [block_given? ? yield(k,v) : self.human_enum_name(#{attr_name.inspect}, k), attr == :value ? v : k]
           end
-        end
-      RUBY
-      
-      instance_eval(<<-RUBY, __FILE__, __LINE__ + 1)
-        def human_#{enum_cd}
-          self.human_enum_name(#{attr_name.inspect}, self.#{enum_cd})
         end
       RUBY
 
