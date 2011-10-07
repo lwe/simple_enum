@@ -179,7 +179,7 @@ module SimpleEnum
       enum_attr = :"#{attr_name.downcase}_enum_hash"
 
       define_method("human_#{enum_cd}") do
-        "#{attr_name.inspect}, #{self.send(enum_cd)}"
+        self.class.human_enum_name(attr_name.inspect, self.send(enum_cd))
       end
 
       write_inheritable_attribute(enum_attr, values)
