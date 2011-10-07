@@ -179,6 +179,8 @@ module SimpleEnum
       enum_attr = :"#{attr_name.downcase}_enum_hash"
 
       define_method("human_#{enum_cd}") do
+        p "Calling: #{attr_name}, #{self.send(enum_cd)}"
+        p "#{self.class.human_enum_name('delivery_types', :date)}"
         self.class.human_enum_name(attr_name.inspect, self.send(enum_cd))
       end
 
