@@ -173,7 +173,7 @@ module SimpleEnum
         raise(ArgumentError, "Invalid enumeration value: #{new_value}") if (options[:whiny] and v.nil? and !new_value.blank?)
         write_attribute options[:column], v
       end
-
+      
       # allow access to defined values hash, e.g. in a select helper or finder method.
       attr_name = enum_cd.to_s.pluralize
       enum_attr = :"#{attr_name.downcase}_enum_hash"
@@ -195,7 +195,7 @@ module SimpleEnum
       RUBY
       
       instance_eval(<<-RUBY, __FILE__, __LINE__ + 1)
-        def human_#{attr_name}
+        def human_#{enum_cd}
           self.human_enum_name(#{attr_name.inspect}, self.#{enum_cd})
         end
       RUBY
