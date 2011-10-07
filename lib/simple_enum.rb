@@ -173,14 +173,14 @@ module SimpleEnum
         raise(ArgumentError, "Invalid enumeration value: #{new_value}") if (options[:whiny] and v.nil? and !new_value.blank?)
         write_attribute options[:column], v
       end
-      
-      define_method("human_#{enum_cd}") do
-        "#{attr_name.inspect}, #{self.send(enum_cd)}"
-      end
-      
+            
       # allow access to defined values hash, e.g. in a select helper or finder method.
       attr_name = enum_cd.to_s.pluralize
       enum_attr = :"#{attr_name.downcase}_enum_hash"
+
+      define_method("human_#{enum_cd}") do
+        "#{attr_name.inspect}, #{self.send(enum_cd)}"
+      end
 
       write_inheritable_attribute(enum_attr, values)
 
