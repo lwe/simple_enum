@@ -171,6 +171,14 @@ deprecated starting with version 1.4.1, e.g.
     # GOOD
     as_enum :project_status, [:active, :inactive, :archived], :column => "status"
 
+Do not use states named after existing, or well known method names, like `new` or `create`, e.g.
+
+    # BAD, conflicts with Rails ActiveRecord Methods (!)
+    as_enum :handle, [:new, :create, :update]
+
+    # BETTER, prefixes all methods
+    as_enum :handle, [:new, :create, :update], :prefix => true
+
 Searching for certain values by using the finder methods:
 
     User.where(:gender_cd => User.female)
