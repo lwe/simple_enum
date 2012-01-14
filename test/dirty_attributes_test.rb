@@ -10,7 +10,7 @@ class DirtyAttributesTest < ActiveSupport::TestCase
     reload_db
   end
 
-  test "setting using changed? on enum" do
+  def test_setting_using_changed_on_enum
     jane = DirtyDummy.create!(:gender => :female)
     assert_equal 1, jane.gender_cd
     jane.gender = :male # operation? =)
@@ -19,7 +19,7 @@ class DirtyAttributesTest < ActiveSupport::TestCase
     assert_equal true, jane.gender_changed?
   end
 
-  test "access old value via gender_was" do
+  def test_access_old_value_via gender_was
     john = DirtyDummy.create!(:gender => :male)
     assert_equal 0, john.gender_cd
     john.gender = :female
@@ -28,7 +28,7 @@ class DirtyAttributesTest < ActiveSupport::TestCase
     assert_equal :male, john.gender_was
   end
 
-  test "dirty methods are disabled by default (opt-in)" do
+  def test_dirty_methods_are_disabled_by_default
     no_dirty = Dummy.new
     assert !no_dirty.respond_to?(:gender_was), "should not respond_to :gender_was"
     assert !no_dirty.respond_to?(:gender_changed?), "should not respond_to :gender_changed?"
