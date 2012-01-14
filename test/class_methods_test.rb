@@ -5,7 +5,7 @@ class ClassMethodsTest < MiniTest::Unit::TestCase
     reload_db
   end
 
-  test "that_klass_genders_array_accessor_equal_to_attr_accessor" do
+  def test_that_klass_genders_array_accessor_equal_to_attr_accessor
     assert_equal 0, Dummy.genders(:male)
     assert_equal Dummy.genders(:male), Dummy.genders[:male]
     assert_nil Dummy.genders(:inexistent)
@@ -13,27 +13,28 @@ class ClassMethodsTest < MiniTest::Unit::TestCase
     refute_nil Dummy.genders[:female]
   end
 
-  test "inheritance of `genders` to subclasses (#issue/3)" do
+  def test_inheritance_of_genders_to_subclasses
+    # issue#3
     assert_equal({ :female => 1, :male => 0}, SpecificDummy.genders)
   end
 
-  test "genders_reader_created" do
+  def test_genders_reader_created
     assert_equal [0, 1], Dummy.genders.values.sort
     assert_equal %w{female male}, Dummy.genders.keys.map(&:to_s).sort
   end
 
-  test "that_klass_genders_return_array_of_values" do
+  def test_that_klass_genders_return_array_of_values
     # usefuled for IN clauses
     assert_equal [0, 1], Dummy.genders(:male, :female)
     assert_equal [1, 0], Dummy.genders(:female, :male)
   end
 
-  test "inverted Hash returns synonym by code" do
+  def test_inverted_hash_returns_synonym_by_code
     assert_equal :male, Dummy.genders.invert[0]
     assert_equal :female, Dummy.genders.invert[1]
   end
 
-  test "generation of value shortcuts on class" do
+  def test_generation_of_value_shortcuts_on_class
     g = Dummy.new
 
     assert_equal 0, Dummy.male
@@ -45,7 +46,7 @@ class ClassMethodsTest < MiniTest::Unit::TestCase
     assert_respond_to Dummy, :foobar
   end
 
-  test "that no Klass.shortcut are created if :slim => true" do
+  def test_that_no_klass_shortcuts_are_created_if_slim_true
     with_slim = named_dummy('Dummy1') do
       as_enum :gender, [:male, :female], :slim => true
     end
@@ -55,7 +56,7 @@ class ClassMethodsTest < MiniTest::Unit::TestCase
     assert_respond_to with_slim, :genders
   end
 
-  test "that no Klass.shortcut's are created if :slim => :class, though instance shortcuts are" do
+  def test_that_no_klass_shortcuts_are_created_if_slim_class_though_instance_shortcuts_are
     with_slim_class = named_dummy('Dummy2') do
       as_enum :gender, [:male, :female], :slim => :class
     end
@@ -71,7 +72,7 @@ class ClassMethodsTest < MiniTest::Unit::TestCase
     assert_same 1, with_slim_class.genders[:female]
   end
 
-  test "that Klass.shortcut respect :prefix => true and are prefixed by \#{enum_cd}" do
+  def test_that_klass_shortcuts_respect_prefix_true_and_are_prefixed_by_enum_cd
     with_prefix = named_dummy('Dummy3') do
       as_enum :gender, [:male, :female], :prefix => true
     end
@@ -84,7 +85,7 @@ class ClassMethodsTest < MiniTest::Unit::TestCase
     assert_respond_to with_prefix, :genders
   end
 
-  test "to ensure that Klass.shortcut also work with custom prefixes" do
+  def test_to_ensure_that_klass_shortcut_also_work_with_custom_prefixes
     with_custom_prefix = named_dummy('Dummy4') do
       as_enum :gender, [:male, :female], :prefix => :g
     end
@@ -98,14 +99,14 @@ class ClassMethodsTest < MiniTest::Unit::TestCase
     assert_respond_to with_custom_prefix, :genders
   end
 
-  test "that the human_enum_name method returns translated/humanized values" do
+  def test_that_the_human_enum_name_method_returns_translated_humanized_values
     assert_equal :male.to_s.humanize, Dummy.human_enum_name(:genders, :male)
     assert_equal "Girl", Dummy.human_enum_name(:genders, :female)
     assert_equal "Foo", Dummy.human_enum_name(:didums, :foo)
     assert_equal "Foos", Dummy.human_enum_name(:didums, :foo, :count => 5)
   end
 
-  test "enum_for_select(:value) class method" do
+  def test_enum_for_select_value_class_method
     for_select = Dummy.genders_for_select(:value)
     assert_equal ["Male", 0], for_select.first
     assert_equal ["Girl", 1], for_select.last
