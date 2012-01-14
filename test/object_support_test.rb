@@ -1,17 +1,17 @@
-require File.expand_path('../test_helper', __FILE__)
+require 'test_helper'
 
-class ObjectSupportTest < ActiveSupport::TestCase
+class ObjectSupportTest < MiniTest::Unit::TestCase
   
-  test "ensure that symbols stay symbols" do
+  test "that_symbols_stay_symbols" do
     assert_same :sym, :sym.to_enum_sym
   end
   
-  test "ensure that strings are just converted to symbols, whatever they look like" do
+  test "that_strings_are_just_converted_to_symbols" do
     assert_same :sym, 'sym'.to_enum_sym
     assert_same :OtherSym, 'OtherSym'.to_enum_sym
   end
   
-  test "convert custom class to symbol, by providing attr_accessor :name" do
+  test "conversion_of_custom_class_to_symbol" do
     has_name = Class.new do
       attr_accessor :name
     end

@@ -8,65 +8,38 @@ require 'bundler/setup'
 
 require 'test/unit'
 require 'active_support'
-require 'active_record'
 require 'active_support/version'
-require 'active_record/version'
+require 'minitest/autorun'
 
-# create database connection (in memory db!)
-ActiveRecord::Base.establish_connection({
-  :adapter => RUBY_PLATFORM =~ /java/ ? 'jdbcsqlite3' : 'sqlite3',
-  :database => ':memory:'})
+# setup fake rails env
+ROOT       = File.join(File.dirname(__FILE__), '..')
+RAILS_ROOT = ROOT
+RAILS_ENV  = 'test'
 
-# load simple_enum
+# load orms
+ORM = ENV['ORM'] || 'active_record'
+
+def mongoid?; return ORM == 'mongoid';end
+def activerecord?; return ORM == 'active_record';end
+
+# load database implemntation
+require ORM
+
+# load simple enum
 require 'simple_enum'
 
-# load dummy class
-require File.join(File.dirname(__FILE__), 'models')
-
-# Test environment info
-puts "Testing against: activesupport-#{ActiveSupport::VERSION::STRING}, activerecord-#{ActiveRecord::VERSION::STRING}"
+# load ORM specific stuff
+require 'orm/common'
+require "orm/#{ORM}"
 
 # Add test locales
 I18n.load_path << File.join(File.dirname(__FILE__), 'locales.yml')
 
-# Reload database
-def reload_db(options = {})
-  options = { :fill => true, :genders => false }.merge(options)
-  ActiveRecord::Base.connection.create_table :dummies, :force => true do |t|
-    t.column :name, :string
-    t.column :gender_cd, :integer
-    t.column :word_cd, :string, :limit => 5
-    t.column :other, :integer
-  end
+# setup db
+setup_db
 
-  ActiveRecord::Base.connection.create_table :computers, :force => true do |t|
-    t.column :name, :string
-    t.column :operating_system_cd, :integer
-    t.column :manufacturer_cd, :integer
-  end
-
-  # Create ref-data table and fill with records
-  ActiveRecord::Base.connection.create_table :genders, :force => true do |t|
-    t.column :name, :string
-  end
-
-  if options[:fill]
-    # fill db with some rows
-    Dummy.create({ :name => 'Anna',  :gender_cd => 1, :word_cd => 'alpha', :other => 0})
-    Dummy.create({ :name => 'Bella', :gender_cd => 1, :word_cd => 'beta', :other => 1})
-    Dummy.create({ :name => 'Chris', :gender_cd => 0, :word_cd => 'gamma', :other => 2})
-  end
-
-  if options[:genders]
-    male = Gender.new({ :name => 'male' })
-    male.id = 0;
-    male.save!
-
-    female = Gender.new({ :name => 'female' })
-    female.id = 1;
-    female.save!
-  end
-end
+# Test environment info
+puts "Testing against: activesupport-#{ActiveSupport::VERSION::STRING}, #{ORM.to_s}-#{orm_version}"
 
 # do some magic to initialze DB for IRB session
 if Object.const_defined?('IRB')

@@ -1,5 +1,6 @@
 require 'test_helper'
 
+<<<<<<< HEAD
 class SimpleEnumTest < ActiveSupport::TestCase
   def setup
     reload_db
@@ -10,23 +11,42 @@ class SimpleEnumTest < ActiveSupport::TestCase
   end
 
   test "get the correct integer values when setting to symbol" do
+=======
+class SimpleEnumTest < MiniTest::Unit::TestCase
+  def setup
+    reload_db
+  end
+  
+  def test_getting_the_correct_integer_values_when_setting_to_symbol
+>>>>>>> sled/master
     d = Dummy.new
     d.gender = :male
     assert_equal(0, d.gender_cd)
   end
+<<<<<<< HEAD
 
   test "get the correct symbol when setting the integer value" do
+=======
+  
+  def test_getting_the_correct_symbold_when_setting_the_integer_value
+>>>>>>> sled/master
     d = Dummy.new
     d.gender_cd = 1
     assert_equal(:female, d.gender)
   end
+<<<<<<< HEAD
 
   test "verify that <symbol>? returns correct result" do
+=======
+  
+  def test_that_checker_returns_correct_result
+>>>>>>> sled/master
     d = Dummy.new
     d.gender = :male
     assert_equal(true, d.male?)
     assert_equal(false, d.female?)
   end
+<<<<<<< HEAD
 
   test "get symbol when rows are fetched from db" do
     # Anna
@@ -34,18 +54,39 @@ class SimpleEnumTest < ActiveSupport::TestCase
     assert_equal(:alpha, Dummy.find(1).word)
     assert_equal(:foo, Dummy.find(1).didum)
 
+=======
+  
+  def test_getting_symbol_when_data_is_fetched_from_datasource
+    # Anna
+    
+    dummies = Dummy.all
+    
+    assert_equal(:female, dummies[0].gender)
+    assert_equal(:alpha, dummies[0].word)
+    assert_equal(:foo, dummies[0].didum)
+    
+>>>>>>> sled/master
     # Bella
-    assert_equal(true, Dummy.find(2).female?)
-    assert_equal(true, Dummy.find(2).beta?)
-    assert_equal(:bar, Dummy.find(2).didum)
+    assert_equal(true, dummies[1].female?)
+    assert_equal(true, dummies[1].beta?)
+    assert_equal(:bar, dummies[1].didum)
 
     # Chris
+<<<<<<< HEAD
     assert_equal(false, Dummy.find(3).female?)
     assert_equal(:gamma, Dummy.find(3).word)
     assert_equal(:foobar, Dummy.find(3).didum)
   end
 
   test "create and save new record then test symbols" do
+=======
+    assert_equal(false, dummies[2].female?)
+    assert_equal(:gamma, dummies[2].word)
+    assert_equal(:foobar, dummies[2].didum)    
+  end
+  
+  def test_creating_and_saving_a_new_datasource_object_then_test_symbols
+>>>>>>> sled/master
     d = Dummy.create({ :name => 'Dummy', :gender_cd => 0 }) # :gender => male
     assert_equal(true, d.male?)
 
@@ -54,6 +95,7 @@ class SimpleEnumTest < ActiveSupport::TestCase
     d.save!
     assert_equal(true, Dummy.find(d.id).female?)
   end
+<<<<<<< HEAD
 
   test "validation :if" do
     class ValidateIfComputer < Computer
@@ -174,6 +216,26 @@ class SimpleEnumTest < ActiveSupport::TestCase
   end
 
   test "raises NO ArgumentError if :whiny => false is defined" do
+=======
+  
+  def test_add_validation_and_test_validations
+    Dummy.class_eval { validates_as_enum :gender }
+    
+    d = Dummy.new :gender_cd => 5 # invalid number :)
+    assert_equal(false, d.save)
+    d.gender_cd = 1
+    assert_equal(true, d.save)
+    assert_equal(:female, d.gender)
+  end
+  
+  def test_that_argumenterror_is_raised_if_invalid_symbol_is_passed
+    assert_raises ArgumentError do
+      Dummy.new :gender => :foo
+    end
+  end
+  
+  def test_that_no_argumenterror_is_raised_if_whiny_is_false
+>>>>>>> sled/master
     not_whiny = Class.new(Dummy) do
       as_enum :gender, [:male, :female], :whiny => false
     end
@@ -183,9 +245,15 @@ class SimpleEnumTest < ActiveSupport::TestCase
     d.gender = ''
     assert_nil(d.gender)
   end
+<<<<<<< HEAD
 
   test "ensure that setting to 'nil' works if :whiny => true and :whiny => false" do
     d = Dummy.new :gender => :male
+=======
+  
+  def test_that_setting_to_nil_works_if_whiny_is_true_or_false
+    d = Dummy.new :gender => :male    
+>>>>>>> sled/master
     assert_equal(:male, d.gender)
     d.gender = nil
     assert_nil(d.gender)

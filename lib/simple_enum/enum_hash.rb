@@ -15,8 +15,8 @@ module SimpleEnum
       if args.is_a?(Hash)
         args.each { |k,v| set_value_for_reverse_lookup(k, v) }
       else
-        ary = args.send(args.respond_to?(:enum_with_index) ? :enum_with_index : :each_with_index).to_a unless args.first.is_a?(ActiveRecord::Base) or args.first.is_a?(Array)
-        ary = args.map { |e| [e, e.id] } if args.first.is_a?(ActiveRecord::Base)
+        ary = args.send(args.respond_to?(:enum_with_index) ? :enum_with_index : :each_with_index).to_a unless args.first.respond_to?(:map)
+        ary = args.map { |e| [e, e.id] } if args.first.respond_to?(:map) && !args.first.is_a?(Array)
         ary ||= args
         ary.each { |e| set_value_for_reverse_lookup(e[0], e[1]) }
       end
@@ -41,6 +41,6 @@ module SimpleEnum
         self[key] = value
         @reverse_sym_lookup[sym] = key
         @sym_value_lookup[sym] = value
-      end    
+      end          
   end
 end

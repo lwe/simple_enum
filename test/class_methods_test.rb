@@ -1,28 +1,29 @@
 require 'test_helper'
 
-class ClassMethodsTest < ActiveSupport::TestCase
+class ClassMethodsTest < MiniTest::Unit::TestCase
   def setup
     reload_db
   end
 
-  test "that Klass.genders[:sym] == Klass.genders(:sym)" do
+  test "that_klass_genders_array_accessor_equal_to_attr_accessor" do
     assert_equal 0, Dummy.genders(:male)
     assert_equal Dummy.genders(:male), Dummy.genders[:male]
     assert_nil Dummy.genders(:inexistent)
     assert_nil Dummy.genders[:inexistent]
-    assert_not_nil Dummy.genders[:female]
+    refute_nil Dummy.genders[:female]
   end
 
   test "inheritance of `genders` to subclasses (#issue/3)" do
     assert_equal({ :female => 1, :male => 0}, SpecificDummy.genders)
   end
 
-  test "genders reader created" do
+  test "genders_reader_created" do
     assert_equal [0, 1], Dummy.genders.values.sort
     assert_equal %w{female male}, Dummy.genders.keys.map(&:to_s).sort
   end
 
-  test "that Klass.genders(:sym_a, :sym_b) returns an array of values, useful for IN clauses" do
+  test "that_klass_genders_return_array_of_values" do
+    # usefuled for IN clauses
     assert_equal [0, 1], Dummy.genders(:male, :female)
     assert_equal [1, 0], Dummy.genders(:female, :male)
   end
@@ -45,11 +46,9 @@ class ClassMethodsTest < ActiveSupport::TestCase
   end
 
   test "that no Klass.shortcut are created if :slim => true" do
-    class Dummy1 < ActiveRecord::Base
-      set_table_name 'dummies'
+    with_slim = named_dummy('Dummy1') do
       as_enum :gender, [:male, :female], :slim => true
     end
-    with_slim = Dummy1
 
     assert !with_slim.respond_to?(:male)
     assert !with_slim.respond_to?(:female)
@@ -57,11 +56,9 @@ class ClassMethodsTest < ActiveSupport::TestCase
   end
 
   test "that no Klass.shortcut's are created if :slim => :class, though instance shortcuts are" do
-    class Dummy2 < ActiveRecord::Base
-      set_table_name 'dummies'
+    with_slim_class = named_dummy('Dummy2') do
       as_enum :gender, [:male, :female], :slim => :class
     end
-    with_slim_class = Dummy2
 
     jane = with_slim_class.new
 
@@ -75,11 +72,9 @@ class ClassMethodsTest < ActiveSupport::TestCase
   end
 
   test "that Klass.shortcut respect :prefix => true and are prefixed by \#{enum_cd}" do
-    class Dummy3 < ActiveRecord::Base
-      set_table_name 'dummies'
+    with_prefix = named_dummy('Dummy3') do
       as_enum :gender, [:male, :female], :prefix => true
     end
-    with_prefix = Dummy3
 
     assert !with_prefix.respond_to?(:male)
     assert !with_prefix.respond_to?(:female)
@@ -90,11 +85,9 @@ class ClassMethodsTest < ActiveSupport::TestCase
   end
 
   test "to ensure that Klass.shortcut also work with custom prefixes" do
-    class Dummy4 < ActiveRecord::Base
-      set_table_name 'dummies'
+    with_custom_prefix = named_dummy('Dummy4') do
       as_enum :gender, [:male, :female], :prefix => :g
     end
-    with_custom_prefix = Dummy4
 
     assert !with_custom_prefix.respond_to?(:male)
     assert !with_custom_prefix.respond_to?(:female)
@@ -110,14 +103,6 @@ class ClassMethodsTest < ActiveSupport::TestCase
     assert_equal "Girl", Dummy.human_enum_name(:genders, :female)
     assert_equal "Foo", Dummy.human_enum_name(:didums, :foo)
     assert_equal "Foos", Dummy.human_enum_name(:didums, :foo, :count => 5)
-  end
-
-  test "enum_for_select class method" do
-    for_select = Dummy.genders_for_select
-    genders = Dummy.genders
-    assert_equal genders.first.first, for_select.first.second
-    assert_equal ["Male", :male], for_select.first
-    assert_equal ["Girl", :female], for_select.last
   end
 
   test "enum_for_select(:value) class method" do

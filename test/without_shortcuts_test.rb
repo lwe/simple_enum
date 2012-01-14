@@ -1,16 +1,15 @@
 require 'test_helper'
 
-class SlimDummy < ActiveRecord::Base
-  set_table_name 'dummies'
-  as_enum :gender, [:male, :female], :slim => true
-end
-
-class WithoutShortcutsTest < ActiveSupport::TestCase  
+class WithoutShortcutsTest < MiniTest::Unit::TestCase  
   def setup
     reload_db
+    
+    named_dummy('SlimDummy') do
+      as_enum :gender, [:male, :female], :slim => true
+    end
   end
 
-  test "that no shortcut methods are generated if :slim => true" do
+  def test_that_no_shortcut_methods_are_generated_if_slime_is_true
     jane = SlimDummy.new
     jane.gender = :female
     
@@ -23,8 +22,8 @@ class WithoutShortcutsTest < ActiveSupport::TestCase
     assert !jane.respond_to?(:female?), "should not respond_to <female?>"
   end
   
-  test "that saving and loading from a DB still works, even if :slim => true" do
-    anna = SlimDummy.find_by_name 'Anna'
+  def test_that_saving_and_loading_from_datasource_works_even_if_slim_is_true
+    anna = SlimDummy.where(:name => 'Anna').first
     
     assert_equal 1, anna.gender_cd
     assert_equal :female, anna.gender

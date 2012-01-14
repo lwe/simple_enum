@@ -1,4 +1,4 @@
-def fill_db(options={}) 
+def fill_db(options={})
   options = { :fill => true, :genders => false }.merge(options)
 
   if options[:fill]
@@ -8,13 +8,8 @@ def fill_db(options={})
     Dummy.create({ :name => 'Chris', :gender_cd => 0, :word_cd => 'gamma', :other => 2})
   end
 
-  if options[:genders]    
-    male = Gender.new({ :name => 'male' })
-    male.id = 0;
-    male.save!
-
-    female = Gender.new({ :name => 'female' })
-    female.id = 1;
-    female.save!
+  if options[:genders]
+    @male   = Gender.create!({ :name => 'male' })
+    @female = Gender.create!({ :name => 'female' })
   end
 end

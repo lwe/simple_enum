@@ -8,8 +8,9 @@
 #
 # See the +as_enum+ documentation for more details.
 
-# because we depend on AR and i18n
+# because we depend on i18n and activesupport
 require 'i18n'
+require 'active_support'
 
 require 'simple_enum/enum_hash'
 require 'simple_enum/object_support'
@@ -200,6 +201,10 @@ module SimpleEnum
       attr_name = enum_cd.to_s.pluralize
       enum_attr = :"#{attr_name.downcase}_enum_hash"
 
+      define_method("human_#{enum_cd}") do
+        self.class.human_enum_name(attr_name, self.send(enum_cd))
+      end
+
       class_eval(<<-RUBY, __FILE__, __LINE__ + 1)
         class_attribute #{enum_attr.inspect}, :instance_write => false, :instance_reader => false
 
@@ -261,5 +266,30 @@ end
 # Tie stuff together and load translations if ActiveRecord is defined
 Object.send(:include, SimpleEnum::ObjectSupport)
 
-ActiveRecord::Base.send(:include, SimpleEnum) if defined?(ActiveRecord)
+# include in AR
+if defined?(ActiveRecord)
+  ActiveRecord::Base.send(:include, SimpleEnum)
+end
+
+# include in MongoID
+if defined?(Mongoid)
+  # little wrapper so set field
+  module SimpleEnum
+    module Mongoid
+      include SimpleEnum::ClassMethods
+    
+      def as_enum(enum_cd, values, options = {})
+        options = SimpleEnum.default_options.merge({ :column => "#{enum_cd}_cd" }).merge(options)
+        options.assert_valid_keys(:column, :whiny, :prefix, :slim, :upcase)
+
+        field options[:column]
+        super
+      end
+    end
+  end
+  
+  # include in Mongoid
+  Mongoid::Document::ClassMethods.send(:include, SimpleEnum::Mongoid) if defined?(Mongoid)
+end
+
 I18n.load_path << File.join(File.dirname(__FILE__), '..', 'locales', 'en.yml')
