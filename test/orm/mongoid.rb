@@ -7,7 +7,7 @@ end
 def setup_db
   # create database connection
   Mongoid.configure do |config|
-    config.master = Mongo::Connection.new('127.0.0.1', 27017).db("simple-enum-test-suite")
+    config.master = Mongo::Connection.new('localhost').db("simple-enum-test-suite")
     config.use_utc = true
     config.include_root_in_json = true
   end
