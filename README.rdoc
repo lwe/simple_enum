@@ -77,6 +77,14 @@ useful when creating queries, displaying option elements or similar:
   *Disclaimer*: if you _ever_ decide to reorder this array, beaware that any previous mapping is lost. So it's recommended
   to create mappings (that might change) using hashes instead of arrays. For stuff like gender it might be probably perfectly
   fine to use arrays though.
+* Want to use `SimpleEnum` in an ActiveModel, or other class, just do:
+
+        class MyModel
+          include SimpleEnum
+          attr_accessor :gender_cd
+          as_enum :gender, [:male, :female]
+        end
+
 * Maybe you've columns named differently than the proposed <tt>{column}_cd</tt> naming scheme, feel free to use any column name
   by providing an option:
 
@@ -112,7 +120,8 @@ useful when creating queries, displaying option elements or similar:
   The <tt>:prefix</tt> option not only takes a boolean value as an argument, but instead can also be supplied a custom
   prefix (i.e. any string or symbol), so with <tt>:prefix => 'foo'</tt> all shortcut methods would look like: <tt>foo_<symbol>...</tt>
   *Note*: if the <tt>:slim => true</tt> is defined, this option has no effect whatsoever (because no shortcut methods are generated).
-* Sometimes it might be useful to disable the generation of the shortcut methods (<tt><symbol>?</tt>, <tt><symbol>!</tt> and <tt>Klass.<symbol></tt>), to do so just add the option <tt>:slim => true</tt>:
+* Sometimes it might be useful to disable the generation of the shortcut methods (<tt><symbol>?</tt>, <tt><symbol>!</tt> and <tt>Klass.<symbol></tt>),
+  to do so just add the option <tt>:slim => true</tt>:
 
         class User < ActiveRecord::Base
           as_enum :gender, [:male, :female], :slim => true
