@@ -18,7 +18,7 @@ class DirtyAttributesTest < ActiveSupport::TestCase
     assert_equal true, jane.gender_changed?
   end
 
-  def test_access_old_value_via gender_was
+  def test_access_old_value_via_gender_was
     john = DirtyDummy.create!(:gender => :male)
     assert_equal 0, john.gender_cd
     john.gender = :female
