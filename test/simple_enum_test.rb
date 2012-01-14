@@ -20,23 +20,23 @@ class SimpleEnumTest < MiniTest::Unit::TestCase
     d.gender_cd = 1
     assert_equal(:female, d.gender)
   end
-  
+
   def test_that_checker_returns_correct_result
     d = Dummy.new
     d.gender = :male
     assert_equal(true, d.male?)
     assert_equal(false, d.female?)
   end
-  
+
   def test_getting_symbol_when_data_is_fetched_from_datasource
     # Anna
-    
+
     dummies = Dummy.all
-    
+
     assert_equal(:female, dummies[0].gender)
     assert_equal(:alpha, dummies[0].word)
     assert_equal(:foo, dummies[0].didum)
-    
+
     # Bella
     assert_equal(true, dummies[1].female?)
     assert_equal(true, dummies[1].beta?)
@@ -45,9 +45,9 @@ class SimpleEnumTest < MiniTest::Unit::TestCase
     # Chris
     assert_equal(false, dummies[2].female?)
     assert_equal(:gamma, dummies[2].word)
-    assert_equal(:foobar, dummies[2].didum)    
+    assert_equal(:foobar, dummies[2].didum)
   end
-  
+
   def test_creating_and_saving_a_new_datasource_object_then_test_symbols
     d = Dummy.create({ :name => 'Dummy', :gender_cd => 0 }) # :gender => male
     assert_equal(true, d.male?)
@@ -163,7 +163,7 @@ class SimpleEnumTest < MiniTest::Unit::TestCase
       Dummy.new :gender => :foo
     end
   end
-  
+
   def test_that_no_argumenterror_is_raised_if_whiny_is_false
     not_whiny = Class.new(Dummy) do
       as_enum :gender, [:male, :female], :whiny => false
@@ -174,9 +174,9 @@ class SimpleEnumTest < MiniTest::Unit::TestCase
     d.gender = ''
     assert_nil(d.gender)
   end
-  
+
   def test_that_setting_to_nil_works_if_whiny_is_true_or_false
-    d = Dummy.new :gender => :male    
+    d = Dummy.new :gender => :male
     assert_equal(:male, d.gender)
     d.gender = nil
     assert_nil(d.gender)
@@ -201,7 +201,7 @@ class SimpleEnumTest < MiniTest::Unit::TestCase
       expected = 0
       ActiveSupport::Deprecation.silenced = false
       ActiveSupport::Deprecation.behavior = Proc.new { |msg, cb| expected += 1 if msg =~ /\[simple_enum\].+gender_cd/ }
-      invalid_dummy = Class.new(ActiveRecord::Base) do
+      invalid_dummy = anonymous_dummy do
         as_enum :gender_cd, [:male, :female], :column => "gender_cd"
       end
 

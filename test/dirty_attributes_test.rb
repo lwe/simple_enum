@@ -1,7 +1,6 @@
 require 'test_helper'
 
-class DirtyDummy < ActiveRecord::Base
-  set_table_name 'dummies'
+DirtyDummy = anonymous_dummy do
   as_enum :gender, [:male, :female], :dirty => true
 end
 

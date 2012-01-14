@@ -7,11 +7,19 @@ en:
           attributes:
             operating_system:
               invalid_enum: y u no os?
-    enums:
-      dummy:
-        genders:
-          female: Girl
-        didums:
-          foo:
-            one: Foo
-            other: Foos
+  mongoid:
+    errors:
+      models:
+        validated_computer:
+          attributes:
+            operating_system:
+              invalid_enum: y u no os?
+
+  enums:
+    dummy:
+      genders:
+        female: Girl
+      didums:
+        foo:
+          one: Foo
+          other: Foos

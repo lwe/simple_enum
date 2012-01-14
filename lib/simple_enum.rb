@@ -252,13 +252,17 @@ module SimpleEnum
     include Validation
 
     def human_enum_name(enum, key, options = {})
-      klasses = self.respond_to?(:descendants) ? descendants : ancestors
-      defaults = ([self] + klasses).map { |klass| :"#{klass.name.underscore}.#{enum}.#{key}" }
-      defaults << :"#{enum}.#{key}"
+      defaults = lookup_ancestors.map do |klass|
+        :"#{self.i18n_scope}.enums.#{klass.model_name.i18n_key}.#{enum}.#{key}"
+      end
+
+      defaults << :"enums.#{self.model_name.i18n_key}.#{enum}.#{key}"
+      defaults << :"enums.#{enum}.#{key}"
       defaults << options.delete(:default) if options[:default]
-      defaults << "#{key}".humanize
-      options[:count] ||= 1
-      I18n.translate(defaults.shift, options.merge(:default => defaults.flatten, :scope => [:activerecord, :enums]))
+      defaults << key.to_s.humanize
+
+      options.reverse_merge! :count => 1, :default => defaults
+      I18n.translate(defaults.shift, options)
     end
   end
 end
@@ -267,29 +271,9 @@ end
 Object.send(:include, SimpleEnum::ObjectSupport)
 
 # include in AR
-if defined?(ActiveRecord)
-  ActiveRecord::Base.send(:include, SimpleEnum)
-end
+ActiveRecord::Base.send(:include, SimpleEnum) if defined?(ActiveRecord)
+# load MongoID support
+require 'simple_enum/mongoid' if defined?(Mongoid)
 
-# include in MongoID
-if defined?(Mongoid)
-  # little wrapper so set field
-  module SimpleEnum
-    module Mongoid
-      include SimpleEnum::ClassMethods
-    
-      def as_enum(enum_cd, values, options = {})
-        options = SimpleEnum.default_options.merge({ :column => "#{enum_cd}_cd" }).merge(options)
-        options.assert_valid_keys(:column, :whiny, :prefix, :slim, :upcase)
-
-        field options[:column]
-        super
-      end
-    end
-  end
-  
-  # include in Mongoid
-  Mongoid::Document::ClassMethods.send(:include, SimpleEnum::Mongoid) if defined?(Mongoid)
-end
-
+# setup i18n load path...
 I18n.load_path << File.join(File.dirname(__FILE__), '..', 'locales', 'en.yml')
