@@ -1,14 +1,14 @@
 = SimpleEnum - unobtrusive enum-like fields for ActiveRecord
 
 A Rails plugin which brings easy-to-use enum-like functionality to
-ActiveRecord models (now compatible with rails 3.1, ruby 1.9 and jruby).
+ActiveRecord and Mongoid models (now compatible with rails 3.1, ruby 1.9 and jruby).
 
 Since version 1.4, simple_enum is no longer compatible with activerecord 2.x, use
 version 1.3.2 instead: <https://github.com/lwe/simple_enum/tree/v1.3.2>.
 
 *Note*: a recent search on github for `enum` turned out, that there are many, many similar solutions.
 
-== Quick start
+== ActiveRecord Quick start
 
 Add this to a model:
 
@@ -16,7 +16,7 @@ Add this to a model:
       as_enum :gender, :female => 1, :male => 0
     end
 
-Then create the new column using migrations:
+Then create the required `gender_cd` column using migrations:
 
     class AddGenderColumnToUser < ActiveRecord::Migration
       def self.up
@@ -27,6 +27,19 @@ Then create the new column using migrations:
         remove_column :users, :gender_cd
       end
     end
+
+== Mongoid Quick start
+
+Add this to a model:
+
+    class User
+      include Mongoid::Document
+      include SimpleEnum::Mongoid
+
+      as_enum :gender, :female => 1, :male => 0
+    end
+
+== Working with enums
 
 *Done*. Now it's possible to pull some neat tricks on the new column, yet
 the original db column (+gender_cd+) is still intact and not touched by
