@@ -3,7 +3,7 @@ en:
   activerecord:
     errors:
       models:
-        simple_enum_test/validated_computer:
+        validated_computer:
           attributes:
             operating_system:
               invalid_enum: y u no os?

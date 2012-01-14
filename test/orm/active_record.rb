@@ -11,7 +11,6 @@ def setup_db
     :database => ':memory:'})    
 end
 
-
 # Reload database
 def reload_db(options = {})
   ActiveRecord::Base.connection.create_table :dummies, :force => true do |t|
@@ -24,6 +23,13 @@ def reload_db(options = {})
   # Create ref-data table and fill with records
   ActiveRecord::Base.connection.create_table :genders, :force => true do |t|
     t.column :name, :string
+  end
+  
+  # Validations
+  ActiveRecord::Base.connection.create_table :computers, :force => true do |t|
+    t.column :name, :string
+    t.column :operating_system_cd, :integer
+    t.column :manufacturer_cd, :integer
   end  
   
   fill_db(options)
@@ -34,6 +40,16 @@ def anonymous_dummy(&block)
   Class.new(ActiveRecord::Base) do
     set_table_name 'dummies'
     instance_eval &block 
+  end
+end
+
+def extend_computer(current_i18n_name = "Computer", &block)
+  Class.new(Computer) do
+    set_table_name 'computers'
+    instance_eval &block
+    instance_eval <<-RUBY
+      def self.model_name; ActiveModel::Name.new(Computer, nil, #{current_i18n_name.inspect}) end
+    RUBY
   end
 end
 
@@ -49,7 +65,6 @@ def named_dummy(class_name, &block)
   
     klass
   end
-
 end
 
 class Dummy < ActiveRecord::Base
@@ -59,6 +74,11 @@ class Dummy < ActiveRecord::Base
 end
 
 class Gender < ActiveRecord::Base
+end
+
+class Computer < ActiveRecord::Base
+  as_enum :manufacturer, [:dell, :compaq, :apple]
+  as_enum :operating_system, [:windows, :osx, :linux, :bsd]
 end
 
 # Used to test STI stuff
