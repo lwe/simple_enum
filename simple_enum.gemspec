@@ -30,7 +30,6 @@ Gem::Specification.new do |s|
 
   unless RUBY_PLATFORM =~ /java/
     s.add_development_dependency 'sqlite3'
-    s.add_development_dependency 'SystemTimer'
   else
     s.add_development_dependency 'activerecord-jdbcsqlite3-adapter'
   end
