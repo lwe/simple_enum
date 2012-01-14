@@ -92,6 +92,15 @@ useful when creating queries, displaying option elements or similar:
           as_enum :gender, [:male, :female], :column => 'sex'
         end
 
+* Need to provide custom options for the mongoid field, or skip the automatically generated field?
+
+        # skip field generation
+        field :gender_cd # <- create field manually (!)
+        as_enum :gender, [:male, :female], :field => false
+
+        # custom field options (directly passed to Mongoid::Document#field)
+        as_enum :gender, [:male, :female], :field => { :type => Integer, :default => 1 }
+
 * To make it easier to create dropdowns with values use:
 
         <%= select(:user, :gender, User.genders.keys) %>

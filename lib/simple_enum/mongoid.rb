@@ -1,7 +1,7 @@
 require 'simple_enum'
 
 module SimpleEnum
-  
+
   # Enables support for mongoid, also automatically creates the
   # requested field.
   #
@@ -15,32 +15,34 @@ module SimpleEnum
   #
   # When no field is requested:
   #
-  #   field :gender_cd, :type => String
+  #   field :gender_cd, :type => Integer
   #   as_enum :gender, [:female, :male], :field => false
   #
   # or custom field options (like e.g. type want to be passed):
   #
-  #   as_enum :gender, [:female, :male], :field => { :type => Fixnum }
-  # 
+  #   as_enum :gender, [:female, :male], :field => { :type => Integer }
+  #
   module Mongoid
     extend ActiveSupport::Concern
-    
+
     included do
       # create class level methods
       class_attribute :enum_definitions, :instance_write => false, :instance_reader => false
       enum_definitions = {}
     end
-    
+
     module ClassMethods
       include SimpleEnum::ClassMethods
-      
+
       # Wrap method chain to create mongoid field and additional
       # column options
       def as_enum_with_mongoid(enum_cd, values, options = {})
         options = SimpleEnum.default_options.merge({ :column => "#{enum_cd}_cd" }).merge(options)
-        field = options.delete(:field)
-        field options[:column]
-        
+
+        # forward custom field options
+        field_options = options.delete(:field)
+        field(options[:column], field_options.is_a?(Hash) ? field_options : {}) unless field_options === false
+
         # call original as_enum method
         as_enum_without_mongoid(enum_cd, values, options)
       end
