@@ -13,7 +13,6 @@ require 'i18n'
 require 'active_support'
 
 require 'simple_enum/enum_hash'
-require 'simple_enum/object_support'
 require 'simple_enum/validation'
 
 require 'active_support/deprecation'
@@ -231,7 +230,7 @@ module SimpleEnum
         prefix = options[:prefix] && "#{options[:prefix] == true ? enum_cd : options[:prefix]}_"
 
         values.each do |k,code|
-          sym = k.to_enum_sym
+          sym = EnumHash.symbolize(k)
 
           define_method("#{prefix}#{sym}?") do
             code == read_attribute(options[:column])
@@ -266,9 +265,6 @@ module SimpleEnum
     end
   end
 end
-
-# Tie stuff together and load translations if ActiveRecord is defined
-Object.send(:include, SimpleEnum::ObjectSupport)
 
 # include in AR
 ActiveRecord::Base.send(:include, SimpleEnum) if defined?(ActiveRecord)
