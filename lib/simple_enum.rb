@@ -174,7 +174,7 @@ module SimpleEnum
 
       # generate getter
       define_method("#{enum_cd}") do
-        id = read_attribute options[:column]
+        id = respond_to?(:read_attribute) ? read_attribute(options[:column]) : send(options[:column])
         values_inverted[id]
       end
 
@@ -182,7 +182,7 @@ module SimpleEnum
       define_method("#{enum_cd}=") do |new_value|
         v = new_value.blank? ? nil : values[new_value.to_sym]
         raise(ArgumentError, "Invalid enumeration value: #{new_value}") if (options[:whiny] and v.nil? and !new_value.blank?)
-        write_attribute options[:column], v
+        respond_to?(:write_attribute) ? write_attribute(options[:column], v) : send("#{options[:column]}=", v)
       end
 
       # support dirty attributes by delegating to column, currently opt-in
@@ -233,10 +233,11 @@ module SimpleEnum
           sym = EnumHash.symbolize(k)
 
           define_method("#{prefix}#{sym}?") do
-            code == read_attribute(options[:column])
+            current = respond_to?(:read_attribute) ? read_attribute(options[:column]) : send(options[:column])
+            code == current
           end
           define_method("#{prefix}#{sym}!") do
-            write_attribute options[:column], code
+            respond_to?(:write_attribute) ? write_attribute(options[:column], code) : send("#{options[:column]}=", code)
             sym
           end
 
