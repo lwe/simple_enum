@@ -4,7 +4,7 @@ en:
     errors:
       messages:
         invalid_enum: invalid option supplied.
-  mongoid:
+  mongoid:   
     errors:
       messages:
         invalid_enum: invalid option supplied.
