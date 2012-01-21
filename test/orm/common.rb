@@ -1,3 +1,11 @@
+class MockName < String
+  def name; to_s end
+  
+  def self.mock!(name)
+    ActiveModel::Name.new(MockName.new(name))
+  end
+end
+
 def fill_db(options={})
   options = { :fill => true, :genders => false }.merge(options)
 

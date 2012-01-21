@@ -4,11 +4,22 @@ def orm_version
   ActiveRecord::VERSION::STRING
 end
 
+def ar32?
+  ActiveRecord::VERSION::MAJOR >= 3 && ActiveRecord::VERSION::MINOR >= 2
+end
+
 def setup_db
   # create database connection (in memory db!)
   ActiveRecord::Base.establish_connection({
     :adapter => RUBY_PLATFORM =~ /java/ ? 'jdbcsqlite3' : 'sqlite3',
-    :database => ':memory:'})    
+    :database => ':memory:'})
+    
+  # Fix visitor, for JRuby
+  if RUBY_PLATFORM =~ /java/ && ar32?
+    ActiveRecord::ConnectionAdapters::SQLiteAdapter.send(:define_method, :visitor) do
+      @visitor ||= Arel::Visitors::SQLite.new(self)
+    end
+  end
 end
 
 # Reload database
@@ -38,17 +49,17 @@ end
 # Models
 def anonymous_dummy(&block)
   Class.new(ActiveRecord::Base) do
-    set_table_name 'dummies'
+    ar32? ? self.table_name = 'dummies' : set_table_name('dummies')
     instance_eval &block 
   end
 end
 
 def extend_computer(current_i18n_name = "Computer", &block)
   Class.new(Computer) do
-    set_table_name 'computers'
+    ar32? ? self.table_name = 'computers' : set_table_name('computers')
     instance_eval &block
     instance_eval <<-RUBY
-      def self.model_name; ActiveModel::Name.new(Computer, nil, #{current_i18n_name.inspect}) end
+      def self.model_name; MockName.mock!(#{current_i18n_name.inspect}) end
     RUBY
   end
 end
@@ -59,7 +70,7 @@ def named_dummy(class_name, &block)
   rescue NameError  
     klass = Object.const_set(class_name, Class.new(ActiveRecord::Base))
     klass.module_eval do
-      set_table_name 'dummies'
+      ar32? ? self.table_name = 'dummies' : set_table_name('dummies')
       instance_eval &block
     end
   
@@ -83,6 +94,6 @@ end
 
 # Used to test STI stuff
 class SpecificDummy < Dummy
-  set_table_name 'dummies'
+  ar32? ? self.table_name = 'dummies' : set_table_name('dummies')
 end
 

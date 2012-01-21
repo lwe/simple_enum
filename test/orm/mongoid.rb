@@ -40,7 +40,7 @@ def extend_computer(current_i18n_name = "Computer", &block)
     self.collection_name = 'computers'
     instance_eval &block
     instance_eval <<-RUBY
-      def self.model_name; ActiveModel::Name.new(Computer, nil, #{current_i18n_name.inspect}) end
+      def self.model_name; MockName.mock!(#{current_i18n_name.inspect}) end
     RUBY
   end
 end
