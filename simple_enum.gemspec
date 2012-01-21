@@ -6,8 +6,8 @@ Gem::Specification.new do |s|
   s.name        = "simple_enum"
   s.version     = SimpleEnum::VERSION
   s.platform    = Gem::Platform::RUBY
-  s.summary     = "Simple enum-like field support for active records."
-  s.description = ""
+  s.summary     = "Simple enum-like field support for models."
+  s.description = "Provides enum-like fields for ActiveRecord, ActiveModel and Mongoid models."
 
   s.required_ruby_version     = ">= 1.8.7"
   s.required_rubygems_version = ">= 1.3.6"
@@ -22,10 +22,12 @@ Gem::Specification.new do |s|
 
   s.license          = 'MIT'
 
-  s.add_dependency "activesupport", "~> 3.0"
+  s.add_dependency "activesupport", '>= 3.0.0'
+  
   s.add_development_dependency 'rake', '>= 0.9.2'
+  s.add_development_dependency 'appraisal', '>= 0.4'
   s.add_development_dependency 'minitest', '>= 2.3.0'
-  s.add_development_dependency 'activerecord', '~> 3.0'
+  s.add_development_dependency 'activerecord', '>= 3.0.0'
   s.add_development_dependency 'mongoid', '~> 2.0'
 
   unless RUBY_PLATFORM =~ /java/

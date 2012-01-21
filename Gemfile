@@ -2,11 +2,8 @@ source "http://rubygems.org"
 
 gemspec
 
-platform :jruby do
-  gem 'jdbc-sqlite3'
-end
+# some development deps
+gem 'jdbc-sqlite3', :platform => :jruby
 
-platform :ruby do
-  gem 'sqlite3'
-  gem 'bson_ext'
-end
+gem 'sqlite3', :platform => :ruby
+gem 'bson_ext', :platform => :ruby
