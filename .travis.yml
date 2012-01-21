@@ -6,6 +6,6 @@ rvm:
   - 1.9.3
   - jruby
 gemfile:
-  - gemfiles/rails-3.0
-  - gemfiles/rails-3.1
-  - gemfiles/rails-3.2
+  - gemfiles/rails-3.0.gemfile
+  - gemfiles/rails-3.1.gemfile
+  - gemfiles/rails-3.2.gemfile
