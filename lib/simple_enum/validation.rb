@@ -29,7 +29,7 @@ module SimpleEnum
         enum_def = enum_definitions[attr_name]
         unless send(enum_def[:name].to_s.pluralize).values.include?(value)
           params = { :value => value}
-          params[:default] = configuration[:message] if configuration[:message].present?
+          params[:message] = configuration[:message] if configuration[:message].present?
           record.errors.add(enum_def[:name], :invalid_enum, params)
         end
       end
