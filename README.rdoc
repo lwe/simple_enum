@@ -6,6 +6,8 @@ ActiveRecord and Mongoid models (now compatible with rails 3.1, ruby 1.9 and jru
 Since version 1.4, simple_enum is no longer compatible with activerecord 2.x, use
 version 1.3.2 instead: <https://github.com/lwe/simple_enum/tree/v1.3.2>.
 
+For Mongoid support, you need to use the master branch as of Jan 28, 2012 as earlier branches do not give you SimpleEnum::Mongoid. Also, you need to include this gem after you inclue Mongoid in GemFile. Otherwise, code for supporting Mongoid will not run.
+
 *Note*: a recent search on github for `enum` turned out, that there are many, many similar solutions.
 
 == ActiveRecord Quick start
