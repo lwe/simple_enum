@@ -28,11 +28,23 @@ class SimpleEnumTest < MiniTest::Unit::TestCase
     assert_equal(false, d.female?)
   end
 
-  def test_getting_symbol_when_data_is_fetched_from_datasource
-    # Anna
+  def test_enum_comparisons
+    d = Dummy.new
+    assert_equal(false, d.gender?)
+    d.gender = :male
+    assert_equal(true, d.gender?)
+    assert_equal(true, d.gender?(:male))
+    assert_equal(false, d.gender?(:female))
+    assert_equal(false, d.gender?(:whot))
+    d.gender = :female
+    assert_equal(true, d.gender?(:female))
+    assert_equal(false, d.gender?(:male))
+  end
 
+  def test_getting_symbol_when_data_is_fetched_from_datasource
     dummies = Dummy.all
 
+    # Anna
     assert_equal(:female, dummies[0].gender)
     assert_equal(:alpha, dummies[0].word)
     assert_equal(:foo, dummies[0].didum)

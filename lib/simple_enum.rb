@@ -185,6 +185,14 @@ module SimpleEnum
         respond_to?(:write_attribute) ? write_attribute(options[:column], v) : send("#{options[:column]}=", v)
       end
 
+      # generate checker
+      define_method("#{enum_cd}?") do |*args|
+        current = send(enum_cd)
+        return current == args.first if args.length > 0
+
+        !!current
+      end
+
       # support dirty attributes by delegating to column, currently opt-in
       if options[:dirty]
         define_method("#{enum_cd}_changed?") do
