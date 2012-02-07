@@ -268,9 +268,9 @@ module SimpleEnum
 end
 
 # include in AR
-ActiveRecord::Base.send(:include, SimpleEnum) if defined?(ActiveRecord)
-# load MongoID support
-require 'simple_enum/mongoid' if defined?(Mongoid)
+ActiveSupport.on_load(:active_record) do
+  ActiveRecord::Base.send(:include, SimpleEnum)
+end
 
 # setup i18n load path...
 I18n.load_path << File.join(File.dirname(__FILE__), '..', 'locales', 'en.yml')

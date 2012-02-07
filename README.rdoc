@@ -30,6 +30,11 @@ Then create the required `gender_cd` column using migrations:
 
 == Mongoid Quick start
 
+Add this to an initializer
+
+     # load mongoid support
+     require 'simple_enum/mongoid'
+
 Add this to a model:
 
     class User

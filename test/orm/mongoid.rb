@@ -1,4 +1,5 @@
 require 'mongoid/version'
+require 'simple_enum/mongoid'
 
 def orm_version
   Mongoid::VERSION
