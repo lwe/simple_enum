@@ -188,7 +188,7 @@ module SimpleEnum
       # generate checker
       define_method("#{enum_cd}?") do |*args|
         current = send(enum_cd)
-        return current == args.first if args.length > 0
+        return current == EnumHash.symbolize(args.first) if args.length > 0
 
         !!current
       end

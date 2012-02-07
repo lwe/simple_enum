@@ -41,6 +41,16 @@ class SimpleEnumTest < MiniTest::Unit::TestCase
     assert_equal(false, d.gender?(:male))
   end
 
+  def test_enum_comparisons_with_strings
+    d = Dummy.new(:gender => :male)
+    assert_equal(true, d.gender?("male"))
+  end
+
+  def test_enum_comparisons_with_nil_always_returns_false
+    d = Dummy.new(:gender => :male)
+    assert_equal(false, d.gender?(nil))
+  end
+
   def test_getting_symbol_when_data_is_fetched_from_datasource
     dummies = Dummy.all
 
