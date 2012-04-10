@@ -16,10 +16,6 @@ GEM
       activesupport (= 3.0.11)
       arel (~> 2.0.10)
       tzinfo (~> 0.3.23)
-    activerecord-jdbc-adapter (1.2.1)
-    activerecord-jdbcsqlite3-adapter (1.2.1)
-      activerecord-jdbc-adapter (~> 1.2.1)
-      jdbc-sqlite3 (~> 3.7.2)
     activesupport (3.0.11)
     appraisal (0.4.0)
       bundler
@@ -49,7 +45,6 @@ PLATFORMS
 
 DEPENDENCIES
   activerecord (~> 3.0.9)
-  activerecord-jdbcsqlite3-adapter
   activesupport (~> 3.0.9)
   appraisal (>= 0.4)
   bson_ext
