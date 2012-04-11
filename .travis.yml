@@ -1,3 +1,4 @@
+language: ruby
 env:
   - ORM=active_record
   - ORM=mongoid
