@@ -232,4 +232,9 @@ class SimpleEnumTest < MiniTest::Unit::TestCase
       ActiveSupport::Deprecation.behavior = original_behavior
     end
   end
+
+  def test_human_name_for_nil_value
+    d = Dummy.new
+    assert_nil(d.human_gender)
+  end
 end
