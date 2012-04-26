@@ -209,7 +209,7 @@ module SimpleEnum
       enum_attr = :"#{attr_name.downcase}_enum_hash"
 
       define_method("human_#{enum_cd}") do
-        self.class.human_enum_name(attr_name, self.send(enum_cd))
+        self.class.human_enum_name(attr_name, self.send(enum_cd)) unless self.send(enum_cd).nil?
       end
 
       class_eval(<<-RUBY, __FILE__, __LINE__ + 1)
