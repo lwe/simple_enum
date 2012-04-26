@@ -209,6 +209,7 @@ module SimpleEnum
       enum_attr = :"#{attr_name.downcase}_enum_hash"
 
       define_method("human_#{enum_cd}") do
+        return nil if self.send(enum_cd).nil?
         self.class.human_enum_name(attr_name, self.send(enum_cd))
       end
 
