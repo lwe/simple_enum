@@ -1,4 +1,4 @@
-= SimpleEnum - unobtrusive enum-like fields for ActiveRecord
+= SimpleEnum - unobtrusive enum-like fields for ActiveRecord {<img src="https://secure.travis-ci.org/lwe/simple_enum.png" />}[http://travis-ci.org/lwe/simple_enum]
 
 A Rails plugin which brings easy-to-use enum-like functionality to
 ActiveRecord and Mongoid models (now compatible with rails 3.1, ruby 1.9 and jruby).
