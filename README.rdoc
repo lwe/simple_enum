@@ -97,6 +97,18 @@ useful when creating queries, displaying option elements or similar:
           as_enum :gender, [:male, :female], :column => 'sex'
         end
 
+* Want support for ActiveRecords dirty attributes, provide <tt>:dirty => true</tt> as option, which automatically adds both
+  the <tt>{enum}_changed?</tt> and <tt>{enum}_was</tt> methods, which delegate to ActiveRecord.
+
+        class User < ActiveRecord::Base
+            as_enum :gender, [:male, :female], :dirty => true
+        end
+
+        @user = User.where(:gender_cd => User.male).first
+        @user.gender = :female
+        @user.gender_was
+        # => :male
+
 * Need to provide custom options for the mongoid field, or skip the automatically generated field?
 
         # skip field generation
@@ -105,10 +117,6 @@ useful when creating queries, displaying option elements or similar:
 
         # custom field options (directly passed to Mongoid::Document#field)
         as_enum :gender, [:male, :female], :field => { :type => Integer, :default => 1 }
-
-* To make it easier to create dropdowns with values use:
-
-        <%= select(:user, :gender, User.genders.keys) %>
 
 * It's possible to validate the internal enum values, just like any other ActiveRecord validation:
 
@@ -171,6 +179,10 @@ useful when creating queries, displaying option elements or similar:
         class User < ActiveRecord::Base
           as_enum :gender, [:male, :female], :whiny => false
         end
+
+* To make it easier to create dropdowns with values use:
+
+        <%= select(:user, :gender, User.genders.keys) %>
 
 * Need translated keys et al in your forms? SimpleEnum provides a <tt><enum>_for_select</tt> method:
 
