@@ -97,6 +97,8 @@ useful when creating queries, displaying option elements or similar:
           as_enum :gender, [:male, :female], :column => 'sex'
         end
 
+  It's not allowed to use the same column name as the enum name, this has been deprecated since 1.4.x and will be
+  removed in 1.6.x.
 * Want support for ActiveRecords dirty attributes, provide <tt>:dirty => true</tt> as option, which automatically adds both
   the <tt>{enum}_changed?</tt> and <tt>{enum}_was</tt> methods, which delegate to ActiveRecord.
 
@@ -211,9 +213,9 @@ useful when creating queries, displaying option elements or similar:
 == Best practices
 
 Do not use the same name for the enum as for the column, note that this mode of use is
-deprecated starting with version 1.4.1, e.g.
+deprecated since version 1.4.1 and raises an ArgumentError starting from version 1.6.0:
 
-    # BAD
+    # BAD: raises ArgumentError
     as_enum :status, [:active, :inactive, :archived], :column => "status"
 
     # GOOD
@@ -264,7 +266,7 @@ or <em>b)</em> a custom method to convert an object to a symbolized form named +
 == Known issues/Open items
 
 * Maybe the <tt>:whiny</tt> option should default to <tt>false</tt>, so that generally no exceptions are thrown if a user fakes a request?
-* Clean-up code and tests -> bring down LOC ;) (but maintain Code LOC vs. Test LOC ratio which is currently 1:2.9)
+* Convert to RSpec and clean up tests
 * Make `:slim => true` the default option...?
 
 == Contributors
