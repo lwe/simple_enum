@@ -28,6 +28,19 @@ class SimpleEnumTest < MiniTest::Unit::TestCase
     assert_equal(false, d.female?)
   end
 
+  def test_setting_value_as_key
+    d = Dummy.new
+    d.gender = 1
+    assert_equal(:female, d.gender)
+    assert_equal(1, d.gender_cd)
+  end
+
+  def test_setting_value_as_key_in_constructor
+    d = Dummy.new :gender => 1
+    assert_equal(:female, d.gender)
+    assert_equal(1, d.gender_cd)
+  end
+
   def test_enum_comparisons
     d = Dummy.new
     assert_equal(false, d.gender?)
@@ -217,19 +230,14 @@ class SimpleEnumTest < MiniTest::Unit::TestCase
     assert_nil(d.gender)
   end
 
-  def test_deprecation_warning_when_using_enum_name_eq_column_name
-    original_behavior = ActiveSupport::Deprecation.behavior
+  def test_argument_error_is_raised_when_using_enum_name_eq_column_name
     begin
-      expected = 0
-      ActiveSupport::Deprecation.silenced = false
-      ActiveSupport::Deprecation.behavior = Proc.new { |msg, cb| expected += 1 if msg =~ /\[simple_enum\].+gender_cd/ }
       invalid_dummy = anonymous_dummy do
         as_enum :gender_cd, [:male, :female], :column => "gender_cd"
       end
-
-      assert expected == 1, "deprecation message not displayed"
-    ensure
-      ActiveSupport::Deprecation.behavior = original_behavior
+      assert false, "no error raised"
+    rescue ArgumentError => e
+      assert e.to_s =~ /use different names for/, "invalid ArgumentError raised"
     end
   end
 

@@ -169,8 +169,8 @@ module SimpleEnum
       self.enum_definitions = {} if self.enum_definitions.nil?
       self.enum_definitions[enum_cd] = self.enum_definitions[options[:column]] = { :name => enum_cd, :column => options[:column], :options => options }
 
-      # display deprecation warning if enum_cd == column
-      ActiveSupport::Deprecation.warn "[simple_enum] use different names for #{enum_cd}'s name and column name (support for this will be dropped in 1.5)" if enum_cd.to_s == options[:column].to_s
+      # raise error if enum_cd == column
+      raise ArgumentError, "[simple_enum] use different names for #{enum_cd}'s name and column name." if enum_cd.to_s == options[:column].to_s
 
       # generate getter
       define_method("#{enum_cd}") do
@@ -180,9 +180,10 @@ module SimpleEnum
 
       # generate setter
       define_method("#{enum_cd}=") do |new_value|
-        v = new_value.blank? ? nil : values[new_value.to_sym]
-        raise(ArgumentError, "Invalid enumeration value: #{new_value}") if (options[:whiny] and v.nil? and !new_value.blank?)
-        respond_to?(:write_attribute) ? write_attribute(options[:column], v) : send("#{options[:column]}=", v)
+        real = new_value.blank? ? nil : values[new_value.to_sym]
+        real = new_value if real.nil? && values_inverted[new_value].present?
+        raise(ArgumentError, "Invalid enumeration value: #{new_value}") if (options[:whiny] and real.nil? and !new_value.blank?)
+        respond_to?(:write_attribute) ? write_attribute(options[:column], real) : send("#{options[:column]}=", real)
       end
 
       # generate checker
