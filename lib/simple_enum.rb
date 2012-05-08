@@ -180,7 +180,7 @@ module SimpleEnum
 
       # generate setter
       define_method("#{enum_cd}=") do |new_value|
-        real = new_value.blank? ? nil : values[new_value.to_sym]
+        real = new_value.blank? ? nil : values[EnumHash.symbolize(new_value)]
         real = new_value if real.nil? && values_inverted[new_value].present?
         raise(ArgumentError, "Invalid enumeration value: #{new_value}") if (options[:whiny] and real.nil? and !new_value.blank?)
         respond_to?(:write_attribute) ? write_attribute(options[:column], real) : send("#{options[:column]}=", real)
