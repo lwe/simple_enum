@@ -45,7 +45,7 @@ module SimpleEnum
     end
 
     def included(base) #:nodoc:
-      base.send :class_attribute, :enum_definitions, :instance_write => false, :instance_reader => false
+      base.send :class_attribute, :enum_definitions, :instance_writer => false, :instance_reader => false
       base.enum_definitions = {}
       base.send :extend, ClassMethods
     end
@@ -214,7 +214,7 @@ module SimpleEnum
       end
 
       class_eval(<<-RUBY, __FILE__, __LINE__ + 1)
-        class_attribute #{enum_attr.inspect}, :instance_write => false, :instance_reader => false
+        class_attribute #{enum_attr.inspect}, :instance_writer => false, :instance_reader => false
 
         def self.#{attr_name}(*args)
           return #{enum_attr} if args.first.nil?
