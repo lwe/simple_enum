@@ -45,8 +45,7 @@ module SimpleEnum
     end
 
     def included(base) #:nodoc:
-      base.send :class_attribute, :enum_definitions, :instance_writer => false, :instance_reader => false
-      base.enum_definitions = {}
+      base.send :class_attribute, :simple_enum_definitions, :instance_writer => false, :instance_reader => false
       base.send :extend, ClassMethods
     end
   end
@@ -166,7 +165,6 @@ module SimpleEnum
       values_inverted = values.invert
 
       # store info away
-      self.enum_definitions = {} if self.enum_definitions.nil?
       self.enum_definitions[enum_cd] = self.enum_definitions[options[:column]] = { :name => enum_cd, :column => options[:column], :options => options }
 
       # raise error if enum_cd == column
@@ -272,6 +270,10 @@ module SimpleEnum
 
       options.reverse_merge! :count => 1, :default => defaults
       I18n.translate(defaults.shift, options)
+    end
+
+    def enum_definitions
+      self.simple_enum_definitions ||= {}
     end
   end
 end
