@@ -27,8 +27,7 @@ module SimpleEnum
 
     included do
       # create class level methods
-      class_attribute :enum_definitions, :instance_write => false, :instance_reader => false
-      enum_definitions = {}
+      class_attribute :simple_enum_definitions, :instance_writer => false, :instance_reader => false
     end
 
     module ClassMethods

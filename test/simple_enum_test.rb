@@ -9,6 +9,15 @@ class SimpleEnumTest < MiniTest::Unit::TestCase
     assert_equal "gender_cd", Dummy.enum_definitions[:gender][:column]
   end
 
+  def test_enum_definitions_only_available_from_class
+    assert_raises(NoMethodError) { Dummy.new.enum_definitions }
+    assert_raises(NoMethodError) { Dummy.new.enum_definitions= {} }
+  end
+
+  def test_enum_definitions_local_to_model
+    assert_equal nil, Computer.enum_definitions[:gender]
+  end
+
   def test_getting_the_correct_integer_values_when_setting_to_symbol
     d = Dummy.new
     d.gender = :male
