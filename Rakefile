@@ -1,18 +1,30 @@
 require 'rubygems'
 require 'bundler/setup'
-require 'appraisal'
 require 'rake/testtask'
-
-include Rake::DSL
 
 Bundler::GemHelper.install_tasks
 
-desc 'Default: run unit tests.'
+desc 'Default: run all unit tests for both ActiveRecord & Mongoid.'
 task :default => :test
 
-desc 'Run unit tests, use ORM=...'
-Rake::TestTask.new(:test) do |t|
-  t.libs << 'test'
-  t.test_files = Dir.glob('test/**/*_test.rb')
-  t.verbose = true
+namespace :test do
+  Rake::TestTask.new(:units) do |t|
+    t.libs << "test"
+    t.test_files = 'test/*_test.rb'
+    t.verbose = true
+  end
+
+  desc 'Run all unit tests for ActiveRecord'
+  task :activerecord do |t|
+    ENV['SIMPLE_ENUM_TEST_ORM'] = 'active_record'
+    Rake::Task['test:units'].execute
+  end
+
+  desc 'Run all unit tests for Mongoid'
+  task :mongoid do |t|
+    ENV['SIMPLE_ENUM_TEST_ORM'] = 'mongoid'
+    Rake::Task['test:units'].execute
+  end
 end
+
+task :test => [:'test:activerecord', :'test:mongoid']
