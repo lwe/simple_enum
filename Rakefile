@@ -10,7 +10,7 @@ task :default => :test
 namespace :test do
   Rake::TestTask.new(:units) do |t|
     t.libs << "test"
-    t.test_files = 'test/*_test.rb'
+    t.test_files = Dir['test/*_test.rb']
     t.verbose = true
   end
 
