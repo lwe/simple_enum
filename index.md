@@ -25,15 +25,15 @@ Assuming simple_enum has been added to your Gemfile and you are using ActiveReco
 works out of to box.
 
 1. Add a _code_ (cd) column to your table using migrations, like:
-    ```ruby
-    add_column :people, :gender_cd, :integer
-    ```
+```ruby
+add_column :people, :gender_cd, :integer
+```
 2. Add `as_enum` in your model:
-    ```ruby
-    class Person < ActiveRecord::Base
-      as_enum :gender, %w{female male}
-    end
-    ```
+```ruby
+class Person < ActiveRecord::Base
+  as_enum :gender, %w{female male}
+end
+```
 
 # Using simple_enum with Mongoid
 
