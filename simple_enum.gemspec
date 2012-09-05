@@ -14,7 +14,7 @@ Gem::Specification.new do |s|
 
   s.authors  = ["Lukas Westermann"]
   s.email    = ["lukas.westermann@gmail.com"]
-  s.homepage = "http://github.com/lwe/simple_enum"
+  s.homepage = "http://lwe.github.com/simple_enum/"
 
   s.files            = `git ls-files`.split("\n")
   s.test_files       = `git ls-files -- {test,spec,features}/*`.split("\n")
