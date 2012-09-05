@@ -76,6 +76,10 @@ header h1 {
   line-height: 1.2;
 }
 
+header h1 a, header h1 a:hover {
+  color: #303030;
+}
+
 header h2 {
   letter-spacing: -1px;
   font-size: 24px;
@@ -358,6 +362,10 @@ footer a {
 footer a:hover {
   color: #444;
 }
+
+/* highlight in lists */
+li .highlight { margin-left: 17px; }
+li .highlight pre { margin: 10px 0; }
 
 /* MISC */
 .clearfix:after {

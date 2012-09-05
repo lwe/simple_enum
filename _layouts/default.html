@@ -17,15 +17,21 @@
     <div id="container">
       <div class="inner">
         <header>
-          <h1>simple_enum</h1>
-          <h2>Simple enum-like field support for Ruby, ActiveModel and Mongoid, including validation and internationalization.</h2>
+          <h1><a href="index.html">simple_enum</a></h1>
+          <h2>{{ page.excerpt }}</h2>
         </header>
 
+        {% if page.downloads %}
         <section id="downloads" class="clearfix">
           <a href="https://rubygems.org/gems/simple_enum" id="view-on-rubygems" class="button"><span>Rubygems</span></a>
           <a href="http://rubydoc.info/gems/simple_enum" id="view-on-rubydoc" class="button"><span>Rubydoc.info</span></a>
           <a href="https://github.com/lwe/simple_enum" id="view-on-github" class="button"><span>View on GitHub</span></a>
         </section>
+        {% else %}
+        <section id="home" class="clearfix">
+          <a href="index.html">← Back</a>
+        </section>
+        {% endif %}
 
         <hr>
 
