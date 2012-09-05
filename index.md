@@ -20,7 +20,3 @@ gem 'simple_enum'
 {% endhighlight %}
 
 And then execute `bundle` or install it yourself: `gem install simple_enum`.
-
-# Using simple_enum with plain Ruby (or ActiveModel or ...)
-
-# Configuring simple_enum
