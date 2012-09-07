@@ -254,4 +254,16 @@ class SimpleEnumTest < MiniTest::Unit::TestCase
     d = Dummy.new
     assert_nil(d.human_gender)
   end
+
+  def test_strings_option
+    d = Dummy.new :role => :anon
+
+    assert_equal :anon, d.role
+    assert_equal 'anon', d.role_cd
+
+    d.role = :admin
+
+    assert_equal :admin, d.role
+    assert_equal 'admin', d.role_cd
+  end
 end

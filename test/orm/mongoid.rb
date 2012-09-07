@@ -71,6 +71,7 @@ class Dummy
   as_enum :gender, [:male, :female]
   as_enum :word, { :alpha => 'alpha', :beta => 'beta', :gamma => 'gamma'}
   as_enum :didum, [ :foo, :bar, :foobar ], :column => 'other'
+  as_enum :role, [:admin, :member, :anon], :strings => true
 
   before_save :check_typed
 
