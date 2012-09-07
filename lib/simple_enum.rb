@@ -37,6 +37,7 @@ module SimpleEnum
     #   <tt>false</tt> no exception is thrown and the internal value is set to <tt>nil</tt> (default is <tt>true</tt>)
     # * <tt>:dirty</tt> - Boolean value which if set to <tt>true</tt> generates <tt>..._was</tt> and <tt>..._changed?</tt>
     #   methods for the enum, which delegate to the internal column.
+    # * <tt>:strings</tt> - Boolean value which if set to <tt>true</tt> defaults array values as strings instead of integers.
     def default_options
       @default_options ||= {
         :whiny => true,
@@ -154,14 +155,18 @@ module SimpleEnum
     #   <tt>false</tt> no exception is thrown and the internal value is set to <tt>nil</tt> (default is <tt>true</tt>)
     # * <tt>:dirty</tt> - Boolean value which if set to <tt>true</tt> generates <tt>..._was</tt> and <tt>..._changed?</tt>
     #   methods for the enum, which delegate to the internal column (default is <tt>false</tt>)
+    # * <tt>:strings</tt> - Boolean value which if set to <tt>true</tt> defaults array values as strings instead of integers.
     # * <tt>:field</tt> - Also allowed as valid key, for Mongoid integration + default options, see simple_enum#27.
     #
     def as_enum(enum_cd, values, options = {})
       options = SimpleEnum.default_options.merge({ :column => "#{enum_cd}_cd" }).merge(options)
-      options.assert_valid_keys(:column, :whiny, :prefix, :slim, :upcase, :dirty, :field)
+      options.assert_valid_keys(:column, :whiny, :prefix, :slim, :upcase, :dirty, :strings, :field)
 
       metaclass = (class << self; self; end)
 
+      if values.is_a?(Array) && options[:strings]
+        values = Hash[*values.map { |val| [val, val.to_s] }.flatten]
+      end
       # convert array to hash...
       values = SimpleEnum::EnumHash.new(values)
       values_inverted = values.invert

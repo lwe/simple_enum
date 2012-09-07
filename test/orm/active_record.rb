@@ -28,6 +28,7 @@ def reload_db(options = {})
     t.column :name, :string
     t.column :gender_cd, :integer
     t.column :word_cd, :string, :limit => 5
+    t.column :role_cd, :string
     t.column :other, :integer
   end
 
@@ -81,6 +82,7 @@ class Dummy < ActiveRecord::Base
   as_enum :gender, [:male, :female]
   as_enum :word, { :alpha => 'alpha', :beta => 'beta', :gamma => 'gamma'}
   as_enum :didum, [ :foo, :bar, :foobar ], :column => 'other'
+  as_enum :role, [:admin, :member, :anon], :strings => true
 end
 
 class Gender < ActiveRecord::Base
