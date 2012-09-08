@@ -1,11 +1,13 @@
 require 'test_helper'
 
 class MongoidTest < MiniTest::Unit::TestCase
-  @@default_options = SimpleEnum.default_options
-
   def setup
-    SimpleEnum.default_options.clear.merge(@@default_options)
+    @default_options = SimpleEnum.default_options
     reload_db
+  end
+
+  def teardown
+    SimpleEnum.default_options.clear.update(@default_options)
   end
 
   def test_creates_a_field_per_default
