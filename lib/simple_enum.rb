@@ -155,7 +155,7 @@ module SimpleEnum
     #   <tt>false</tt> no exception is thrown and the internal value is set to <tt>nil</tt> (default is <tt>true</tt>)
     # * <tt>:dirty</tt> - Boolean value which if set to <tt>true</tt> generates <tt>..._was</tt> and <tt>..._changed?</tt>
     #   methods for the enum, which delegate to the internal column (default is <tt>false</tt>)
-    # * <tt>:strings</tt> - Boolean value which if set to <tt>true</tt> defaults array values as strings instead of integers.
+    # * <tt>:strings</tt> - Boolean value which if set to <tt>true</tt> stores array values as strings instead of it's index.
     # * <tt>:field</tt> - Also allowed as valid key, for Mongoid integration + default options, see simple_enum#27.
     #
     def as_enum(enum_cd, values, options = {})
@@ -164,11 +164,8 @@ module SimpleEnum
 
       metaclass = (class << self; self; end)
 
-      if values.is_a?(Array) && options[:strings]
-        values = Hash[*values.map { |val| [val, val.to_s] }.flatten]
-      end
-      # convert array to hash...
-      values = SimpleEnum::EnumHash.new(values)
+      # convert array to hash
+      values = SimpleEnum::EnumHash.new(values, options[:strings])
       values_inverted = values.invert
 
       # store info away

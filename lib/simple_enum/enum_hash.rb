@@ -4,7 +4,6 @@ module SimpleEnum
   # Works like to original +Hash+ class, but with some added value,
   # like access to
   #
-  #
   class EnumHash < ::ActiveSupport::OrderedHash
 
     # Converts an entity to a symbol, uses to_enum_sym, if possible.
@@ -16,7 +15,7 @@ module SimpleEnum
       sym unless sym.blank?
     end
 
-    def initialize(args = [])
+    def initialize(args = [], strings = false)
       super()
 
       @reverse_sym_lookup = {}
@@ -28,7 +27,7 @@ module SimpleEnum
         ary = args.send(args.respond_to?(:enum_with_index) ? :enum_with_index : :each_with_index).to_a unless args.first.respond_to?(:map)
         ary = args.map { |e| [e, e.id] } if args.first.respond_to?(:map) && !args.first.is_a?(Array)
         ary ||= args
-        ary.each { |e| set_value_for_reverse_lookup(e[0], e[1]) }
+        ary.each { |e| set_value_for_reverse_lookup(e[0], strings ? e[0].to_s : e[1]) }
       end
     end
 
