@@ -7,8 +7,7 @@ excerpt: "Guide for setting up and using simple_enum with Rails and ActiveRecord
 # Using simple_enum with Rails
 
 If you've added simple_enum to your Gemfile and you are using ActiveRecord, simple_enum
-works out of to box. Enumeration values can be specified as Array or Hash, see TODO for more
-informations.
+works out of to box. Enumeration columns can then be specified with either an Array or Hash.
 
 <ol>
   <li>

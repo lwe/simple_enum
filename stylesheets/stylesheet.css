@@ -162,6 +162,12 @@ a.button span {
 #download-tar-gz span {
   background: transparent url(../images/tar-gz-icon.png) 12px 50% no-repeat;
 }
+#view-on-rubygems span {
+  background: transparent url(../images/rubygems-icon.png) 12px 50% no-repeat;
+}
+#view-on-rubydoc span {
+  background: transparent url(../images/rubydoc-logo.png) 12px 50% no-repeat;
+}
 #view-on-github span {
   background: transparent url(../images/octocat-icon.png) 12px 50% no-repeat;
 }
