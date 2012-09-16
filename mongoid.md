@@ -1,6 +1,6 @@
 ---
 layout: default
-title: "Using simple_enum with Rails - simple_enum"
+title: "Using simple_enum with Mongoid - simple_enum"
 excerpt: "Guide for integrating simple_enum with Mongoid."
 ---
 

@@ -1,7 +1,7 @@
 ---
 layout: default
 title: "simple_enum: enum fields for ruby"
-excerpt: "Simple enum-like field support for Ruby, ActiveModel and Mongoid, including validation and internationalization."
+excerpt: "Simple enum-like field support for Ruby, ActiveRecord and Mongoid, including validation and internationalization."
 downloads: true
 ---
 
