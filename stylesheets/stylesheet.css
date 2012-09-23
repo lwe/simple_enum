@@ -353,8 +353,17 @@ ol li {
   padding-left: 3px;
 }
 
-dl dt {
-  color: #303030;
+dl dt,
+dl dt code {
+  background: #f2f2f2;
+  display: block;
+  margin: 0;
+  border: 0;
+}
+
+dl dd {
+  border-left: 10px solid #f2f2f2;
+  padding-left: 10px;
 }
 
 footer {
