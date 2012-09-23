@@ -241,6 +241,10 @@ ul, ol, dl {
   margin-bottom: 20px;
 }
 
+/* NAV */
+nav a {
+  display: block;
+}
 
 /* COMMON STYLES */
 
@@ -333,8 +337,8 @@ p a {
 }
 
 blockquote {
-  font-size: 1.6em;
-  border-left: 10px solid #e9e9e9;
+  font-size: 1em;
+  border-left: 10px solid #eeeeee;
   margin-bottom: 20px;
   padding: 0 0 0 30px;
 }
