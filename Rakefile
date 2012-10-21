@@ -31,6 +31,7 @@ task :test => [:'test:activerecord', :'test:mongoid']
 
 # Mongodb
 directory "tmp/mongodb.data"
+desc 'Run mongodb in tmp/'
 task :mongodb => [:'tmp/mongodb.data'] do |t|
   system "mongod", "--dbpath", "tmp/mongodb.data"
 end
