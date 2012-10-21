@@ -51,4 +51,16 @@ class MongoidTest < MiniTest::Unit::TestCase
     refute_nil klass.new.fields['gender_cd']
     assert_equal String, klass.new.fields['gender_cd'].options[:type]
   end
+
+  def test_default_field_options_are_merged_recursivly
+    skip('Only available in mongoid') unless mongoid?
+    SimpleEnum.default_options[:field] = { :type => String }
+    klass = anonymous_dummy do
+      as_enum :gender, [:male, :female], :field => { :default => "0" }
+    end
+
+    refute_nil klass.new.fields['gender_cd']
+    assert_equal String, klass.new.fields['gender_cd'].options[:type]
+    assert_equal "0", klass.new.fields['gender_cd'].options[:default]
+  end
 end

@@ -36,7 +36,7 @@ module SimpleEnum
       # Wrap method chain to create mongoid field and additional
       # column options
       def as_enum_with_mongoid(enum_cd, values, options = {})
-        options = SimpleEnum.default_options.merge({ :column => "#{enum_cd}_cd" }).merge(options)
+        options = SimpleEnum.default_options.merge({ :column => "#{enum_cd}_cd" }).deep_merge(options)
 
         # forward custom field options
         field_options = options.delete(:field)
