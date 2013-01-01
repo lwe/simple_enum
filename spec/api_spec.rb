@@ -28,15 +28,6 @@ describe 'API' do
     it "can access enumeration on class" do
       subject.class.genders.should be_a(SimpleEnum::Enum)
     end
-
-    it "has ancestors" do
-      p subject.class.ancestors
-      p subject.class.singleton_class.ancestors
-    end
-
-    it "has instance methods" do
-      p subject.methods.sort
-    end
   end
 
 #  context 'active record' do
