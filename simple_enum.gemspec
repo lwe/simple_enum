@@ -22,10 +22,10 @@ Gem::Specification.new do |s|
 
   s.license          = 'MIT'
 
-  s.add_dependency "activesupport", '>= 3.0.0'
+  s.add_dependency 'activesupport', '>= 3.0.0'
 
-  s.add_development_dependency 'rake', '>= 0.9.2'
-  s.add_development_dependency 'minitest', '>= 2.3.0'
-  s.add_development_dependency 'activerecord', '>= 3.0.0'
+  s.add_development_dependency 'rake', '>= 10.0'
+  s.add_development_dependency 'rspec', '>= 2.12.0'
+  s.add_development_dependency 'activerecord', '>= 3.2.0'
   s.add_development_dependency 'mongoid', '~> 2.0'
 end
