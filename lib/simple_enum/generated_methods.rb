@@ -28,7 +28,7 @@ module SimpleEnum
       klass.module_eval <<-RUBY, __FILE__, __LINE__ + 1
         module ClassMethods                                # module ClassMethods
           def #{enum.prefix}#{enum.name.to_s.pluralize}    #   def genders
-            simple_enum_attributes[#{enum.name.inspect}]  #      simple_enum_attributes[:gender]
+            simple_enum_attributes[#{enum.name.inspect}]   #     simple_enum_attributes[:gender]
           end                                              #   end
         end                                                # end
       RUBY
@@ -36,29 +36,33 @@ module SimpleEnum
 
     def self.generate_getter(klass, enum)
       klass.module_eval <<-RUBY, __FILE__, __LINE__ + 1
-        def #{enum.name}                             # def gender
-          read_enum_attribute(#{enum.name.inspect})  #   read_enum_attribute(:gender)
-        end                                          # end
+        def #{enum.name}                                                   # def gender
+          value = read_enum_attribute(#{enum.name.inspect})                #   value = read_enum_attribute(:gender)
+          self.class.#{enum.prefix}#{enum.name.to_s.pluralize}.key(value)  #   self.class.genders.key(value)
+        end                                                                # end
       RUBY
     end
 
     def self.generate_setter(klass, enum)
       klass.module_eval <<-RUBY, __FILE__, __LINE__ + 1
-        def #{enum.name}=(value)                             # def gender=(value)
-          write_enum_attribute(#{enum.name.inspect}, value)  #   write_enum_attribute(:gender, value)
-        end                                                  # end
+        def #{enum.name}=(key)                                              # def gender=(key)
+          value = self.class.#{enum.prefix}#{enum.name.to_s.pluralize}[key] #   value = self.class.genders[key]
+          write_enum_attribute(#{enum.name.inspect}, value)                 #   write_enum_attribute(:gender, value)
+        end                                                                 # end
       RUBY
     end
 
     def self.generate_attribute_methods(klass, enum, key)
       klass.module_eval <<-RUBY, __FILE__, __LINE__ + 1
-        def #{enum.prefix}#{key}                                       # def male
-          write_enum_attribute(#{enum.name.inspect}, #{key.inspect})   #   write_enum_attribute(:gender, :male)
-        end                                                            # end
+        def #{enum.prefix}#{key}                                                        # def male
+          value = self.class.#{enum.prefix}#{enum.name.to_s.pluralize}[#{key.inspect}]  #   value = self.calss.genders[:male]
+          write_enum_attribute(#{enum.name.inspect}, value)                             #   write_enum_attribute(:gender, value)
+        end                                                                             # end
 
-        def #{enum.prefix}#{key}?                                      # def male?
-          read_enum_attribute(#{enum.name.inspect}) == #{key.inspect}  #   read_enum_attribute(:gender) == :male
-        end                                                            # end
+        def #{enum.prefix}#{key}?                                                       # def male?
+          value = self.class.#{enum.prefix}#{enum.name.to_s.pluralize}[#{key}.inspect]  #   value = self.class.genders[:male]
+          read_enum_attribute(#{enum.name.inspect}) == #{key.inspect}                   #   read_enum_attribute(:gender) == value
+        end                                                                             # end
       RUBY
     end
   end

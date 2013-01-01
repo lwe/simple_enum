@@ -38,10 +38,21 @@ module SimpleEnum
       @prefix ||= options[:prefix] && "#{options[:prefix] == true ? name : options[:prefix]}_"
     end
 
+    def [](key)
+      @lookup_hash[key.to_sym]
+    end
+
+    def key(value)
+      @reverse_hash[value.to_s]
+    end
+
     def replace(values)
       @lookup_hash = ActiveSupport::OrderedHash.new
       @reverse_hash = Hash.new
-      values.each_with_index { |obj, idx| @lookup_hash[obj.to_sym] = idx }
+      values.each_with_index { |obj, idx|
+        @lookup_hash[obj.to_sym] = idx
+        @reverse_hash[idx.to_s] = obj.to_sym
+      }
     end
   end
 end
