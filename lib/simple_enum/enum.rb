@@ -29,6 +29,7 @@ module SimpleEnum
       replace(values)
     end
 
+    # Delegate keys and values to internal hash.
     delegate :keys, :values, :to => :@lookup_hash
 
     # Public: Convenience method to access `options[:prefix]`.
