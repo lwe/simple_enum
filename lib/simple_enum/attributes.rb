@@ -10,18 +10,21 @@ module SimpleEnum
   # call and all basic functions so that enumerations can be added, loaded set
   # etc.
   #
+  # TODO write documentation
   module Attributes
     extend ActiveSupport::Concern
 
     included do
+      # TODO write documentation
       class_attribute :simple_enum_attributes, :instance_reader => false, :instance_writer => false
       self.simple_enum_attributes = {}
 
       extend SimpleEnum::GeneratedMethods
-      include simple_enum_module
     end
 
     module ClassMethods
+
+      # TODO add documentation
       def as_enum(name, values, options = {})
         SimpleEnum::Enum.new(name, values, options).tap do |enum|
           simple_enum_attributes[enum.name] = enum
@@ -42,8 +45,6 @@ module SimpleEnum
       def simple_enum_initialization_callback(klass, enum)
       end
 
-    private
-
       # Private: All dynamic methods are created on this module, this ensures
       # that things like `super` still works as expected. Note that all subclasses
       # share the same module...
@@ -53,27 +54,39 @@ module SimpleEnum
       #
       # Returns shared module for dynamic methods.
       def simple_enum_module
-        @simple_enum_module ||= Module.new.tap { |m|
-          m.module_eval <<-RUBY, __FILE__, __LINE__ + 1
+        @simple_enum_module ||= Module.new.tap { |mod|
+          mod.module_eval <<-RUBY, __FILE__, __LINE__ + 1
             extend ActiveSupport::Concern
             module ClassMethods; end
           RUBY
+          include mod
         }
       end
     end
 
     private
 
+    # Public: Reads the stored value for an enumeration, can
+    # be overriden by specific implementation e.g. for ActiveRecord
+    # or Mongoid integration.
+    #
+    # attribute - The Symbol with the attribute to read.
+    #
+    # Returns stored value, normally a Number
     def read_enum_attribute(attribute)
       instance_variable_get("@#{attribute}")
     end
 
+    # Public: Write attribute value for enum, just sets the instance
+    # variable. Can be overriden by specific implementations, like AR
+    # or Mongoid.
+    #
+    # attribute - The Symbol with the attribute to write.
+    # value - The Number (or String) with the value to write.
+    #
+    # Returns nothing.
     def write_enum_attribute(attribute, value)
       instance_variable_set("@#{attribute}", value)
-    end
-
-    def enum_attribute?(attribute, value)
-      read_enum_attribute(attribute) == value
     end
   end
 end
