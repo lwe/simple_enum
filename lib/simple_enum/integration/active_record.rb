@@ -10,50 +10,49 @@ module SimpleEnum
       extend ActiveSupport::Concern
 
       module ClassMethods
-        #
-        def simple_enum_initialization_callback(klass, enum)
-          column = enum.options[:column] ||= "#{enum.name}_cd".to_sym
-          ActiveRecord.generate_dirty_methods klass, enum, column
-          enum.keys.each { |key| ActiveRecord.generate_bang_methods(klass, enum, column, key) }
+        def simple_enum_column_name(attribute)
+          enum = simple_enum_attributes[attribute]
+          enum.options[:column] ||= "#{enum.name}_cd".to_sym
+        end
+
+        def simple_enum_feature_initialization_callback(mod, enum)
+          column = simple_enum_column_name(enum.name)
+          mod.module_eval <<-RUBY, __FILE__, __LINE__ + 1
+            def #{enum.name}_changed?                                          # def gender_changed?
+              #{column}_changed?                                               #   gender_cd_changed?
+            end                                                                # end
+
+            def #{enum.name}_was                                               # def gender_was
+              value = #{column}_was                                            #   value = gender_cd_was
+              self.class.#{enum.prefix}#{enum.name.to_s.pluralize}.key(value)  #   self.class.genders.key(value)
+            end                                                                # end
+          RUBY
 
           super
         end
-      end
 
-      def self.generate_dirty_methods(klass, enum, column)
-        klass.module_eval <<-RUBY, __FILE__, __LINE__ + 1
-          def #{enum.name}_changed?                                          # def gender_changed?
-            #{column}_changed?                                               #   gender_cd_changed?
-          end                                                                # end
+        def simple_enum_attribute_initialization_callback(mod, enum, key)
+          column = simple_enum_column_name(enum.name)
+          mod.module_eval <<-RUBY, __FILE__, __LINE__ + 1
+            def #{enum.prefix}#{key}!                                                       # def male!
+              value = self.class.#{enum.prefix}#{enum.name.to_s.pluralize}[#{key.inspect}]  #   value = self.calss.genders[:male]
+              update_attribute(#{column.inspect}, value)                                    #   update_attribute(:gender_cd, value)
+            end                                                                             # end
+          RUBY
 
-          def #{enum.name}_was                                               # def gender_was
-            value = #{column}_was                                            #   value = gender_cd_was
-            self.class.#{enum.prefix}#{enum.name.to_s.pluralize}.key(value)  #   self.class.genders.key(value)
-          end                                                                # end
-        RUBY
-      end
+          super
+        end
 
-      def self.generate_bang_methods(klass, enum, column, key)
-        klass.module_eval <<-RUBY, __FILE__, __LINE__ + 1
-          def #{enum.prefix}#{key}!                                                       # def male!
-            value = self.class.#{enum.prefix}#{enum.name.to_s.pluralize}[#{key.inspect}]  #   value = self.calss.genders[:male]
-            update_attribute(#{column.inspect}, value)                                    #   update_attribute(:gender_cd, value)
-          end                                                                             # end
-        RUBY
-      end
-
-      def read_enum_attribute(attribute)
-        self[simple_enum_column_name(attribute)]
-      end
-
-      def write_enum_attribute(attribute, value)
-        self[simple_enum_column_name(attribute)] = value
       end
 
       private
 
-      def simple_enum_column_name(attribute)
-        self.class.simple_enum_attributes[attribute].options[:column]
+      def read_enum_attribute_before_conversion(attribute)
+        read_attribute(self.class.simple_enum_column_name(attribute))
+      end
+
+      def write_enum_attribute_after_conversion(attribute, value)
+        write_attribute(self.class.simple_enum_column_name(attribute), value)
       end
     end
   end
