@@ -1,4 +1,3 @@
-require 'mongoid'
 require 'active_support/concern'
 
 require 'simple_enum/attributes'

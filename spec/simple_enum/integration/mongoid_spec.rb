@@ -1,27 +1,38 @@
 require 'spec_helper'
-require 'simple_enum/integration/active_record'
+require 'mongoid'
+require 'simple_enum/integration/mongoid'
 
-describe SimpleEnum::Persistence, :activerecord => true do
-  class ActiveRecordDummy < ActiveRecord::Base
+describe SimpleEnum::Integration::Mongoid, :mongoid => true do
+  class MongoidDummy
+    include Mongoid::Document
+    include SimpleEnum::Mongoid
+    self.collection_name = 'mongoid_dummies'
+
+    field :gender_cd, :type => Integer
+    field :other, :type => Integer
     as_enum :gender, [:male, :female]
     as_enum :alternative, [:alpha, :beta, :gamma], :column => 'other'
   end
 
   before do
-    ActiveRecord::Base.establish_connection :adapter => 'sqlite3', :database => ':memory:'
-    ActiveRecord::Base.connection.create_table :active_record_dummies, :force => true do |t|
-      t.column :gender_cd, :integer
-      t.column :other, :integer
+    Mongoid.configure do |config|
+      config.master = Mongo::Connection.new('localhost').db("simple-enum-test-suite")
+      config.use_utc = true
+      config.include_root_in_json = true
     end
+
+    Mongoid.master.collections.select do |collection|
+      collection.name !~ /system/
+    end.each(&:drop)
   end
 
   context "as_enum :gender" do
-    subject { ActiveRecordDummy.new(:gender => :male) }
+    subject { MongoidDummy.new(:gender => :male) }
     its(:gender_cd) { should == 0}
     its(:gender) { should == :male }
 
     context "bang methods" do
-      subject { ActiveRecordDummy.create }
+      subject { MongoidDummy.create }
       its(:gender) { should be_nil }
 
       it "saves gender_cd when calling female!" do
@@ -33,7 +44,7 @@ describe SimpleEnum::Persistence, :activerecord => true do
     end
 
     context 'dirty attributes' do
-      subject { ActiveRecordDummy.create(:gender => 'male') }
+      subject { MongoidDummy.create(:gender => 'male') }
       before { subject.female }
 
       its(:gender_changed?) { should be_true }
@@ -43,7 +54,7 @@ describe SimpleEnum::Persistence, :activerecord => true do
   end
 
   context ':column option' do
-    subject { ActiveRecordDummy.new(:alternative => 'beta') }
+    subject { MongoidDummy.new(:alternative => 'beta') }
     its(:alternative) { should == :beta }
     its(:other) { should == 1 }
   end
