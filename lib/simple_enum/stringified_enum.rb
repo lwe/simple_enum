@@ -1,15 +1,11 @@
-require 'active_support/ordered_hash'
-
 module SimpleEnum
 
-  # The SimpleEnum::Enum provides the underlying enum definition
-  # for an `as_enum` call. It holds all possible values, the options,
-  # the name etc.
+  # The StringifiedEnum dumps the enum as String instead of the indexed number.
   #
-  class IndexedEnum
+  class StringifiedEnum
 
     # Allow access to values and lookup hash.
-    attr_reader :values, :lookup_hash
+    attr_reader :lookup_hash
 
     # Public: Creates a new enum instance using a name,
     # a hash or array of values and options.
@@ -25,25 +21,23 @@ module SimpleEnum
       update(values.to_a)
     end
 
-    # Keys meaning enum keys, delegate to values for array
-    alias_method :keys, :values
+    def keys
+      lookup_hash.values
+    end
 
-    def load(index)
-      values[index] if index
+    def load(str)
+      lookup_hash[str] if str
     end
 
     def dump(key)
-      lookup_hash[key.to_s] if key
+      lookup_hash[key.to_s].try(:to_s) if key
     end
 
     private
 
-    def update(values)
-      @values = values
+    def update(ary)
       @lookup_hash = ActiveSupport::OrderedHash.new
-      values.each_with_index { |key, idx|
-        @lookup_hash[key.to_s] = idx
-      }
+      ary.each { |key| lookup_hash[key.to_s] = key }
     end
   end
 end

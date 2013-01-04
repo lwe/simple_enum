@@ -2,7 +2,7 @@ require 'spec_helper'
 require 'simple_enum'
 require 'simple_enum/integration/active_record'
 
-describe SimpleEnum::Integration::ActiveRecord, :activerecord => true do
+describe SimpleEnum::Persistence, :activerecord => true do
   class ActiveRecordDummy < ActiveRecord::Base
     as_enum :gender, [:male, :female]
     as_enum :alternative, [:alpha, :beta, :gamma], :column => 'other'
@@ -36,11 +36,6 @@ describe SimpleEnum::Integration::ActiveRecord, :activerecord => true do
     context 'dirty attributes' do
       subject { ActiveRecordDummy.create(:gender => 'male') }
       before { subject.female }
-
-      it "changes" do
-        p subject.changes
-        p subject.send(:attribute_was, 'gender_cd')
-      end
 
       its(:gender_changed?) { should be_true }
       its(:gender_was) { should == :male }

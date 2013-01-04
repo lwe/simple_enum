@@ -15,16 +15,16 @@ module SimpleEnum
     # to `ActiveModel::Dirty` attribute methods, then calls super.
     #
     # Returns nothing.
-    def simple_enum_initialization_callback(attribute)
+    def simple_enum_initialization_callback(type)
       simple_enum_generated_feature_methods.module_eval <<-RUBY, __FILE__, __LINE__ + 1
-        def #{attribute.name}_changed?                          # def gender_changed?
-          attribute_changed?(#{attribute.column.to_s.inspect})  #   attribute_changed?('gender_cd')
-        end                                                     # end
+        def #{type.name}_changed?                          # def gender_changed?
+          attribute_changed?(#{type.column.to_s.inspect})  #   attribute_changed?('gender_cd')
+        end                                                # end
 
-        def #{attribute.name}_was                                        # def gender_was
-          value = attribute_was(#{attribute.column.to_s.inspect})        #   value = attribute_was('gender_cd')
-          simple_enum_attributes[#{attribute.name.inspect}].load(value)  #   simple_enum_attributes[:gender].load(value)
-        end                                                              # end
+        def #{type.name}_was                                        # def gender_was
+          value = attribute_was(#{type.column.to_s.inspect})        #   value = attribute_was('gender_cd')
+          simple_enum_attributes[#{type.name.inspect}].load(value)  #   simple_enum_attributes['gender'].load(value)
+        end                                                         # end
       RUBY
 
       super

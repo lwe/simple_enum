@@ -44,9 +44,9 @@ describe SimpleEnum::Attributes do
       subject.write_enum_attribute('gender', 'female').should == 1
     end
 
-    it "accepts numerical argument" do
-      subject.write_enum_attribute(:gender, 1).should == 1
-      subject.read_enum_attribute(:gender).should == :female
+    it "writes nil if unknown argument given" do
+      subject.write_enum_attribute(:gender, :something).should == nil
+      subject.read_enum_attribute(:gender).should == nil
     end
   end
 
