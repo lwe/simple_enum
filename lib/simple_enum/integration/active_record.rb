@@ -16,10 +16,10 @@ module SimpleEnum
               #{attribute.column}_changed?  #   gender_cd_changed?
             end                             # end
 
-            def #{attribute.name}_was                                            # def gender_was
-              value = #{attribute.column}_was                                    #   value = gender_cd_was
-              simple_enum_attributes[#{attribute.name.inspect}].enum.key(value)  #   simple_enum_attributes[:gender].enum.key(value)
-            end                                                                  # end
+            def #{attribute.name}_was                                        # def gender_was
+              value = #{attribute.column}_was                                #   value = gender_cd_was
+              simple_enum_attributes[#{attribute.name.inspect}].load(value)  #   simple_enum_attributes[:gender].load(value)
+            end                                                              # end
           RUBY
 
           attribute.enum.keys.each do |key|

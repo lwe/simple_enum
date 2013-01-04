@@ -1,13 +1,16 @@
 require 'active_support/concern'
 require 'active_support/core_ext/class'
+require 'active_support/core_ext/module'
 require 'active_support/hash_with_indifferent_access'
 
-require 'simple_enum/enum'
+require 'simple_enum/indexed_enum'
 require 'simple_enum/generated_methods'
 
 module SimpleEnum
 
   EnumAttribute = Struct.new(:name, :enum, :options) do
+    delegate :dump, :load, :keys, :to => :enum
+
     def prefix
       @prefix ||= options[:prefix] && "#{options[:prefix] == true ? name : options[:prefix]}_"
     end
@@ -37,7 +40,7 @@ module SimpleEnum
 
       # Public: Creates a new enumerated attribute on the current class.
       def as_enum(name, values, options = {})
-        enum = SimpleEnum::Enum.new(name, values, options)
+        enum = SimpleEnum::IndexedEnum.new(values)
         attribute = SimpleEnum::EnumAttribute.new(name, enum, options)
         simple_enum_initialization_callback(attribute)
         self.simple_enum_attributes = simple_enum_attributes.merge(name => attribute)
@@ -69,7 +72,7 @@ module SimpleEnum
     # Returns stored value, normally a Number
     def read_enum_attribute(attribute)
       value = read_enum_attribute_before_conversion(attribute)
-      simple_enum_attributes[attribute].enum.key(value)
+      simple_enum_attributes[attribute].load(value)
     end
 
     # Public: Write attribute value for enum, converts the key to
@@ -81,7 +84,7 @@ module SimpleEnum
     #
     # Returns stored and converted value.
     def write_enum_attribute(attribute, key)
-      value = simple_enum_attributes[attribute].enum[key] || key
+      value = simple_enum_attributes[attribute].dump(key) || key
       write_enum_attribute_after_conversion(attribute, value)
       value
     end

@@ -4,8 +4,8 @@ require 'simple_enum/integration/active_record'
 
 describe SimpleEnum::Integration::ActiveRecord, :activerecord => true do
   class ActiveRecordDummy < ActiveRecord::Base
-    as_enum :gender, %w{male female}
-    as_enum :alternative, %w{alpha beta gamma}, :column => 'other'
+    as_enum :gender, [:male, :female]
+    as_enum :alternative, [:alpha, :beta, :gamma], :column => 'other'
   end
 
   before do

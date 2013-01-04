@@ -52,11 +52,9 @@ describe SimpleEnum::Attributes do
 
   context "generated class methods" do
     subject { PlainOldRubyObject }
-    its(:genders) { should be_a(SimpleEnum::Enum) }
-
-    it "represents the enum :gender" do
-      subject.genders.name.should == :gender
-    end
+    its(:genders) { should be_a(SimpleEnum::IndexedEnum) }
+    its(:genders) { should respond_to(:load) }
+    its(:genders) { should respond_to(:dump) }
 
     it "has :male and :female as keys" do
       subject.genders.keys.should == [:male, :female]
