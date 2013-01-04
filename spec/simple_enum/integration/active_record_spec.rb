@@ -37,6 +37,11 @@ describe SimpleEnum::Integration::ActiveRecord, :activerecord => true do
       subject { ActiveRecordDummy.create(:gender => 'male') }
       before { subject.female }
 
+      it "changes" do
+        p subject.changes
+        p subject.send(:attribute_was, 'gender_cd')
+      end
+
       its(:gender_changed?) { should be_true }
       its(:gender_was) { should == :male }
       its(:gender_cd_was) { should == 0 }

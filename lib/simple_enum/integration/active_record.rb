@@ -1,6 +1,8 @@
 require 'active_record'
 require 'active_support/concern'
 
+require 'simple_enum/dirty'
+
 module SimpleEnum
   module Integration
 
@@ -11,17 +13,6 @@ module SimpleEnum
 
       module ClassMethods
         def simple_enum_initialization_callback(attribute)
-          simple_enum_generated_feature_methods.module_eval <<-RUBY, __FILE__, __LINE__ + 1
-            def #{attribute.name}_changed?  # def gender_changed?
-              #{attribute.column}_changed?  #   gender_cd_changed?
-            end                             # end
-
-            def #{attribute.name}_was                                        # def gender_was
-              value = #{attribute.column}_was                                #   value = gender_cd_was
-              simple_enum_attributes[#{attribute.name.inspect}].load(value)  #   simple_enum_attributes[:gender].load(value)
-            end                                                              # end
-          RUBY
-
           attribute.enum.keys.each do |key|
             simple_enum_generated_feature_methods.module_eval <<-RUBY, __FILE__, __LINE__ + 1
               def #{attribute.prefix}#{key}!                                   # def female!
@@ -55,4 +46,5 @@ end
 
 # Extend ActiveRecord::Base
 ActiveRecord::Base.send(:include, SimpleEnum::Attributes)
+ActiveRecord::Base.send(:extend,  SimpleEnum::Dirty)
 ActiveRecord::Base.send(:include, SimpleEnum::Integration::ActiveRecord)
