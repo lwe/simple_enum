@@ -12,44 +12,47 @@ module SimpleEnum
   # It's also basically just based on the callbacks provided by SimpleEnum::Attributes. The
   # GeneratedMethods are automatically included by default and thus always available.
   module GeneratedMethods
+    def simple_enum_initialization_callback(attribute)
+      GeneratedMethods.generate_class_method(self.simple_enum_generated_class_methods, attribute.name, attribute.prefix)
+      GeneratedMethods.generate_feature_methods(self.simple_enum_generated_feature_methods, attribute.name)
+      attribute.enum.keys.each do |key|
+        GeneratedMethods.generate_attribute_methods(self.simple_enum_generated_feature_methods, attribute.name, key, attribute.prefix)
+      end
+
+      super
+    end
 
     # Creates the `Klass.genders` method to return
-    def simple_enum_class_initialization_callback(mod, enum)
+    def self.generate_class_method(mod, name, prefix)
       mod.module_eval <<-RUBY, __FILE__, __LINE__ + 1
-        def #{enum.prefix}#{enum.name.to_s.pluralize}    #   def genders
-          simple_enum_attributes[#{enum.name.inspect}]   #     simple_enum_attributes[:gender]
+        def #{prefix}#{name.to_s.pluralize}              #   def genders
+          simple_enum_attributes[#{name.inspect}].enum   #     simple_enum_attributes[:gender].enum
         end                                              #   end
       RUBY
-
-      super
     end
 
-    def simple_enum_feature_initialization_callback(mod, enum)
+    def self.generate_feature_methods(mod, name)
       mod.module_eval <<-RUBY, __FILE__, __LINE__ + 1
-        def #{enum.name}                              # def gender
-          read_enum_attribute(#{enum.name.inspect})   #   read_enum_attribute(:gender)
+        def #{name}                              # def gender
+          read_enum_attribute(#{name.inspect})   #   read_enum_attribute(:gender)
+        end                                      # end
+
+        def #{name}=(key)                             # def gender=(key)
+          write_enum_attribute(#{name.inspect}, key)  #   write_enum_attribute(:gender, value)
         end                                           # end
-
-        def #{enum.name}=(key)                             # def gender=(key)
-          write_enum_attribute(#{enum.name.inspect}, key)  #   write_enum_attribute(:gender, value)
-        end                                                # end
       RUBY
-
-      super
     end
 
-    def simple_enum_attribute_initialization_callback(mod, enum, key)
+    def self.generate_attribute_methods(mod, name, key, prefix)
       mod.module_eval <<-RUBY, __FILE__, __LINE__ + 1
-        def #{enum.prefix}#{key}                                       # def male
-          write_enum_attribute(#{enum.name.inspect}, #{key.inspect})   #   write_enum_attribute(:gender, value)
-        end                                                            # end
+        def #{prefix}#{key}                                       # def male
+          write_enum_attribute(#{name.inspect}, #{key.inspect})   #   write_enum_attribute(:gender, value)
+        end                                                       # end
 
-        def #{enum.prefix}#{key}?                                      # def male?
-          read_enum_attribute(#{enum.name.inspect}) == #{key.inspect}  #   read_enum_attribute(:gender) == :male
-        end                                                            # end
+        def #{prefix}#{key}?                                      # def male?
+          read_enum_attribute(#{name.inspect}) == #{key.inspect}  #   read_enum_attribute(:gender) == :male
+        end                                                       # end
       RUBY
-
-      super
     end
   end
 end

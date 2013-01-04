@@ -2,12 +2,12 @@ require 'spec_helper'
 require 'simple_enum'
 require 'simple_enum/integration/active_record'
 
-class ActiveRecordDummy < ActiveRecord::Base
-  as_enum :gender, %w{male female}
-  as_enum :alternative, %w{alpha beta gamma}, :column => 'other'
-end
-
 describe SimpleEnum::Integration::ActiveRecord, :activerecord => true do
+  class ActiveRecordDummy < ActiveRecord::Base
+    as_enum :gender, %w{male female}
+    as_enum :alternative, %w{alpha beta gamma}, :column => 'other'
+  end
+
   before do
     ActiveRecord::Base.establish_connection :adapter => 'sqlite3', :database => ':memory:'
     ActiveRecord::Base.connection.create_table :active_record_dummies, :force => true do |t|

@@ -7,6 +7,16 @@ require 'simple_enum/generated_methods'
 
 module SimpleEnum
 
+  EnumAttribute = Struct.new(:name, :enum, :options) do
+    def prefix
+      @prefix ||= options[:prefix] && "#{options[:prefix] == true ? name : options[:prefix]}_"
+    end
+
+    def column
+      @column ||= options[:column] || "#{name}_cd".to_sym
+    end
+  end
+
   # The SimpleEnum::Attributes is the core module which provides the `as_enum`
   # call and all basic functions so that enumerations can be added, loaded set
   # etc.
@@ -25,26 +35,16 @@ module SimpleEnum
 
     module ClassMethods
 
-      # TODO add documentation
+      # Public: Creates a new enumerated attribute on the current class.
       def as_enum(name, values, options = {})
-        SimpleEnum::Enum.new(name, values, options).tap do |enum|
-          simple_enum_attributes[enum.name] = enum
-
-          # Run callbacks
-          simple_enum_class_initialization_callback(simple_enum_generated_class_methods, enum)
-          simple_enum_feature_initialization_callback(simple_enum_generated_feature_methods, enum)
-          enum.keys.each { |key| simple_enum_attribute_initialization_callback(simple_enum_generated_feature_methods, enum, key) }
-        end
+        enum = SimpleEnum::Enum.new(name, values, options)
+        attribute = SimpleEnum::EnumAttribute.new(name, enum, options)
+        simple_enum_initialization_callback(attribute)
+        self.simple_enum_attributes = simple_enum_attributes.merge(name => attribute)
       end
 
-      def simple_enum_class_initialization_callback(mod, enum)
-      end
-
-      def simple_enum_feature_initialization_callback(mod, enum)
-      end
-
-      def simple_enum_attribute_initialization_callback(mod, enum, key)
-      end
+      # Provided initialization hooks/callbacks.
+      def simple_enum_initialization_callback(attribute); end
 
       def simple_enum_generated_class_methods
         @simple_enum_generated_class_methods ||= Module.new.tap { |mod|
@@ -69,7 +69,7 @@ module SimpleEnum
     # Returns stored value, normally a Number
     def read_enum_attribute(attribute)
       value = read_enum_attribute_before_conversion(attribute)
-      simple_enum_attributes[attribute].key(value)
+      simple_enum_attributes[attribute].enum.key(value)
     end
 
     # Public: Write attribute value for enum, converts the key to
@@ -81,7 +81,7 @@ module SimpleEnum
     #
     # Returns stored and converted value.
     def write_enum_attribute(attribute, key)
-      value = simple_enum_attributes[attribute][key] || key
+      value = simple_enum_attributes[attribute].enum[key] || key
       write_enum_attribute_after_conversion(attribute, value)
       value
     end
@@ -90,6 +90,8 @@ module SimpleEnum
 
     # Public: Reads the plain attribute before conversion from
     # an instance variable.
+    #
+    # Returns enumeration before
     def read_enum_attribute_before_conversion(attribute)
       instance_variable_get(:"@#{attribute}")
     end
