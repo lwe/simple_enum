@@ -8,8 +8,6 @@ describe SimpleEnum::Integration::Mongoid, :mongoid => true do
     include SimpleEnum::Mongoid
     self.collection_name = 'mongoid_dummies'
 
-    field :gender_cd, :type => Integer
-    field :other, :type => Integer
     as_enum :gender, [:male, :female]
     as_enum :alternative, [:alpha, :beta, :gamma], :column => 'other'
   end

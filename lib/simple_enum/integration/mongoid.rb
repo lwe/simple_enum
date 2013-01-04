@@ -9,11 +9,17 @@ module SimpleEnum
     module Mongoid
       extend ActiveSupport::Concern
 
-      #module ClassMethods
-      #  def simple_enum_initialization_callback(type)
-      #    super
-      #  end
-      #end
+      module ClassMethods
+
+        # Hook into enum initialization to automatically create new field,
+        # unless :field is set to false.
+        def simple_enum_initialization_callback(type)
+          field_options = type.options[:field]
+          field(type.column, !field_options || field_options == true ? {} : field_options) unless field_options == false
+
+          super
+        end
+      end
 
       # Public: Override `update_enum_column`, because mongoid
       # has no `update_column`, but the atmoic `set` operation.

@@ -3,7 +3,7 @@ require 'active_support/core_ext/class'
 require 'active_support/core_ext/module'
 require 'active_support/hash_with_indifferent_access'
 
-require 'simple_enum/indexed_enum'
+require 'simple_enum/enums'
 require 'simple_enum/generated_methods'
 
 module SimpleEnum

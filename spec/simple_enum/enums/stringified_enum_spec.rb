@@ -1,22 +1,22 @@
 require 'spec_helper'
-require 'simple_enum/indexed_enum'
+require 'simple_enum/enums/stringified_enum'
 
-describe SimpleEnum::IndexedEnum do
+describe SimpleEnum::StringifiedEnum do
   context 'with array of strings' do
     subject { described_class.new %w{male female} }
 
     its(:keys) { should == %w{male female} }
 
     it "implements #dump" do
-      subject.dump(:male).should == 0
-      subject.dump(:female).should == 1
-      subject.dump('male').should == 0
-      subject.dump('female').should == 1
+      subject.dump(:male).should == 'male'
+      subject.dump(:female).should == 'female'
+      subject.dump('male').should == 'male'
+      subject.dump('female').should == 'female'
     end
 
     it "implements #load" do
-      subject.load(0).should == 'male'
-      subject.load(1).should == 'female'
+      subject.load('male').should == 'male'
+      subject.load('female').should == 'female'
     end
   end
 
@@ -26,14 +26,14 @@ describe SimpleEnum::IndexedEnum do
     its(:keys) { should == [:unread, :read, :starred, :archived] }
 
     it "implements #dump" do
-      subject.dump(:read).should == 1
-      subject.dump('archived').should == 3
+      subject.dump(:read).should == 'read'
+      subject.dump('archived').should == 'archived'
       subject.dump(nil).should be_nil
     end
 
     it "implements #load" do
-      subject.load(0).should == :unread
-      subject.load(2).should == :starred
+      subject.load('unread').should == :unread
+      subject.load('starred').should == :starred
       subject.load(nil).should be_nil
     end
   end

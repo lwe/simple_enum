@@ -1,3 +1,5 @@
+require 'active_support/ordered_hash'
+
 module SimpleEnum
 
   # The StringifiedEnum dumps the enum as String instead of the indexed number.
