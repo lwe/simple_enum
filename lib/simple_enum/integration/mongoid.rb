@@ -11,8 +11,10 @@ module SimpleEnum
 
       module ClassMethods
 
-        # Hook into enum initialization to automatically create new field,
+        # Internal: Hook into enum initialization to automatically create new field,
         # unless :field is set to false.
+        #
+        # Returns nothing.
         def simple_enum_initialization_callback(type)
           field_options = type.options[:field]
           field(type.column, !field_options || field_options == true ? {} : field_options) unless field_options == false
@@ -41,6 +43,18 @@ module SimpleEnum
     end
   end
 
+  # The SimpleEnum::Mongoid module must be included in `Mongoid::Document` models to provide
+  # `as_enum` functionality with persistence using Mongoid.
+  #
+  # Examples:
+  #
+  #   class Message
+  #     include Mongoid::Document
+  #     include SimpleEnum::Mongoid
+  #
+  #     as_enum :priority, [:low, :normal, :high, :urgent]
+  #   end
+  #
   module Mongoid
     extend ActiveSupport::Concern
 

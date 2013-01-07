@@ -1,10 +1,9 @@
 require 'active_support/concern'
 require 'active_support/core_ext/class'
 require 'active_support/core_ext/module'
-require 'active_support/hash_with_indifferent_access'
 
 require 'simple_enum/enums'
-require 'simple_enum/generated_methods'
+require 'simple_enum/attribute_methods'
 
 module SimpleEnum
 
@@ -38,7 +37,7 @@ module SimpleEnum
       class_attribute :simple_enum_attributes, :instance_writer => false
       self.simple_enum_attributes = {}
 
-      extend SimpleEnum::GeneratedMethods
+      include SimpleEnum::AttributeMethods
     end
 
     module ClassMethods
@@ -80,48 +79,6 @@ module SimpleEnum
           include mod
         }
       end
-    end
-
-    # Public: Reads the stored value for an enumeration and converts
-    # it to the enumerated value. Integrations for ActiveRecord or
-    # Mongoid should override `read_enum_attribute_before_conversion`
-    # instead.
-    #
-    # attr_name - The Symbol with the attribute to read.
-    #
-    # Returns stored value, normally a Number
-    def read_enum_attribute(attr_name)
-      value = read_enum_attribute_before_conversion(attr_name)
-      simple_enum_attributes[attr_name.to_s].load(value)
-    end
-
-    # Public: Write attribute value for enum, converts the key to
-    # the enum value and delegates to `write_enum_attribute_after_conversion`
-    # which integrations like AR/Mongoid can override
-    #
-    # attr_name - The Symbol with the attribute to write.
-    # key - The Symbol with the value to write.
-    #
-    # Returns stored and converted value.
-    def write_enum_attribute(attr_name, key)
-      value = simple_enum_attributes[attr_name.to_s].dump(key)
-      write_enum_attribute_after_conversion(attr_name, value)
-      value
-    end
-
-    private
-
-    # Public: Reads the plain attribute before conversion from
-    # an instance variable.
-    #
-    # Returns enumeration before
-    def read_enum_attribute_before_conversion(attr_name)
-      instance_variable_get(:"@#{attr_name}")
-    end
-
-    # Public: Writes the converted value as instance variable.
-    def write_enum_attribute_after_conversion(attr_name, value)
-      instance_variable_set("@#{attr_name}", value)
     end
   end
 end

@@ -1,5 +1,4 @@
 require 'active_record'
-require 'active_support/concern'
 
 require 'simple_enum/attributes'
 require 'simple_enum/persistence'
