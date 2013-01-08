@@ -1,27 +1,26 @@
 require 'active_support/concern'
 require 'active_support/core_ext/class'
-require 'active_support/core_ext/module'
+require 'active_support/core_ext/hash'
 
 require 'simple_enum/enums'
+require 'simple_enum/enum_type'
 require 'simple_enum/attribute_methods'
 
 module SimpleEnum
 
-  # The EnumType encapsulates all information for an enum instance,
-  # including the name, options and the coder model.
-  EnumType = Struct.new(:name, :model, :options) do
-    # Simplified access to #load, #dump and #keys on model.
-    delegate :dump, :load, :keys, :to => :model
-
-    # Returns String with prefix for methods, if any.
-    def prefix
-      @prefix ||= options[:prefix] && "#{options[:prefix] == true ? name : options[:prefix]}_"
-    end
-
-    # Returns String with column name, or `options[:column]`.
-    def column
-      @column ||= options[:column] || "#{name}_cd"
-    end
+  # Public: The default_options are always merged with the options
+  # provided in `as_enum`. It allows to set some defaults, e.g. like always
+  # enabling the prefix. The options are deep merged.
+  #
+  # Examples:
+  #
+  #   # config/initializiers/simple_enum.rb or similar
+  #   # Always enable prefixes
+  #   SimpleEnum.default_options[:prefix] = true
+  #
+  # Returns a Hash.
+  def self.default_options
+    @default_options ||= {}
   end
 
   # The SimpleEnum::Attributes is the core module which provides the `as_enum`
@@ -66,6 +65,7 @@ module SimpleEnum
       # Returns EnumType instance.
       def as_enum(attr_name, values, options = {})
         values = SimpleEnum::Enum(values)
+        options = SimpleEnum.default_options.deep_merge(options)
 
         SimpleEnum::EnumType.new(attr_name.to_s, values, options).tap do |type|
           simple_enum_initialization_callback(type)
