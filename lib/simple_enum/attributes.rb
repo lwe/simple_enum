@@ -8,7 +8,7 @@ require 'simple_enum/attribute_methods'
 module SimpleEnum
 
   # The EnumType encapsulates all information for an enum instance,
-  # including the name, options and the coder/values.
+  # including the name, options and the coder model.
   EnumType = Struct.new(:name, :model, :options) do
     # Simplified access to #load, #dump and #keys on model.
     delegate :dump, :load, :keys, :to => :model
@@ -25,18 +25,30 @@ module SimpleEnum
   end
 
   # The SimpleEnum::Attributes is the core module which provides the `as_enum`
-  # call and all basic functions so that enumerations can be added, loaded set
-  # etc.
+  # call and all basic functionality - this is also the module that must be
+  # included to enable simple_enum for a class.
   #
-  # TODO write documentation
+  # Examples:
+  #
+  #    class Message
+  #      include SimpleEnum::Attributes
+  #      as_enum :priority, [:low, :medium, :high]
+  #    end
+  #
+  #    msg = Message.new
+  #    msg.priority = :medium
+  #    msg.high? # => false
+  #
   module Attributes
     extend ActiveSupport::Concern
 
     included do
-      # TODO write documentation
+      # Holds all enum attributes on this class, provides an instance reader.
+      # It is a Hash of EnumType instances and the enum name as String key.
       class_attribute :simple_enum_attributes, :instance_writer => false
       self.simple_enum_attributes = {}
 
+      # Generate default attribute methods (setter/getter et all).
       include SimpleEnum::AttributeMethods
     end
 
@@ -50,14 +62,10 @@ module SimpleEnum
       # attr_name - The Symbol or String with the name of the enumeration.
       # values - The Array, Hash or anything that implements #load, #dump and
       #          #keys. Contains the available enumeration values.
+      #
+      # Returns EnumType instance.
       def as_enum(attr_name, values, options = {})
-        values = if [:load, :dump, :keys].all? { |m| values.respond_to?(m) }
-          values
-        elsif values.is_a?(Hash)
-          SimpleEnum::HashedEnum.new(values)
-        else
-          SimpleEnum::IndexedEnum.new(values)
-        end
+        values = SimpleEnum::Enum(values)
 
         SimpleEnum::EnumType.new(attr_name.to_s, values, options).tap do |type|
           simple_enum_initialization_callback(type)
@@ -68,12 +76,22 @@ module SimpleEnum
       # Provided initialization hooks/callbacks.
       def simple_enum_initialization_callback(type); end
 
+      # Public: Access a dynamically extended and generated module to
+      # add class methods, new dynamically generated class methods should
+      # be added only via this module.
+      #
+      # Returns Module.
       def simple_enum_generated_class_methods
         @simple_enum_generated_class_methods ||= Module.new.tap { |mod|
           extend mod
         }
       end
 
+      # Public: Access a dynamically extended and generated module to
+      # add instance methods, new dynamically generated instance methods should
+      # be added only via this module.
+      #
+      # Returns Module.
       def simple_enum_generated_feature_methods
         @simple_enum_generated_feature_methods ||= Module.new.tap { |mod|
           include mod
