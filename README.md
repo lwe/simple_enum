@@ -1,5 +1,5 @@
-SimpleEnum - simple enum-like attributes
-========================================
+SimpleEnum - simple, enum-like attributes
+=========================================
 
 Simply provides enum-like attributes for your models, including plain old ruby objects,
 ActiveRecord or Mongoid. Version 2.0 is a complete rewrite, using a more modular approach
@@ -21,21 +21,17 @@ that's it, otherwise ensure to `require "simple_enum"` somewhere.
 Add this to a model:
 
 ```ruby
-class User < ActiveRecord::Base
-  as_enum :gender, female: 1, male: 0
+class Message < ActiveRecord::Base
+  as_enum :priority, [:low, :medium, :high, :extreme]
 end
 ```
 
-Then create the required `gender_cd` column using migrations:
+Then create the required `priority_cd` column using migrations:
 
 ```ruby
 class AddGenderColumnToUser < ActiveRecord::Migration
-  def self.up
-    add_column :users, :gender_cd, :integer
-  end
-
-  def self.down
-    remove_column :users, :gender_cd
+  def change
+    add_column :messages, :priority_cd, :integer, default: 0 # => 0 == :low
   end
 end
 ```
@@ -52,11 +48,11 @@ require 'simple_enum/integration/mongoid'
 Add this to a model:
 
 ```ruby
-class User
+class Message
   include Mongoid::Document
   include SimpleEnum::Mongoid
 
-  as_enum :gender, female: 1, male: 0
+  as_enum :priority, [:low, :medium, :high, :extreme]
 end
 ```
 
