@@ -2,6 +2,7 @@ require 'active_support/concern'
 
 require 'simple_enum/attributes'
 require 'simple_enum/persistence'
+require 'simple_enum/translation'
 require 'simple_enum/dirty'
 
 module SimpleEnum
@@ -61,6 +62,7 @@ module SimpleEnum
     included do
       include SimpleEnum::Attributes
       include SimpleEnum::Persistence
+      extend  SimpleEnum::Translation
       extend  SimpleEnum::Dirty
       include SimpleEnum::Integration::Mongoid
     end
