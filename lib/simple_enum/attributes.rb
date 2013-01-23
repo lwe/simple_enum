@@ -5,6 +5,7 @@ require 'active_support/core_ext/hash'
 require 'simple_enum/enums'
 require 'simple_enum/enum_type'
 require 'simple_enum/attribute_methods'
+require 'simple_enum/class_methods'
 
 module SimpleEnum
 
@@ -49,6 +50,7 @@ module SimpleEnum
 
       # Generate default attribute methods (setter/getter et all).
       include SimpleEnum::AttributeMethods
+      extend SimpleEnum::ClassMethods
     end
 
     module ClassMethods
