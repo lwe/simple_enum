@@ -1,35 +1,27 @@
 require 'rubygems'
 require 'bundler/setup'
-require 'rake/testtask'
+require 'rspec/core/rake_task'
 
 Bundler::GemHelper.install_tasks
 
-desc 'Default: run all unit tests for both ActiveRecord & Mongoid.'
-task :default => :test
+desc 'Default: run all tests for both ActiveRecord & Mongoid.'
+task :default => :spec
 
-namespace :test do
-  Rake::TestTask.new(:units) do |t|
-    t.libs << "test"
-    t.test_files = Dir['test/*_test.rb']
-    t.verbose = true
-  end
-
+namespace :spec do
   desc 'Run all unit tests for ActiveRecord'
-  task :activerecord do |t|
-    ENV['SIMPLE_ENUM_TEST_ORM'] = 'active_record'
-    Rake::Task['test:units'].execute
+  RSpec::Core::RakeTask.new(:activerecord) do |t|
+    t.rspec_opts = %w{--color --tag ~mongoid}
   end
 
   desc 'Run all unit tests for Mongoid'
-  task :mongoid do |t|
-    ENV['SIMPLE_ENUM_TEST_ORM'] = 'mongoid'
-    Rake::Task['test:units'].execute
+  RSpec::Core::RakeTask.new(:mongoid) do |t|
+    t.rspec_opts = %w{--color --tag ~activerecord}
   end
 end
 
-task :test => [:'test:activerecord', :'test:mongoid']
+task :spec => [:'spec:activerecord', :'spec:mongoid']
 
-# Mongodb
+# Start mongodb, useful for local development
 directory "tmp/mongodb.data"
 desc 'Run mongodb in tmp/'
 task :mongodb => [:'tmp/mongodb.data'] do |t|
