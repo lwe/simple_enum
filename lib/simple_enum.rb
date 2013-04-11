@@ -176,7 +176,7 @@ module SimpleEnum
 
       # generate getter
       define_method("#{enum_cd}") do
-        id = respond_to?(:read_attribute) ? read_attribute(options[:column]) : send(options[:column])
+        id = send(options[:column])
         values_inverted[id]
       end
 
@@ -185,7 +185,7 @@ module SimpleEnum
         real = new_value.blank? ? nil : values[EnumHash.symbolize(new_value)]
         real = new_value if real.nil? && values_inverted[new_value].present?
         raise(ArgumentError, "Invalid enumeration value: #{new_value}") if (options[:whiny] and real.nil? and !new_value.blank?)
-        respond_to?(:write_attribute) ? write_attribute(options[:column], real) : send("#{options[:column]}=", real)
+        send("#{options[:column]}=", real)
       end
 
       # generate checker
@@ -244,11 +244,11 @@ module SimpleEnum
           sym = EnumHash.symbolize(k)
 
           define_method("#{prefix}#{sym}?") do
-            current = respond_to?(:read_attribute) ? read_attribute(options[:column]) : send(options[:column])
+            current = send(options[:column])
             code == current
           end
           define_method("#{prefix}#{sym}!") do
-            respond_to?(:write_attribute) ? write_attribute(options[:column], code) : send("#{options[:column]}=", code)
+            send("#{options[:column]}=", code)
             sym
           end
 
