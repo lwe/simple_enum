@@ -202,6 +202,25 @@ class SimpleEnumTest < MiniTest::Unit::TestCase
     assert_equal "invalid manufacturer", computer.errors[:manufacturer].first
   end
 
+  def test_validator
+    validator_comp = extend_computer do
+      validates :manufacturer, :operating_system, :as_enum => true
+    end
+
+    computer = validator_comp.new
+    assert !computer.save, "save should return false"
+    assert_equal(1, computer.errors[:manufacturer].size)
+    assert_equal(1, computer.errors[:operating_system].size)
+
+    computer.manufacturer_cd = 84321483219
+    assert !computer.save, "save should return false"
+    assert_equal(1, computer.errors[:manufacturer].size)
+
+    computer.manufacturer_cd = 0
+    computer.operating_system_cd = 0
+    assert_equal(true, computer.save)
+  end
+
   def test_that_argumenterror_is_raised_if_invalid_symbol_is_passed
     assert_raises ArgumentError do
       Dummy.new :gender => :foo
