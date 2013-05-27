@@ -260,8 +260,6 @@ module SimpleEnum
       end
     end
 
-    include Validation
-
     def human_enum_name(enum, key, options = {})
       defaults = lookup_ancestors.map do |klass|
         :"#{self.i18n_scope}.enums.#{klass.model_name.i18n_key}.#{enum}.#{key}"
