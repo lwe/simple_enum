@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    simple_enum (1.6.4)
+    simple_enum (1.6.5)
       activesupport (>= 3.0.0)
 
 GEM
