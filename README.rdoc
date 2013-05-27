@@ -124,7 +124,8 @@ useful when creating queries, displaying option elements or similar:
 
         class User < ActiveRecord::Base
           as_enum :gender, [:male, :female]
-          validates_as_enum :gender
+          validates :gender, :as_enum => true
+          # OR validates_as_enum :gender
         end
 
   All common options like <tt>:if</tt>, <tt>:unless</tt>, <tt>:allow_nil</tt> and <tt>:message</tt> are supported, because it just works within
