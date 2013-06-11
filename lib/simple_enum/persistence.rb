@@ -61,13 +61,15 @@ module SimpleEnum
     # Internal: Override original behavior by delegating to `read_attribute`
     # using the column name of the attribute.
     def read_enum_attribute_before_conversion(attr_name)
-      read_attribute(simple_enum_attributes[attr_name.to_s].column)
+      column = simple_enum_attributes[attr_name.to_s].column
+      send("#{column}")
     end
 
     # Internal: Override original behavior by delegating to write_attribute
     # using the column name of the attribute.
     def write_enum_attribute_after_conversion(attr_name, value)
-      write_attribute(simple_enum_attributes[attr_name.to_s].column, value)
+      column = simple_enum_attributes[attr_name.to_s].column
+      send("#{column}=", value)
     end
   end
 end
