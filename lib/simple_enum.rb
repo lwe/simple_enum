@@ -215,6 +215,11 @@ module SimpleEnum
         self.class.human_enum_name(attr_name, self.send(enum_cd)) unless self.send(enum_cd).nil?
       end
 
+      # generate find_by enum singleton
+      self.define_singleton_method("find_by_#{enum_cd}") do |*args|
+        send("find_by_#{options[:column]}", args)
+      end
+
       class_eval(<<-RUBY, __FILE__, __LINE__ + 1)
         class_attribute #{enum_attr.inspect}, :instance_writer => false, :instance_reader => false
 
