@@ -216,8 +216,12 @@ module SimpleEnum
       end
 
       # generate find_by enum singleton
-      self.define_singleton_method("find_by_#{enum_cd}") do |*args|
+      (class << self; self end).define_method("find_by_#{enum_cd}") do |*args|
         send("find_by_#{options[:column]}", args)
+      end
+
+      (class << self; self end).define_method("find_all_by_#{enum_cd}") do |*args|
+        send("find_all_by_#{options[:column]}", args)
       end
 
       class_eval(<<-RUBY, __FILE__, __LINE__ + 1)
