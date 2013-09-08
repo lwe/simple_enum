@@ -188,7 +188,7 @@ class SimpleEnumTest < MiniTest::Unit::TestCase
 
     computer = validated_comp.new
     assert !computer.save, "save should return false"
-    assert_equal "invalid option supplied.", computer.errors[:manufacturer].first
+    assert_equal "invalid option supplied", computer.errors[:manufacturer].first
     assert_equal "y u no os?", computer.errors[:operating_system].first
   end
 
