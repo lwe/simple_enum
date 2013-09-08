@@ -3,8 +3,8 @@ en:
   activerecord:
     errors:
       messages:
-        invalid_enum: invalid option supplied.
-  mongoid:   
+        invalid_enum: invalid option supplied
+  mongoid:
     errors:
       messages:
-        invalid_enum: invalid option supplied.
+        invalid_enum: invalid option supplied
