@@ -1,6 +1,6 @@
 # Setup environment for both tests and IRB interactive console
 #
-$KCODE = 'u' unless RUBY_VERSION =~ /^1\.9/ # to make parameterize work...
+$KCODE = 'u' if RUBY_VERSION =~ /^1\.8/ # to make parameterize work...
 
 require 'rubygems'
 require 'bundler/setup'

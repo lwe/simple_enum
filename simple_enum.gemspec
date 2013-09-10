@@ -24,7 +24,7 @@ Gem::Specification.new do |s|
   s.add_dependency "activesupport", '>= 3.0.0'
 
   s.add_development_dependency 'rake', '>= 0.9.2'
-  s.add_development_dependency 'minitest', '>= 2.3.0'
+  s.add_development_dependency 'minitest', '~> 2.0'
   s.add_development_dependency 'activerecord', '>= 3.0.0'
   s.add_development_dependency 'mongoid', '~> 2.0'
 end
