@@ -1,6 +1,5 @@
 # -*- encoding: utf-8 -*-
-$:.push File.expand_path("../lib", __FILE__)
-require "simple_enum/version"
+require File.expand_path('../lib/simple_enum/version', __FILE__)
 
 Gem::Specification.new do |s|
   s.name        = "simple_enum"
@@ -16,9 +15,9 @@ Gem::Specification.new do |s|
   s.email    = ["lukas.westermann@gmail.com"]
   s.homepage = "http://lwe.github.com/simple_enum/"
 
-  s.files            = `git ls-files`.split("\n")
-  s.test_files       = `git ls-files -- {test,spec,features}/*`.split("\n")
-  s.require_path     = 'lib'
+  s.files            = %w{.gitignore Rakefile Gemfile simple_enum.gemspec} + Dir['**/*.{rb,yml}']
+  s.test_files       = s.files.grep(%r{^(test|spec|locales)/})
+  s.require_path     = %w{lib}
 
   s.license          = 'MIT'
 
