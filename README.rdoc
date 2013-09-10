@@ -278,6 +278,8 @@ or <em>b)</em> a custom method to convert an object to a symbolized form named +
 * @johnthethird - feature for <tt>_for_select</tt> to return the values
 * @sinsiliux - ruby 1.9 fixes and removed AR dependency
 * @sled - mongoid support
+* @abrom - <tt>find_by_...</tt> method
+* @mhuggins - translations fixes
 * and all others: https://github.com/lwe/simple_enum/graphs/contributors thanks
 
 == Licence & Copyright
