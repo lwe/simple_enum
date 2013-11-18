@@ -82,6 +82,13 @@ useful when creating queries, displaying option elements or similar:
   *Disclaimer*: if you _ever_ decide to reorder this array, beaware that any previous mapping is lost. So it's recommended
   to create mappings (that might change) using hashes instead of arrays. For stuff like gender it might be probably perfectly
   fine to use arrays though.
+* You can use string values instead of integer values if your database column has the type +string+ or +text+:
+
+       class User < ActiveRecord::Base
+         as_eum :status, [:deleted, :active, :dsiabled], :strings => true
+       end
+
+       User.create!(status: :active) #=> #<User id: 1, status_cd: "active">
 * Want to use `SimpleEnum` in an ActiveModel, or other class, just do:
 
         class MyModel
