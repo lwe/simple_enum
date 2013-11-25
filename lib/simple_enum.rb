@@ -182,6 +182,7 @@ module SimpleEnum
 
       # generate setter
       define_method("#{enum_cd}=") do |new_value|
+        new_value = new_value.to_s if options[:strings] and new_value
         real = new_value.blank? ? nil : values[EnumHash.symbolize(new_value)]
         real = new_value if real.nil? && values_inverted[new_value].present?
         raise(ArgumentError, "Invalid enumeration value: #{new_value}") if (options[:whiny] and real.nil? and !new_value.blank?)

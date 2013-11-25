@@ -44,6 +44,23 @@ class SimpleEnumTest < MiniTest::Unit::TestCase
     assert_equal(1, d.gender_cd)
   end
 
+  def test_setting_value_when_it_is_not_a_string_and_strings_is_true
+    d = Dummy.new    
+    d.numeric = 100
+    assert_equal(:"100", d.numeric)
+    assert_equal("100", d.numeric_cd)
+    d.numeric = 3.14
+    assert_equal(:"3.14", d.numeric)
+    assert_equal("3.14", d.numeric_cd)
+  end
+
+  def test_setting_value_to_nil_when_enum_has_nil_as_symbol_and_strings_is_true
+    d = Dummy.new
+    d.nilish = nil
+    assert_equal(nil, d.nilish)
+    assert_equal(nil, d.nilish_cd)
+  end
+
   def test_setting_value_as_key_in_constructor
     d = Dummy.new :gender => 1
     assert_equal(:female, d.gender)
@@ -219,6 +236,15 @@ class SimpleEnumTest < MiniTest::Unit::TestCase
     computer.manufacturer_cd = 0
     computer.operating_system_cd = 0
     assert_equal(true, computer.save)
+  end
+
+  def test_validator_allows_symbols_as_raw_colum_value_if_strings_is_true
+    validated_dummy = extend_dummy do
+      validates_as_enum :role
+    end
+
+    d = validated_dummy.new :role_cd  => :admin
+    assert d.valid?, "valid? should return true"
   end
 
   def test_that_argumenterror_is_raised_if_invalid_symbol_is_passed
