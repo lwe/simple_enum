@@ -18,6 +18,8 @@ module ActiveModel
           enum_def = @klass.enum_definitions[attribute]
           raw_value = record.send(enum_def[:column])
 
+          raw_value = raw_value.to_s if enum_def[:options][:strings] && raw_value
+
           next if (raw_value.nil? && options[:allow_nil]) || (raw_value.blank? && options[:allow_blank])
 
           unless @klass.send(enum_def[:name].to_s.pluralize).values.include?(raw_value)

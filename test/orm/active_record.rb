@@ -30,6 +30,8 @@ def reload_db(options = {})
     t.column :word_cd, :string, :limit => 5
     t.column :role_cd, :string
     t.column :other, :integer
+    t.column :numeric_cd, :string
+    t.column :nilish_cd, :string
   end
 
   # Create ref-data table and fill with records
@@ -65,6 +67,16 @@ def extend_computer(current_i18n_name = "Computer", &block)
   end
 end
 
+def extend_dummy(current_i18n_name = "Dummy", &block)
+  Class.new(Dummy) do
+    ar32? ? self.table_name = 'dummies' : set_table_name('dummies')
+    instance_eval &block
+    instance_eval <<-RUBY
+      def self.model_name; MockName.mock!(#{current_i18n_name.inspect}) end
+    RUBY
+  end
+end
+
 def named_dummy(class_name, &block)
   begin
     return class_name.constantize
@@ -83,6 +95,8 @@ class Dummy < ActiveRecord::Base
   as_enum :word, { :alpha => 'alpha', :beta => 'beta', :gamma => 'gamma'}
   as_enum :didum, [ :foo, :bar, :foobar ], :column => 'other'
   as_enum :role, [:admin, :member, :anon], :strings => true
+  as_enum :numeric, [:"100", :"3.14"], :strings => true
+  as_enum :nilish, [:nil], :strings => true
 end
 
 class Gender < ActiveRecord::Base
