@@ -85,7 +85,7 @@ useful when creating queries, displaying option elements or similar:
 * You can use string values instead of integer values if your database column has the type +string+ or +text+:
 
        class User < ActiveRecord::Base
-         as_eum :status, [:deleted, :active, :dsiabled], :strings => true
+         as_enum :status, [:deleted, :active, :dsiabled], :strings => true
        end
 
        User.create!(status: :active) #=> #<User id: 1, status_cd: "active">
