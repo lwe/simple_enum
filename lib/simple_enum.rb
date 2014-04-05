@@ -41,7 +41,8 @@ module SimpleEnum
     def default_options
       @default_options ||= {
         :whiny => true,
-        :upcase => false
+        :upcase => false,
+        :scopes => false
       }
     end
 
@@ -141,6 +142,15 @@ module SimpleEnum
     # This is especially useful if there are (too) many enumeration values, or these shortcut methods
     # are not required.
     #
+    # If you would like ActiveRecord scopes for each value, add <tt>:scopes => true</tt> to the options.
+    #
+    # class User < ActiveRecord::Base
+    #   as_enum :gender, [:male, :female], :scopes => true
+    # end
+    #
+    # women = User.female  # => ActiveRecord::Relation for Users where gender is female
+    # men = User.male      # => ActiveRecord::Relation for Users where gender is male
+    #
     # === Configuration options:
     # * <tt>:column</tt> - Specifies a custom column name, instead of the default suffixed <tt>_cd</tt> column
     # * <tt>:prefix</tt> - Define a prefix, which is prefixed to the shortcut methods (e.g. <tt><symbol>!</tt> and
@@ -157,10 +167,11 @@ module SimpleEnum
     #   methods for the enum, which delegate to the internal column (default is <tt>false</tt>)
     # * <tt>:strings</tt> - Boolean value which if set to <tt>true</tt> stores array values as strings instead of it's index.
     # * <tt>:field</tt> - Also allowed as valid key, for Mongoid integration + default options, see simple_enum#27.
+    # * <tt>:scopes</tt> - Boolean value which if set to <tt>true</tt> will define ActiveRecord scopes for each value.
     #
     def as_enum(enum_cd, values, options = {})
       options = SimpleEnum.default_options.merge({ :column => "#{enum_cd}_cd" }).merge(options)
-      options.assert_valid_keys(:column, :whiny, :prefix, :slim, :upcase, :dirty, :strings, :field)
+      options.assert_valid_keys(:column, :whiny, :prefix, :slim, :upcase, :dirty, :strings, :field, :scopes)
 
       metaclass = (class << self; self; end)
 
@@ -257,11 +268,19 @@ module SimpleEnum
             send("#{options[:column]}=", code)
             sym
           end
+        end
+      end
 
-          # allow class access to each value
-          unless options[:slim] === :class
-            metaclass.send(:define_method, "#{prefix}#{sym}", Proc.new { |*args| args.first ? k : code })
-          end
+      if options[:scopes]
+        values.each do |k,code|
+          sym = EnumHash.symbolize(k)
+          scope sym, -> { where(options[:column] => code) }
+        end
+      elsif !options[:slim].in?([true, :class])
+        # allow class access to each value
+        values.each do |k,code|
+          sym = EnumHash.symbolize(k)
+          metaclass.send(:define_method, "#{prefix}#{sym}", Proc.new { |*args| args.first ? k : code })
         end
       end
     end
