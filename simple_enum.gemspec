@@ -29,4 +29,5 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'mongoid', '~> 2.0'
 
   s.add_development_dependency 'pry'
+  s.add_development_dependency 'rspec'
 end
