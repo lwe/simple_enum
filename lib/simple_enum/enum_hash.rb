@@ -29,11 +29,14 @@ module SimpleEnum
         ary ||= args
         ary.each { |e| set_value_for_reverse_lookup(e[0], strings ? e[0].to_s : e[1]) }
       end
+
+      @stringified_keys = keys.map(&:to_s)
+
+      freeze
     end
 
     def contains?(value)
-      keys.find { |k| k.to_s == value.to_s } or
-        values.find { |v| v == value }
+      @stringified_keys.include?(value.to_s) || values.include?(value)
     end
 
     def default(k = nil)
