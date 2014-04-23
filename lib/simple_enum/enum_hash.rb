@@ -31,6 +31,11 @@ module SimpleEnum
       end
     end
 
+    def contains?(value)
+      keys.find { |k| k.to_s == value.to_s } or
+        values.find { |v| v == value }
+    end
+
     def default(k = nil)
       @sym_value_lookup[EnumHash.symbolize(k)] if k
     end
