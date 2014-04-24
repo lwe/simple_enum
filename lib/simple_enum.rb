@@ -183,14 +183,7 @@ module SimpleEnum
 
       generate_enum_getter_for(enum_cd, options, values_inverted)
       generate_enum_setter_for(enum_cd, options, values, values_inverted)
-
-      # generate checker
-      define_method("#{enum_cd}?") do |*args|
-        current = send(enum_cd)
-        return current.to_s == args.first.to_s if args.length > 0
-
-        !!current
-      end
+      generate_enum_presence_for(enum_cd)
 
       # support dirty attributes by delegating to column, currently opt-in
       if options[:dirty]
@@ -312,6 +305,15 @@ module SimpleEnum
 
         raise ArgumentError, "Invalid enumeration value: #{new_value}" if options[:whiny] && !real
         send("#{options[:column]}=", real)
+      end
+    end
+
+    def generate_enum_presence_for(enum)
+      define_method("#{enum}?") do |*args|
+        current = send(enum)
+        return current.to_s == args.first.to_s if args.length > 0
+
+        !!current
       end
     end
   end
