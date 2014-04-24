@@ -20,36 +20,32 @@ require 'active_support/deprecation'
 # Base module which gets included in <tt>ActiveRecord::Base</tt>. See documentation
 # of +SimpleEnum::ClassMethods+ for more details.
 module SimpleEnum
+  extend ActiveSupport::Concern
 
-  class << self
+  # Provides configurability to SimpleEnum, allows to override some defaults which are
+  # defined for all uses of +as_enum+. Most options from +as_enum+ are available, such as:
+  # * <tt>:prefix</tt> - Define a prefix, which is prefixed to the shortcut methods (e.g. <tt><symbol>!</tt> and
+  #   <tt><symbol>?</tt>), if it's set to <tt>true</tt> the enumeration name is used as a prefix, else a custom
+  #   prefix (symbol or string) (default is <tt>nil</tt> => no prefix)
+  # * <tt>:slim</tt> - If set to <tt>true</tt> no shortcut methods for all enumeration values are being generated, if
+  #   set to <tt>:class</tt> only class-level shortcut methods are disabled (default is <tt>nil</tt> => they are generated)
+  # * <tt>:upcase</tt> - If set to +true+ the <tt>Klass.foos</tt> is named <tt>Klass.FOOS</tt>, why? To better suite some
+  #   coding-styles (default is +false+ => downcase)
+  # * <tt>:whiny</tt> - Boolean value which if set to <tt>true</tt> will throw an <tt>ArgumentError</tt>
+  #   if an invalid value is passed to the setter (e.g. a value for which no enumeration exists). if set to
+  #   <tt>false</tt> no exception is thrown and the internal value is set to <tt>nil</tt> (default is <tt>true</tt>)
+  # * <tt>:dirty</tt> - Boolean value which if set to <tt>true</tt> generates <tt>..._was</tt> and <tt>..._changed?</tt>
+  #   methods for the enum, which delegate to the internal column.
+  # * <tt>:strings</tt> - Boolean value which if set to <tt>true</tt> defaults array values as strings instead of integers.
+  mattr_accessor :default_options
+  @@default_options = {
+    whiny: true,
+    upcase: false,
+    scopes: true
+  }
 
-    # Provides configurability to SimpleEnum, allows to override some defaults which are
-    # defined for all uses of +as_enum+. Most options from +as_enum+ are available, such as:
-    # * <tt>:prefix</tt> - Define a prefix, which is prefixed to the shortcut methods (e.g. <tt><symbol>!</tt> and
-    #   <tt><symbol>?</tt>), if it's set to <tt>true</tt> the enumeration name is used as a prefix, else a custom
-    #   prefix (symbol or string) (default is <tt>nil</tt> => no prefix)
-    # * <tt>:slim</tt> - If set to <tt>true</tt> no shortcut methods for all enumeration values are being generated, if
-    #   set to <tt>:class</tt> only class-level shortcut methods are disabled (default is <tt>nil</tt> => they are generated)
-    # * <tt>:upcase</tt> - If set to +true+ the <tt>Klass.foos</tt> is named <tt>Klass.FOOS</tt>, why? To better suite some
-    #   coding-styles (default is +false+ => downcase)
-    # * <tt>:whiny</tt> - Boolean value which if set to <tt>true</tt> will throw an <tt>ArgumentError</tt>
-    #   if an invalid value is passed to the setter (e.g. a value for which no enumeration exists). if set to
-    #   <tt>false</tt> no exception is thrown and the internal value is set to <tt>nil</tt> (default is <tt>true</tt>)
-    # * <tt>:dirty</tt> - Boolean value which if set to <tt>true</tt> generates <tt>..._was</tt> and <tt>..._changed?</tt>
-    #   methods for the enum, which delegate to the internal column.
-    # * <tt>:strings</tt> - Boolean value which if set to <tt>true</tt> defaults array values as strings instead of integers.
-    def default_options
-      @default_options ||= {
-        :whiny => true,
-        :upcase => false,
-        :scopes => true
-      }
-    end
-
-    def included(base) #:nodoc:
-      base.send :class_attribute, :simple_enum_definitions, :instance_writer => false, :instance_reader => false
-      base.send :extend, ClassMethods
-    end
+  included do
+    class_attribute :simple_enum_definitions, instance_write: false, instance_reader: false
   end
 
   module ClassMethods
@@ -277,12 +273,12 @@ module SimpleEnum
         end
       end
 
-      if false && options[:scopes] && respond_to?(:scope)
+      if options[:scopes] && respond_to?(:scope)
         values.each do |k,code|
           sym = EnumHash.symbolize(k)
           scope sym, -> { where(options[:column] => code) }
         end
-      elsif true || !options[:slim].in?([true, :class])
+      elsif !options[:slim].in?([true, :class])
         ActiveSupport::Deprecation.warn "class-level shortcut methods are deprecated and may be removed from future releases, use User.genders(:male) approach instead.", caller
 
         # allow class access to each value
