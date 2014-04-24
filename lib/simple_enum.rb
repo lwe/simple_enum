@@ -186,15 +186,7 @@ module SimpleEnum
       generate_enum_presence_for(enum_cd)
 
       # support dirty attributes by delegating to column, currently opt-in
-      if options[:dirty]
-        define_method("#{enum_cd}_changed?") do
-          self.send("#{options[:column]}_changed?")
-        end
-
-        define_method("#{enum_cd}_was") do
-          values_inverted[self.send("#{options[:column]}_was")]
-        end
-      end
+      generate_enum_dirty_for(enum_cd, options, values_inverted) if options[:dirty]
 
       # allow access to defined values hash, e.g. in a select helper or finder method.
       attr_name = enum_cd.to_s.pluralize
@@ -314,6 +306,16 @@ module SimpleEnum
         return current.to_s == args.first.to_s if args.length > 0
 
         !!current
+      end
+    end
+
+    def generate_enum_dirty_for(enum, options, values)
+      define_method("#{enum}_changed?") do
+        self.send("#{options[:column]}_changed?")
+      end
+
+      define_method("#{enum}_was") do
+        values[self.send("#{options[:column]}_was")]
       end
     end
   end
