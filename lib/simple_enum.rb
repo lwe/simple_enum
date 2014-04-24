@@ -277,12 +277,12 @@ module SimpleEnum
         end
       end
 
-      if options[:scopes] && respond_to?(:scope)
+      if false && options[:scopes] && respond_to?(:scope)
         values.each do |k,code|
           sym = EnumHash.symbolize(k)
           scope sym, -> { where(options[:column] => code) }
         end
-      elsif !options[:slim].in?([true, :class])
+      elsif true || !options[:slim].in?([true, :class])
         ActiveSupport::Deprecation.warn "class-level shortcut methods are deprecated and may be removed from future releases, use User.genders(:male) approach instead.", caller
 
         # allow class access to each value
