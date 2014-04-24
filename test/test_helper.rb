@@ -8,6 +8,7 @@ require 'bundler/setup'
 require 'minitest/autorun'
 require 'active_support'
 require 'active_support/version'
+require 'pry'
 
 # setup fake rails env
 ROOT       = File.join(File.dirname(__FILE__), '..')

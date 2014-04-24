@@ -13,7 +13,7 @@ def setup_db
   ActiveRecord::Base.establish_connection({
     :adapter => RUBY_PLATFORM =~ /java/ ? 'jdbcsqlite3' : 'sqlite3',
     :database => ':memory:'})
-    
+
   # Fix visitor, for JRuby
   if RUBY_PLATFORM =~ /java/ && ar32?
     ActiveRecord::ConnectionAdapters::SQLiteAdapter.send(:define_method, :visitor) do
@@ -32,20 +32,21 @@ def reload_db(options = {})
     t.column :other, :integer
     t.column :numeric_cd, :string
     t.column :nilish_cd, :string
+    t.column :style_cd, :integer
   end
 
   # Create ref-data table and fill with records
   ActiveRecord::Base.connection.create_table :genders, :force => true do |t|
     t.column :name, :string
   end
-  
+
   # Validations
   ActiveRecord::Base.connection.create_table :computers, :force => true do |t|
     t.column :name, :string
     t.column :operating_system_cd, :integer
     t.column :manufacturer_cd, :integer
-  end  
-  
+  end
+
   fill_db(options)
 end
 
@@ -53,7 +54,7 @@ end
 def anonymous_dummy(&block)
   Class.new(ActiveRecord::Base) do
     ar32? ? self.table_name = 'dummies' : set_table_name('dummies')
-    instance_eval &block 
+    instance_eval &block
   end
 end
 
@@ -97,6 +98,7 @@ class Dummy < ActiveRecord::Base
   as_enum :role, [:admin, :member, :anon], :strings => true
   as_enum :numeric, [:"100", :"3.14"], :strings => true
   as_enum :nilish, [:nil], :strings => true
+  as_enum :style, [:vintage, :modern], :scopes => true
 end
 
 class Gender < ActiveRecord::Base
