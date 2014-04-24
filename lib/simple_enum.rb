@@ -182,21 +182,7 @@ module SimpleEnum
       raise ArgumentError, "[simple_enum] use different names for #{enum_cd}'s name and column name." if enum_cd.to_s == options[:column].to_s
 
       generate_enum_getter_for(enum_cd, options, values_inverted)
-
-      # generate setter
-      define_method("#{enum_cd}=") do |new_value|
-        return send("#{options[:column]}=", nil) if new_value.blank?
-
-        new_value = new_value.to_s if options[:strings]
-        real = nil
-        if values.contains?(new_value)
-          real = values[EnumHash.symbolize(new_value)]
-          real = new_value if real.nil? && values_inverted[new_value].present?
-        end
-
-        raise ArgumentError, "Invalid enumeration value: #{new_value}" if options[:whiny] && !real
-        send("#{options[:column]}=", real)
-      end
+      generate_enum_setter_for(enum_cd, options, values, values_inverted)
 
       # generate checker
       define_method("#{enum_cd}?") do |*args|
@@ -310,6 +296,22 @@ module SimpleEnum
       define_method(enum.to_s) do
         id = send(options[:column])
         values[id]
+      end
+    end
+
+    def generate_enum_setter_for(enum, options, values, inverted)
+      define_method("#{enum}=") do |new_value|
+        return send("#{options[:column]}=", nil) if new_value.blank?
+
+        new_value = new_value.to_s if options[:strings]
+        real = nil
+        if values.contains?(new_value)
+          real = values[EnumHash.symbolize(new_value)]
+          real = new_value if real.nil? && inverted[new_value].present?
+        end
+
+        raise ArgumentError, "Invalid enumeration value: #{new_value}" if options[:whiny] && !real
+        send("#{options[:column]}=", real)
       end
     end
   end
