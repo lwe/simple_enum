@@ -181,11 +181,7 @@ module SimpleEnum
       # raise error if enum_cd == column
       raise ArgumentError, "[simple_enum] use different names for #{enum_cd}'s name and column name." if enum_cd.to_s == options[:column].to_s
 
-      # generate getter
-      define_method("#{enum_cd}") do
-        id = send(options[:column])
-        values_inverted[id]
-      end
+      generate_enum_getter_for(enum_cd, options, values_inverted)
 
       # generate setter
       define_method("#{enum_cd}=") do |new_value|
@@ -305,6 +301,16 @@ module SimpleEnum
 
     def enum_definitions
       self.simple_enum_definitions ||= {}
+    end
+
+    private
+
+    # generate getter
+    def generate_enum_getter_for(enum, options, values)
+      define_method(enum.to_s) do
+        id = send(options[:column])
+        values[id]
+      end
     end
   end
 end
