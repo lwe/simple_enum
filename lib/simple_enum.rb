@@ -46,8 +46,15 @@ module SimpleEnum
   }
 
   included do
-    class_attribute :simple_enum_definitions, instance_write: false, instance_reader: false
+    class_attribute :enum_definitions, instance_write: false, instance_reader: false
+    self.enum_definitions = {}
+
     extend SimpleEnum::Translation
+  end
+
+  def inherited(base)
+    base.enum_definitions = enum_definitions.deep_dup
+    super
   end
 
   module ClassMethods
@@ -168,7 +175,7 @@ module SimpleEnum
     # * <tt>:scopes</tt> - Boolean value which if set to <tt>true</tt> will define ActiveRecord scopes for each value.
     #
     def as_enum(enum_cd, values, options = {})
-      options = SimpleEnum.default_options.merge({ :column => "#{enum_cd}_cd" }).merge(options)
+      options = SimpleEnum.default_options.merge(column: "#{enum_cd}_cd").merge(options)
       options.assert_valid_keys(:column, :whiny, :prefix, :slim, :upcase, :dirty, :strings, :field, :scopes)
 
       # convert array to hash
@@ -231,10 +238,6 @@ module SimpleEnum
           scope sym, -> { where(options[:column] => code) }
         end
       end
-    end
-
-    def enum_definitions
-      self.simple_enum_definitions ||= {}
     end
 
     private
