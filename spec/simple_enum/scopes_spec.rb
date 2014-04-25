@@ -3,7 +3,7 @@ require 'spec_helper'
 describe SimpleEnum do
   context 'class_methods: scopes' do
     EnumWithScopes = DatabaseSupport.dummy do
-      as_enum :gender, [:male, :female], scopes: true
+      as_enum :gender, [:male, :female], with: [:scope]
     end
 
     shared_examples_for 'returning a relation' do |value|

@@ -4,7 +4,7 @@ describe SimpleEnum do
   context '.as_enum' do
     context 'with prefix: true' do
       DefaultWithPrefix = DatabaseSupport.dummy do
-        as_enum :gender, [:male, :female], prefix: true, scopes: true
+        as_enum :gender, [:male, :female], prefix: true
       end
 
       subject { DefaultWithPrefix.new }
@@ -27,7 +27,7 @@ describe SimpleEnum do
 
     context 'with prefix: "geschlecht"' do
       GeschlechtWithPrefix = DatabaseSupport.dummy do
-        as_enum :gender, [:male, :female], prefix: 'geschlecht', scopes: true
+        as_enum :gender, [:male, :female], prefix: 'geschlecht'
       end
 
       subject { GeschlechtWithPrefix.new }
@@ -48,26 +48,9 @@ describe SimpleEnum do
       end
     end
 
-    context 'with whiny: false' do
-      NotWhiny = DatabaseSupport.dummy do
-        as_enum :gender, [:male, :female], whiny: false
-      end
-
-      subject { NotWhiny.new(gender: :female) }
-
-      it 'does not raise an error when setting an invalid value' do
-        expect { subject.gender = :something_else }.to_not raise_error
-      end
-
-      it 'sets it actually to nil' do
-        subject.gender = :something_else
-        expect(subject.gender).to be_nil
-      end
-    end
-
     context 'with slim: true' do
       SlimAndLight = DatabaseSupport.dummy do
-        as_enum :gender, [:male, :female], slim: true
+        as_enum :gender, [:male, :female], with: []
       end
 
       subject { SlimAndLight.new }

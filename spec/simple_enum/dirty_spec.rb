@@ -3,7 +3,7 @@ require 'spec_helper'
 describe SimpleEnum do
   context '.as_enum' do
     NonDirty = DatabaseSupport.dummy do
-      as_enum :gender, [:male, :female]
+      as_enum :gender, [:male, :female], with: []
     end
 
     subject { NonDirty.new }
@@ -15,7 +15,7 @@ describe SimpleEnum do
 
     context 'with dirty: true' do
       GettingDirty = DatabaseSupport.dummy do
-        as_enum :gender, [:male, :female], dirty: true
+        as_enum :gender, [:male, :female], with: [:dirty]
       end
 
       subject { GettingDirty.create!(gender: :male) }

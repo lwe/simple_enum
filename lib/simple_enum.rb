@@ -34,9 +34,7 @@ module SimpleEnum
   # * <tt>:strings</tt> - Boolean value which if set to <tt>true</tt> defaults array values as strings instead of integers.
   mattr_accessor :default_options
   @@default_options = {
-    whiny: true,
-    upcase: false,
-    scopes: true
+    with: [:query, :bang, :scope]
   }
 end
 

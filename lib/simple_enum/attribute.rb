@@ -21,7 +21,7 @@ module SimpleEnum
       def as_enum(enum, values, options = {})
         options = SimpleEnum.default_options.merge(column: "#{enum}_cd").merge(options)
         options[:prefix] = options[:prefix] && "#{options[:prefix] == true ? enum : options[:prefix]}_"
-        options.assert_valid_keys(:column, :whiny, :prefix, :slim, :upcase, :dirty, :strings, :field, :scopes)
+        options.assert_valid_keys(:column, :prefix, :with)
 
         # raise error if enum == column
         raise ArgumentError, "[simple_enum] use different names for #{enum}'s name and column name." if enum.to_s == options[:column].to_s
@@ -33,12 +33,11 @@ module SimpleEnum
           key ? enum_hash[key] : enum_hash
         end
 
-        generate_enum_query_methods_for(enum, enum_hash, options) unless options[:slim]
-        generate_enum_bang_methods_for(enum, enum_hash, options) unless options[:slim]
-        generate_enum_scope_methods_for(enum, enum_hash, options) if options.fetch(:scopes, true)
-
         generate_enum_attribute_methods_for(enum, enum_hash, options)
-        generate_enum_dirty_methods_for(enum, enum_hash, options) if options[:dirty]
+
+        options[:with].each do |feature|
+          send "generate_enum_#{feature}_methods_for", enum, enum_hash, options
+        end
       end
 
       private
@@ -93,18 +92,6 @@ module SimpleEnum
       end
     end
 
-    private
-
-    def read_enum_value_before_cast(enum)
-      column = self.class.enum_definitions[enum][:column]
-      self.send column
-    end
-
-    def write_enum_value_after_cast(enum, value)
-      column = self.class.enum_definitions[enum][:column]
-      self.send "#{column}=", value
-    end
-
     def read_enum_value(enum)
       value = read_enum_value_before_cast(enum)
       key = self.class.send("#{enum.to_s.pluralize}").key(value)
@@ -121,5 +108,18 @@ module SimpleEnum
 
       write_enum_value_after_cast(enum, real)
     end
+
+    private
+
+    def read_enum_value_before_cast(enum)
+      column = self.class.enum_definitions[enum][:column]
+      self.send column
+    end
+
+    def write_enum_value_after_cast(enum, value)
+      column = self.class.enum_definitions[enum][:column]
+      self.send "#{column}=", value
+    end
+
   end
 end

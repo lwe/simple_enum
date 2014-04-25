@@ -3,7 +3,7 @@ require 'spec_helper'
 describe SimpleEnum::Attribute do
   context 'attributes' do
     SomeEnum = DatabaseSupport.dummy do
-      as_enum :gender, [:male, :female]
+      as_enum :gender, [:male, :female], with: [:query, :bang]
     end
 
     subject { SomeEnum.new }
