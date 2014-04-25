@@ -184,70 +184,47 @@ module SimpleEnum
         key ? enum_hash[key] : enum_hash
       end
 
+      # Handle prefix
+      prefix = options[:prefix] && "#{options[:prefix] == true ? enum : options[:prefix]}_"
+
       pairs = values.respond_to?(:each_pair) ? values.each_pair : values.each_with_index
       pairs.each do |name, value|
         enum_hash[name] = value
+
+        if options[:slim] != true
+          generate_enum_value_presence_for(prefix, name, value, options)
+          generate_enum_value_bang_for(prefix, name, value, options)
+        end
+
+        if options.fetch(:scopes, true) && respond_to?(:scope)
+          scope name, -> { where(options[:column] => value) }
+        end
       end
 
-      values = SimpleEnum::EnumHash.new(values, options[:strings])
-      values_inverted = values.invert
-
       # store info away
-      self.enum_definitions[enum] = self.enum_definitions[options[:column]] = { :name => enum, :column => options[:column], :options => options }
+      self.enum_definitions[enum] = options
 
       # raise error if enum == column
       raise ArgumentError, "[simple_enum] use different names for #{enum}'s name and column name." if enum.to_s == options[:column].to_s
 
-      generate_enum_getter_for(enum, options, values_inverted)
-      generate_enum_setter_for(enum, options, values, values_inverted)
+      generate_enum_getter_for(enum, options, enum_hash)
+      generate_enum_setter_for(enum, options, enum_hash)
       generate_enum_presence_for(enum)
 
       # support dirty attributes by delegating to column, currently opt-in
-      generate_enum_dirty_for(enum, options, values_inverted) if options[:dirty]
-
-      # only create if :slim is not defined
-      if options[:slim] != true
-        # create both, boolean operations and *bang* operations for each
-        # enum "value"
-        prefix = options[:prefix] && "#{options[:prefix] == true ? enum : options[:prefix]}_"
-
-        values.each do |k,code|
-          sym = EnumHash.symbolize(k)
-
-          generate_enum_value_presence_for(prefix, sym, code, options)
-          generate_enum_value_bang_for(prefix, sym, code, options)
-        end
-      end
+      generate_enum_dirty_for(enum, options, enum_hash) if options[:dirty]
 
       # allow access to defined values hash, e.g. in a select helper or finder method.
       attr_name = enum.to_s.pluralize
       enum_attr = :"#{attr_name.downcase}_enum_hash"
 
       class_eval(<<-RUBY, __FILE__, __LINE__ + 1)
-        #class_attribute #{enum_attr.inspect}, :instance_writer => false, :instance_reader => false
-
-        #def self.#{attr_name}(*args)
-        #  return #{enum_attr} if args.first.nil?
-        #  return #{enum_attr}[args.first] if args.size == 1
-        #  args.inject([]) { |ary, sym| ary << #{enum_attr}[sym]; ary }
-        #end
-
         def self.#{attr_name}_for_select(attr = :key, &block)
           self.#{attr_name}.map do |k,v|
             [block_given? ? yield(k,v) : self.human_enum_name(#{attr_name.inspect}, k), attr == :value ? v : k]
           end
         end
       RUBY
-
-      # write values
-      #self.send "#{enum_attr}=", values
-
-      if options.fetch(:scopes, true) && respond_to?(:scope)
-        values.each do |k,code|
-          sym = EnumHash.symbolize(k)
-          scope sym, -> { where(options[:column] => code) }
-        end
-      end
     end
 
     private
@@ -256,20 +233,17 @@ module SimpleEnum
     def generate_enum_getter_for(enum, options, values)
       define_method(enum.to_s) do
         id = send(options[:column])
-        values[id]
+        values.key(id).try(:to_sym)
       end
     end
 
-    def generate_enum_setter_for(enum, options, values, inverted)
+    def generate_enum_setter_for(enum, options, values)
       define_method("#{enum}=") do |new_value|
         return send("#{options[:column]}=", nil) if new_value.blank?
 
         new_value = new_value.to_s if options[:strings]
-        real = nil
-        if values.contains?(new_value)
-          real = values[EnumHash.symbolize(new_value)]
-          real = new_value if real.nil? && inverted[new_value].present?
-        end
+        real = values[new_value]
+        real = new_value if values.key(new_value)
 
         raise ArgumentError, "Invalid enumeration value: #{new_value}" if options[:whiny] && !real
         send("#{options[:column]}=", real)
@@ -305,7 +279,7 @@ module SimpleEnum
       end
 
       define_method("#{enum}_was") do
-        values[self.send("#{options[:column]}_was")]
+        values.key(self.send("#{options[:column]}_was")).try(:to_sym)
       end
     end
   end
