@@ -192,15 +192,6 @@ module SimpleEnum
       attr_name = enum_cd.to_s.pluralize
       enum_attr = :"#{attr_name.downcase}_enum_hash"
 
-      define_method("human_#{enum_cd}") do
-        self.class.human_enum_name(attr_name, self.send(enum_cd)) unless self.send(enum_cd).nil?
-      end
-
-      # generate find_by enum singleton
-      (class << self; self end).send(:define_method, "find_by_#{enum_cd}") do |*args|
-        send("find_by_#{options[:column]}", args)
-      end
-
       class_eval(<<-RUBY, __FILE__, __LINE__ + 1)
         class_attribute #{enum_attr.inspect}, :instance_writer => false, :instance_reader => false
 
