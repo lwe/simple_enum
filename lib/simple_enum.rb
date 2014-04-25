@@ -178,8 +178,10 @@ module SimpleEnum
     #
     def as_enum(enum, values, options = {})
       options = SimpleEnum.default_options.merge(column: "#{enum}_cd").merge(options)
-      options[:prefix] = options[:prefix] && "#{options[:prefix] == true ? enum : options[:prefix]}_"
       options.assert_valid_keys(:column, :whiny, :prefix, :slim, :upcase, :dirty, :strings, :field, :scopes)
+
+      # raise error if enum == column
+      raise ArgumentError, "[simple_enum] use different names for #{enum}'s name and column name." if enum.to_s == options[:column].to_s
 
       # convert array to hash
       enum_hash = ActiveSupport::HashWithIndifferentAccess.new
@@ -187,22 +189,25 @@ module SimpleEnum
         key ? enum_hash[key] : enum_hash
       end
 
+      # Handle prefix
+      prefix = options[:prefix] && "#{options[:prefix] == true ? enum : options[:prefix]}_"
+
       pairs = values.respond_to?(:each_pair) ? values.each_pair : values.each_with_index
       pairs.each do |name, value|
         enum_hash[name.to_s] = value
 
+        generate_enum_prefixed_value_methods_for(enum, prefix, name, value) unless options[:slim]
+
         if options.fetch(:scopes, true) && respond_to?(:scope)
-          scope name, -> { where(options[:column] => value) }
+          scope "#{prefix}#{name}", -> { where(options[:column] => value) }
         end
       end
 
       # store info away
       self.enum_definitions[enum] = options
 
-      # raise error if enum == column
-      raise ArgumentError, "[simple_enum] use different names for #{enum}'s name and column name." if enum.to_s == options[:column].to_s
-
       generate_enum_attribute_methods_for(enum, enum_hash, options)
+      generate_enum_dirty_methods_for(enum, enum_hash, options) if options[:dirty]
     end
   end
 end

@@ -14,18 +14,17 @@ module SimpleEnum
           return read_enum_value(enum) unless value
           values[value] && read_enum_value_before_cast(enum) == values[value]
         end
+      end
 
-        unless options[:slim]
-          values.each do |key, value|
-            define_method("#{options[:prefix]}#{key}?") { read_enum_value_before_cast(enum) == value }
-            define_method("#{options[:prefix]}#{key}!") { write_enum_value_after_cast(enum, value); key }
-          end
-        end
+      def generate_enum_dirty_methods_for(enum, values, options)
+        column = options[:column]
+        define_method("#{enum}_changed?") { self.send("#{column}_changed?") }
+        define_method("#{enum}_was") { values.key(self.send("#{column}_was")).try(:to_sym) }
+      end
 
-        if options[:dirty]
-          define_method("#{enum}_changed?") { self.send("#{column}_changed?") }
-          define_method("#{enum}_was") { values.key(self.send("#{column}_was")).try(:to_sym) }
-        end
+      def generate_enum_prefixed_value_methods_for(enum, prefix, key, value)
+        define_method("#{prefix}#{key}?") { read_enum_value_before_cast(enum) == value }
+        define_method("#{prefix}#{key}!") { write_enum_value_after_cast(enum, value); key }
       end
     end
 

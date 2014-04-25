@@ -34,6 +34,7 @@ describe SimpleEnum do
       end
 
       it 'raises an ArgumentError if invalid value is passed' do
+        pending
         expect { subject.gender = :something }.to raise_error(ArgumentError)
       end
     end
