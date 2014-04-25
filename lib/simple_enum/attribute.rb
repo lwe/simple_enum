@@ -2,6 +2,12 @@ require 'simple_enum/translation'
 
 module SimpleEnum
 
+  # SimpleEnum::Attribute is the base class to be included in objects to get
+  # the #as_enum functionality. All the including class needs to provide is
+  # a setter and getter for `source`, by default the `source` is `<enum>_cd`.
+  # This is similar to how relations work in Rails, the idea is not taint the
+  # original method.
+  #
   module Attribute
     extend ActiveSupport::Concern
 
@@ -19,12 +25,12 @@ module SimpleEnum
 
     module ClassMethods
       def as_enum(enum, values, options = {})
-        options = SimpleEnum.default_options.merge(column: "#{enum}_cd").merge(options)
+        options = SimpleEnum.default_options.merge(source: "#{enum}_cd").merge(options)
         options[:prefix] = options[:prefix] && "#{options[:prefix] == true ? enum : options[:prefix]}_"
-        options.assert_valid_keys(:column, :prefix, :with)
+        options.assert_valid_keys(:source, :prefix, :with)
 
-        # raise error if enum == column
-        raise ArgumentError, "[simple_enum] use different names for #{enum}'s name and column name." if enum.to_s == options[:column].to_s
+        # raise error if enum == source
+        raise ArgumentError, "[simple_enum] use different names for #{enum}'s name and source name." if enum.to_s == options[:source].to_s
 
         self.enum_definitions[enum] = options
 
@@ -42,6 +48,14 @@ module SimpleEnum
 
       private
 
+      def simple_enum_module
+        @simple_enum_module ||= begin
+          mod = Module.new
+          include mod
+          mod
+        end
+      end
+
       def build_enum_hash(values, options)
         ActiveSupport::HashWithIndifferentAccess.new.tap do |enum_hash|
           pairs = values.respond_to?(:each_pair) ? values.each_pair : values.each_with_index
@@ -50,44 +64,51 @@ module SimpleEnum
       end
 
       def generate_enum_attribute_methods_for(enum, enum_hash, options)
-        column = options[:column]
+        simple_enum_module.module_eval do
+          define_method("#{enum}")  { read_enum_value(enum) }
+          define_method("#{enum}=") { |value| write_enum_value(enum, value) }
 
-        define_method("#{enum}")  { read_enum_value(enum) }
-        define_method("#{enum}=") { |value| write_enum_value(enum, value) }
-
-        define_method("#{enum}?") do |value = nil|
-          return read_enum_value(enum) unless value
-          enum_hash[value] && read_enum_value_before_cast(enum) == enum_hash[value]
+          define_method("#{enum}?") do |value = nil|
+            return read_enum_value(enum) unless value
+            enum_hash[value] && read_enum_value_before_cast(enum) == enum_hash[value]
+          end
         end
       end
 
       def generate_enum_dirty_methods_for(enum, enum_hash, options)
-        column = options[:column]
-        define_method("#{enum}_changed?") { self.send("#{column}_changed?") }
-        define_method("#{enum}_was") { enum_hash.key(self.send("#{column}_was")).try(:to_sym) }
+        source = options[:source]
+        simple_enum_module.module_eval do
+          define_method("#{enum}_changed?") { self.send("#{source}_changed?") }
+          define_method("#{enum}_was") { enum_hash.key(self.send("#{source}_was")).try(:to_sym) }
+        end
       end
 
       def generate_enum_query_methods_for(enum, enum_hash, options)
         prefix = options[:prefix]
-        enum_hash.each do |key, value|
-          define_method("#{prefix}#{key}?") { read_enum_value_before_cast(enum) == value }
+        simple_enum_module.module_eval do
+          enum_hash.each do |key, value|
+            define_method("#{prefix}#{key}?") { read_enum_value_before_cast(enum) == value }
+          end
         end
       end
 
       def generate_enum_bang_methods_for(enum, enum_hash, options)
         prefix = options[:prefix]
-        enum_hash.each do |key, value|
-          define_method("#{prefix}#{key}!") { write_enum_value_after_cast(enum, value); key }
+        simple_enum_module.module_eval do
+          enum_hash.each do |key, value|
+            define_method("#{prefix}#{key}!") { write_enum_value_after_cast(enum, value); key }
+          end
         end
       end
 
       def generate_enum_scope_methods_for(enum, enum_hash, options)
         return unless respond_to?(:scope)
 
-        column = options[:column]
+        source = options[:source]
         prefix = options[:prefix]
+
         enum_hash.each do |key, value|
-          scope "#{prefix}#{key}", -> { where(column => value) }
+          scope "#{prefix}#{key}", -> { where(source => value) }
         end
       end
     end
@@ -112,13 +133,13 @@ module SimpleEnum
     private
 
     def read_enum_value_before_cast(enum)
-      column = self.class.enum_definitions[enum][:column]
-      self.send column
+      source = self.class.enum_definitions[enum][:source]
+      self.send source
     end
 
     def write_enum_value_after_cast(enum, value)
-      column = self.class.enum_definitions[enum][:column]
-      self.send "#{column}=", value
+      source = self.class.enum_definitions[enum][:source]
+      self.send "#{source}=", value
     end
 
   end
