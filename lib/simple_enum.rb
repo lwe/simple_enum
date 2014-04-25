@@ -14,6 +14,7 @@ require 'active_support'
 
 require 'simple_enum/enum_hash'
 require 'simple_enum/validation'
+require 'simple_enum/translation'
 
 require 'active_support/deprecation'
 
@@ -46,6 +47,7 @@ module SimpleEnum
 
   included do
     class_attribute :simple_enum_definitions, instance_write: false, instance_reader: false
+    extend SimpleEnum::Translation
   end
 
   module ClassMethods
@@ -245,20 +247,6 @@ module SimpleEnum
           metaclass.send(:define_method, "#{prefix}#{sym}", Proc.new { |*args| args.first ? k : code })
         end
       end
-    end
-
-    def human_enum_name(enum, key, options = {})
-      defaults = lookup_ancestors.map do |klass|
-        :"#{self.i18n_scope}.enums.#{klass.model_name.i18n_key}.#{enum}.#{key}"
-      end
-
-      defaults << :"enums.#{self.model_name.i18n_key}.#{enum}.#{key}"
-      defaults << :"enums.#{enum}.#{key}"
-      defaults << options.delete(:default) if options[:default]
-      defaults << key.to_s.humanize
-
-      options.reverse_merge! :count => 1, :default => defaults
-      I18n.translate(defaults.shift, options)
     end
 
     def enum_definitions
