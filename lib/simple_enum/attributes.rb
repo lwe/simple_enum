@@ -26,6 +26,11 @@ module SimpleEnum
         define_method("#{prefix}#{key}?") { read_enum_value_before_cast(enum) == value }
         define_method("#{prefix}#{key}!") { write_enum_value_after_cast(enum, value); key }
       end
+
+      def generate_enum_scopes_for(enum, prefix, key, value, options)
+        column = options[:column]
+        scope "#{prefix}#{key}", -> { where(column => value) } if respond_to?(:scope)
+      end
     end
 
     private

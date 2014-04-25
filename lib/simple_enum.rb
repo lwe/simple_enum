@@ -197,10 +197,7 @@ module SimpleEnum
         enum_hash[name.to_s] = value
 
         generate_enum_prefixed_value_methods_for(enum, prefix, name, value) unless options[:slim]
-
-        if options.fetch(:scopes, true) && respond_to?(:scope)
-          scope "#{prefix}#{name}", -> { where(options[:column] => value) }
-        end
+        generate_enum_scopes_for(enum, prefix, name, value, options) if options.fetch(:scopes, true)
       end
 
       # store info away
