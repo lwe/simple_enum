@@ -1,76 +1,96 @@
-= SimpleEnum - unobtrusive enum-like fields for ActiveRecord {<img src="https://secure.travis-ci.org/lwe/simple_enum.png" />}[http://travis-ci.org/lwe/simple_enum]
+SimpleEnum
+==========
 
-A Rails plugin which brings easy-to-use enum-like functionality to
-ActiveRecord and Mongoid models (now compatible with rails 3.1, ruby 1.9 and jruby).
+{<img src="https://secure.travis-ci.org/lwe/simple_enum.png" />}[http://travis-ci.org/lwe/simple_enum]
 
-Since version 1.4, simple_enum is no longer compatible with activerecord 2.x, use
-version 1.3.2 instead: <https://github.com/lwe/simple_enum/tree/v1.3.2>.
+Unobtrusive enum-like fields for ActiveRecord and Ruby, brings enums functionality
+to ActiveRecord and Mongoid models (built for Rails 4+).
 
-*Note*: a recent search on github for `enum` turned out, that there are many, many similar solutions.
+Since version 2.0, simple_enum is no longer compatible with Rails 3.x or Ruby 1.8,
+use version 1.6 instead: https://github.com/lwe/simple_enum/tree/v1.6.7
 
-== ActiveRecord Quick start
+*Note*: a recent search on github for `enum` turned out, that there are many,
+many similar solutions. In fact starting with Rails 4.1, there's `ActiveRecord::Enum`
+which provides **some** of the functionality.
+
+ActiveRecord Quick start
+------------------------
 
 Add this to a model:
 
-    class User < ActiveRecord::Base
-      as_enum :gender, :female => 1, :male => 0
-    end
+```ruby
+class User < ActiveRecord::Base
+  as_enum :gender, :female: 1, male: 0
+end
+```
 
 Then create the required `gender_cd` column using migrations:
 
-    class AddGenderColumnToUser < ActiveRecord::Migration
-      def self.up
-        add_column :users, :gender_cd, :integer
-      end
+```ruby
+class AddGenderColumnToUser < ActiveRecord::Migration
+  def self.up
+    add_column :users, :gender_cd, :integer
+  end
 
-      def self.down
-        remove_column :users, :gender_cd
-      end
-    end
+  def self.down
+    remove_column :users, :gender_cd
+  end
+end
+```
 
-== Mongoid Quick start
+Mongoid Quick start
+-------------------
 
 Add this to an initializer
 
-     # load mongoid support
-     require 'simple_enum/mongoid'
+```ruby
+ # load mongoid support
+ require 'simple_enum/mongoid'
+```
 
 Add this to a model:
 
-    class User
-      include Mongoid::Document
-      include SimpleEnum::Mongoid
+```ruby
+class User
+  include Mongoid::Document
+  include SimpleEnum::Mongoid
 
-      as_enum :gender, :female => 1, :male => 0
-    end
+  as_enum :gender, female: 1, male: 0
+end
+```
 
 == Working with enums
 
-*Done*. Now it's possible to pull some neat tricks on the new column, yet
-the original db column (+gender_cd+) is still intact and not touched by
-any fancy metaclass or similar.
+Now it's possible to pull some neat tricks on the new column, yet the original
+db column (`gender_cd`) is still intact and not touched by any fancy metaclass
+or similar.
 
-    jane = User.new
-    jane.gender = :female
-    jane.female?   # => true
-    jane.male?     # => false
-    jane.gender    # => :female
-    jane.gender_cd # => 1
+```ruby
+jane = User.new
+jane.gender = :female
+jane.female?   # => true
+jane.male?     # => false
+jane.gender    # => :female
+jane.gender_cd # => 1
+```
 
 Easily switch to another value using the bang methods.
 
-    joe = User.new
-    joe.male!     # => :male
-    joe.gender    # => :male
-    joe.gender_cd # => 0
+```ruby
+joe = User.new
+joe.male!     # => :male
+joe.gender    # => :male
+joe.gender_cd # => 0
+```
 
 There are even some neat tricks at class level, which might be
 useful when creating queries, displaying option elements or similar:
 
-    User.genders            # => { :male => 0, :female => 1 }
-    User.genders(:male)     # => 0, same as User.male
-    User.female             # => 1
-    User.genders.female     # => 1, same as User.female or User.genders(:female)
+```ruby
+User.genders            # => { "male" => 0, "female" => 1 } - HashWithIndifferentAccess
+User.genders(:male)     # => 0, same as User.genders[:male]
+User.female             # => ActiveRecord::Relation
+```
 
 == Wait, there's more!
 * Too tired of always adding the integer values? Try:
@@ -271,13 +291,8 @@ or <em>b)</em> a custom method to convert an object to a symbolized form named +
     BankTransaction.statuses.pending   # => 1
     BankTransaction.statuses.pending(true) # => #<Status id: 1, name: "pending">
 
-== Known issues/Open items
-
-* Maybe the <tt>:whiny</tt> option should default to <tt>false</tt>, so that generally no exceptions are thrown if a user fakes a request?
-* Convert to RSpec and clean up tests
-* Make `:slim => true` the default option...?
-
-== Contributors
+Contributors
+------------
 
 * @dmitry - bugfixes and other improvements
 * @tarsolya - implemented all the ruby 1.9 and rails 3 goodness!
@@ -287,7 +302,10 @@ or <em>b)</em> a custom method to convert an object to a symbolized form named +
 * @sled - mongoid support
 * @abrom - <tt>find_by_...</tt> method
 * @mhuggins - translations fixes
+* @patbenatar - for helping move towards 2.0 (scopes et all)
 * and all others: https://github.com/lwe/simple_enum/graphs/contributors thanks
 
-== Licence & Copyright
-Copyright (c) 2011 by Lukas Westermann, Licenced under MIT Licence (see LICENCE file)
+License & Copyright
+-------------------
+
+Copyright (c) 2011-2014 by Lukas Westermann, Licensed under MIT Licence (see LICENCE file)
