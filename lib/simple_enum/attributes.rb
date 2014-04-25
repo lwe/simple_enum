@@ -12,7 +12,7 @@ module SimpleEnum
 
         define_method("#{enum}?") do |value = nil|
           return read_enum_value(enum) unless value
-          read_enum_value(enum) == value
+          values[value] && read_enum_value_before_cast(enum) == values[value]
         end
 
         unless options[:slim]
