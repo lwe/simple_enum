@@ -171,8 +171,6 @@ module SimpleEnum
       options = SimpleEnum.default_options.merge({ :column => "#{enum_cd}_cd" }).merge(options)
       options.assert_valid_keys(:column, :whiny, :prefix, :slim, :upcase, :dirty, :strings, :field, :scopes)
 
-      metaclass = (class << self; self; end)
-
       # convert array to hash
       values = SimpleEnum::EnumHash.new(values, options[:strings])
       values_inverted = values.invert
@@ -189,6 +187,20 @@ module SimpleEnum
 
       # support dirty attributes by delegating to column, currently opt-in
       generate_enum_dirty_for(enum_cd, options, values_inverted) if options[:dirty]
+
+      # only create if :slim is not defined
+      if options[:slim] != true
+        # create both, boolean operations and *bang* operations for each
+        # enum "value"
+        prefix = options[:prefix] && "#{options[:prefix] == true ? enum_cd : options[:prefix]}_"
+
+        values.each do |k,code|
+          sym = EnumHash.symbolize(k)
+
+          generate_enum_value_presence_for(prefix, sym, code, options)
+          generate_enum_value_bang_for(prefix, sym, code, options)
+        end
+      end
 
       # allow access to defined values hash, e.g. in a select helper or finder method.
       attr_name = enum_cd.to_s.pluralize
@@ -213,38 +225,10 @@ module SimpleEnum
       # write values
       self.send "#{enum_attr}=", values
 
-      # only create if :slim is not defined
-      if options[:slim] != true
-        # create both, boolean operations and *bang* operations for each
-        # enum "value"
-        prefix = options[:prefix] && "#{options[:prefix] == true ? enum_cd : options[:prefix]}_"
-
-        values.each do |k,code|
-          sym = EnumHash.symbolize(k)
-
-          define_method("#{prefix}#{sym}?") do
-            current = send(options[:column])
-            code == current
-          end
-          define_method("#{prefix}#{sym}!") do
-            send("#{options[:column]}=", code)
-            sym
-          end
-        end
-      end
-
-      if options[:scopes] && respond_to?(:scope)
+      if options.fetch(:scopes, true) && respond_to?(:scope)
         values.each do |k,code|
           sym = EnumHash.symbolize(k)
           scope sym, -> { where(options[:column] => code) }
-        end
-      elsif !options[:slim].in?([true, :class])
-        ActiveSupport::Deprecation.warn "class-level shortcut methods are deprecated and may be removed from future releases, use User.genders(:male) approach instead.", caller
-
-        # allow class access to each value
-        values.each do |k,code|
-          sym = EnumHash.symbolize(k)
-          metaclass.send(:define_method, "#{prefix}#{sym}", Proc.new { |*args| args.first ? k : code })
         end
       end
     end
@@ -285,6 +269,20 @@ module SimpleEnum
         return current.to_s == args.first.to_s if args.length > 0
 
         !!current
+      end
+    end
+
+    def generate_enum_value_presence_for(prefix, sym, code, options)
+      define_method("#{prefix}#{sym}?") do
+        current = send(options[:column])
+        code == current
+      end
+    end
+
+    def generate_enum_value_bang_for(prefix, sym, code, options)
+      define_method("#{prefix}#{sym}!") do
+        send("#{options[:column]}=", code)
+        sym
       end
     end
 
