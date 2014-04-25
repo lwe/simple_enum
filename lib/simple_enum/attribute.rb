@@ -29,9 +29,6 @@ module SimpleEnum
         options[:prefix] = options[:prefix] && "#{options[:prefix] == true ? enum : options[:prefix]}_"
         options.assert_valid_keys(:source, :prefix, :with)
 
-        # raise error if enum == source
-        raise ArgumentError, "[simple_enum] use different names for #{enum}'s name and source name." if enum.to_s == options[:source].to_s
-
         self.enum_definitions[enum] = options
 
         enum_hash = build_enum_hash(values, options)
@@ -134,13 +131,12 @@ module SimpleEnum
 
     def read_enum_value_before_cast(enum)
       source = self.class.enum_definitions[enum][:source]
-      self.send source
+      source == enum ? self[source] : self.send(source)
     end
 
     def write_enum_value_after_cast(enum, value)
       source = self.class.enum_definitions[enum][:source]
-      self.send "#{source}=", value
+      source == enum ? self[source] = value : self.send("#{source}=", value)
     end
-
   end
 end
