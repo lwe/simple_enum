@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe SimpleEnum do
+describe SimpleEnum::Attribute do
   context 'attributes' do
     SomeEnum = DatabaseSupport.dummy do
       as_enum :gender, [:male, :female]

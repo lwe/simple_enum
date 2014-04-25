@@ -1,9 +1,56 @@
+require 'simple_enum/translation'
+
 module SimpleEnum
 
-  module Attributes
+  module Attribute
     extend ActiveSupport::Concern
 
+    included do
+      class_attribute :enum_definitions, instance_write: false, instance_reader: false
+      self.enum_definitions = {}
+
+      extend SimpleEnum::Translation
+    end
+
+    def inherited(base)
+      base.enum_definitions = enum_definitions.deep_dup
+      super
+    end
+
     module ClassMethods
+      def as_enum(enum, values, options = {})
+        options = SimpleEnum.default_options.merge(column: "#{enum}_cd").merge(options)
+        options.assert_valid_keys(:column, :whiny, :prefix, :slim, :upcase, :dirty, :strings, :field, :scopes)
+
+        # raise error if enum == column
+        raise ArgumentError, "[simple_enum] use different names for #{enum}'s name and column name." if enum.to_s == options[:column].to_s
+
+        # convert array to hash
+        enum_hash = ActiveSupport::HashWithIndifferentAccess.new
+        singleton_class.send(:define_method, enum.to_s.pluralize) do |key = nil|
+          key ? enum_hash[key] : enum_hash
+        end
+
+        # Handle prefix
+        prefix = options[:prefix] && "#{options[:prefix] == true ? enum : options[:prefix]}_"
+
+        pairs = values.respond_to?(:each_pair) ? values.each_pair : values.each_with_index
+        pairs.each do |name, value|
+          enum_hash[name.to_s] = value
+
+          generate_enum_prefixed_value_methods_for(enum, prefix, name, value) unless options[:slim]
+          generate_enum_scopes_for(enum, prefix, name, value, options) if options.fetch(:scopes, true)
+        end
+
+        # store info away
+        self.enum_definitions[enum] = options
+
+        generate_enum_attribute_methods_for(enum, enum_hash, options)
+        generate_enum_dirty_methods_for(enum, enum_hash, options) if options[:dirty]
+      end
+
+      private
+
       def generate_enum_attribute_methods_for(enum, values, options)
         column = options[:column]
 
