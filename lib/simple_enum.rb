@@ -187,8 +187,6 @@ module SimpleEnum
         key ? enum_hash[key] : enum_hash
       end
 
-      # Handle prefix
-
       pairs = values.respond_to?(:each_pair) ? values.each_pair : values.each_with_index
       pairs.each do |name, value|
         enum_hash[name.to_s] = value
@@ -205,18 +203,6 @@ module SimpleEnum
       raise ArgumentError, "[simple_enum] use different names for #{enum}'s name and column name." if enum.to_s == options[:column].to_s
 
       generate_enum_attribute_methods_for(enum, enum_hash, options)
-
-      # allow access to defined values hash, e.g. in a select helper or finder method.
-      attr_name = enum.to_s.pluralize
-      enum_attr = :"#{attr_name.downcase}_enum_hash"
-
-      class_eval(<<-RUBY, __FILE__, __LINE__ + 1)
-        def self.#{attr_name}_for_select(attr = :key, &block)
-          self.#{attr_name}.map do |k,v|
-            [block_given? ? yield(k,v) : self.human_enum_name(#{attr_name.inspect}, k), attr == :value ? v : k]
-          end
-        end
-      RUBY
     end
   end
 end
