@@ -191,7 +191,7 @@ module SimpleEnum
 
       pairs = values.respond_to?(:each_pair) ? values.each_pair : values.each_with_index
       pairs.each do |name, value|
-        enum_hash[name] = value
+        enum_hash[name.to_s] = value
 
         if options.fetch(:scopes, true) && respond_to?(:scope)
           scope name, -> { where(options[:column] => value) }
