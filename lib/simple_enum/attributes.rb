@@ -4,9 +4,18 @@ module SimpleEnum
     extend ActiveSupport::Concern
 
     module ClassMethods
-      def generate_enum_attribute_methods_for(enum)
-        define_method(enum.to_s) { read_enum_value(enum) }
+      def generate_enum_attribute_methods_for(enum, values)
+        options = enum_definitions[enum]
+
+        define_method("#{enum}")  { read_enum_value(enum) }
         define_method("#{enum}=") { |value| write_enum_value(enum, value) }
+
+        unless options[:slim]
+          values.each do |key, value|
+            define_method("#{options[:prefix]}#{key}?") { read_enum_value_before_cast(enum) == value }
+            define_method("#{options[:prefix]}#{key}!") { write_enum_value_after_cast(enum, value); key }
+          end
+        end
       end
     end
 
@@ -17,7 +26,7 @@ module SimpleEnum
       self.send column
     end
 
-    def write_enum_value_before_cast(enum, value)
+    def write_enum_value_after_cast(enum, value)
       column = self.class.enum_definitions[enum][:column]
       self.send "#{column}=", value
     end
@@ -29,14 +38,14 @@ module SimpleEnum
     end
 
     def write_enum_value(enum, value)
-      return write_enum_value_before_cast(enum, nil) if value.blank?
+      return write_enum_value_after_cast(enum, nil) if value.blank?
 
       # new_value = new_value.to_s if options[:strings] FIXME: how to handle :strings option
       values = self.class.send("#{enum.to_s.pluralize}")
       real = values[value]
       real = value if values.key(value)
 
-      write_enum_value_before_cast(enum, real)
+      write_enum_value_after_cast(enum, real)
     end
   end
 end

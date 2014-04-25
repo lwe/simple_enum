@@ -178,6 +178,7 @@ module SimpleEnum
     #
     def as_enum(enum, values, options = {})
       options = SimpleEnum.default_options.merge(column: "#{enum}_cd").merge(options)
+      options[:prefix] = options[:prefix] && "#{options[:prefix] == true ? enum : options[:prefix]}_"
       options.assert_valid_keys(:column, :whiny, :prefix, :slim, :upcase, :dirty, :strings, :field, :scopes)
 
       # convert array to hash
@@ -187,16 +188,10 @@ module SimpleEnum
       end
 
       # Handle prefix
-      prefix = options[:prefix] && "#{options[:prefix] == true ? enum : options[:prefix]}_"
 
       pairs = values.respond_to?(:each_pair) ? values.each_pair : values.each_with_index
       pairs.each do |name, value|
         enum_hash[name] = value
-
-        if options[:slim] != true
-          generate_enum_value_presence_for(prefix, name, value, options)
-          generate_enum_value_bang_for(prefix, name, value, options)
-        end
 
         if options.fetch(:scopes, true) && respond_to?(:scope)
           scope name, -> { where(options[:column] => value) }
@@ -209,7 +204,7 @@ module SimpleEnum
       # raise error if enum == column
       raise ArgumentError, "[simple_enum] use different names for #{enum}'s name and column name." if enum.to_s == options[:column].to_s
 
-      generate_enum_attribute_methods_for(enum)
+      generate_enum_attribute_methods_for(enum, enum_hash)
       generate_enum_presence_for(enum)
 
       # support dirty attributes by delegating to column, currently opt-in
@@ -230,31 +225,12 @@ module SimpleEnum
 
     private
 
-    # generate getter
-
-    def generate_enum_setter_for(enum, options, values)
-    end
-
     def generate_enum_presence_for(enum)
       define_method("#{enum}?") do |*args|
         current = send(enum)
         return current.to_s == args.first.to_s if args.length > 0
 
         !!current
-      end
-    end
-
-    def generate_enum_value_presence_for(prefix, sym, code, options)
-      define_method("#{prefix}#{sym}?") do
-        current = send(options[:column])
-        code == current
-      end
-    end
-
-    def generate_enum_value_bang_for(prefix, sym, code, options)
-      define_method("#{prefix}#{sym}!") do
-        send("#{options[:column]}=", code)
-        sym
       end
     end
 
