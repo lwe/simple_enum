@@ -4,11 +4,12 @@ module SimpleEnum
     extend ActiveSupport::Concern
 
     module ClassMethods
-      def generate_enum_attribute_methods_for(enum, values)
-        options = enum_definitions[enum]
+      def generate_enum_attribute_methods_for(enum, values, options)
+        column = options[:column]
 
         define_method("#{enum}")  { read_enum_value(enum) }
         define_method("#{enum}=") { |value| write_enum_value(enum, value) }
+
         define_method("#{enum}?") do |value = nil|
           return read_enum_value(enum) unless value
           read_enum_value(enum) == value
@@ -19,6 +20,11 @@ module SimpleEnum
             define_method("#{options[:prefix]}#{key}?") { read_enum_value_before_cast(enum) == value }
             define_method("#{options[:prefix]}#{key}!") { write_enum_value_after_cast(enum, value); key }
           end
+        end
+
+        if options[:dirty]
+          define_method("#{enum}_changed?") { self.send("#{column}_changed?") }
+          define_method("#{enum}_was") { values.key(self.send("#{column}_was")).try(:to_sym) }
         end
       end
     end

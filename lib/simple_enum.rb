@@ -204,10 +204,7 @@ module SimpleEnum
       # raise error if enum == column
       raise ArgumentError, "[simple_enum] use different names for #{enum}'s name and column name." if enum.to_s == options[:column].to_s
 
-      generate_enum_attribute_methods_for(enum, enum_hash)
-
-      # support dirty attributes by delegating to column, currently opt-in
-      generate_enum_dirty_for(enum, options, enum_hash) if options[:dirty]
+      generate_enum_attribute_methods_for(enum, enum_hash, options)
 
       # allow access to defined values hash, e.g. in a select helper or finder method.
       attr_name = enum.to_s.pluralize
@@ -220,27 +217,6 @@ module SimpleEnum
           end
         end
       RUBY
-    end
-
-    private
-
-    def generate_enum_presence_for(enum)
-      define_method("#{enum}?") do |*args|
-        current = send(enum)
-        return current.to_s == args.first.to_s if args.length > 0
-
-        !!current
-      end
-    end
-
-    def generate_enum_dirty_for(enum, options, values)
-      define_method("#{enum}_changed?") do
-        self.send("#{options[:column]}_changed?")
-      end
-
-      define_method("#{enum}_was") do
-        values.key(self.send("#{options[:column]}_was")).try(:to_sym)
-      end
     end
   end
 end
