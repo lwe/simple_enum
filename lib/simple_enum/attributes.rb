@@ -9,6 +9,10 @@ module SimpleEnum
 
         define_method("#{enum}")  { read_enum_value(enum) }
         define_method("#{enum}=") { |value| write_enum_value(enum, value) }
+        define_method("#{enum}?") do |value = nil|
+          return read_enum_value(enum) unless value
+          read_enum_value(enum) == value
+        end
 
         unless options[:slim]
           values.each do |key, value|

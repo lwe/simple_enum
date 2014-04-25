@@ -49,7 +49,7 @@ describe SimpleEnum do
 
       if male || female
         it 'returns true for #gender?' do
-          expect(subject.gender?).to be true
+          expect(subject.gender?).to be_true
         end
 
         it "returns #{male ? 'true' : 'false'} for #gender?(:male)" do
@@ -61,12 +61,12 @@ describe SimpleEnum do
         end
       else
         it 'returns false for #gender?' do
-          expect(subject.gender?).to be false
+          expect(subject.gender?).to be_false
         end
       end
 
       it 'returns false for #gender?(:something)' do
-        expect(subject.gender?(:something)).to be false
+        expect(subject.gender?(:something)).to be_false
       end
     end
 

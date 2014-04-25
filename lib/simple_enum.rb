@@ -205,7 +205,6 @@ module SimpleEnum
       raise ArgumentError, "[simple_enum] use different names for #{enum}'s name and column name." if enum.to_s == options[:column].to_s
 
       generate_enum_attribute_methods_for(enum, enum_hash)
-      generate_enum_presence_for(enum)
 
       # support dirty attributes by delegating to column, currently opt-in
       generate_enum_dirty_for(enum, options, enum_hash) if options[:dirty]
