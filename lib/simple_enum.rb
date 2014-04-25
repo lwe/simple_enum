@@ -174,8 +174,8 @@ module SimpleEnum
     # * <tt>:field</tt> - Also allowed as valid key, for Mongoid integration + default options, see simple_enum#27.
     # * <tt>:scopes</tt> - Boolean value which if set to <tt>true</tt> will define ActiveRecord scopes for each value.
     #
-    def as_enum(enum_cd, values, options = {})
-      options = SimpleEnum.default_options.merge(column: "#{enum_cd}_cd").merge(options)
+    def as_enum(enum, values, options = {})
+      options = SimpleEnum.default_options.merge(column: "#{enum}_cd").merge(options)
       options.assert_valid_keys(:column, :whiny, :prefix, :slim, :upcase, :dirty, :strings, :field, :scopes)
 
       # convert array to hash
@@ -183,23 +183,23 @@ module SimpleEnum
       values_inverted = values.invert
 
       # store info away
-      self.enum_definitions[enum_cd] = self.enum_definitions[options[:column]] = { :name => enum_cd, :column => options[:column], :options => options }
+      self.enum_definitions[enum] = self.enum_definitions[options[:column]] = { :name => enum, :column => options[:column], :options => options }
 
-      # raise error if enum_cd == column
-      raise ArgumentError, "[simple_enum] use different names for #{enum_cd}'s name and column name." if enum_cd.to_s == options[:column].to_s
+      # raise error if enum == column
+      raise ArgumentError, "[simple_enum] use different names for #{enum}'s name and column name." if enum.to_s == options[:column].to_s
 
-      generate_enum_getter_for(enum_cd, options, values_inverted)
-      generate_enum_setter_for(enum_cd, options, values, values_inverted)
-      generate_enum_presence_for(enum_cd)
+      generate_enum_getter_for(enum, options, values_inverted)
+      generate_enum_setter_for(enum, options, values, values_inverted)
+      generate_enum_presence_for(enum)
 
       # support dirty attributes by delegating to column, currently opt-in
-      generate_enum_dirty_for(enum_cd, options, values_inverted) if options[:dirty]
+      generate_enum_dirty_for(enum, options, values_inverted) if options[:dirty]
 
       # only create if :slim is not defined
       if options[:slim] != true
         # create both, boolean operations and *bang* operations for each
         # enum "value"
-        prefix = options[:prefix] && "#{options[:prefix] == true ? enum_cd : options[:prefix]}_"
+        prefix = options[:prefix] && "#{options[:prefix] == true ? enum : options[:prefix]}_"
 
         values.each do |k,code|
           sym = EnumHash.symbolize(k)
@@ -210,7 +210,7 @@ module SimpleEnum
       end
 
       # allow access to defined values hash, e.g. in a select helper or finder method.
-      attr_name = enum_cd.to_s.pluralize
+      attr_name = enum.to_s.pluralize
       enum_attr = :"#{attr_name.downcase}_enum_hash"
 
       class_eval(<<-RUBY, __FILE__, __LINE__ + 1)
