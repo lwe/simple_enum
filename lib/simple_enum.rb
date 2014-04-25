@@ -179,6 +179,16 @@ module SimpleEnum
       options.assert_valid_keys(:column, :whiny, :prefix, :slim, :upcase, :dirty, :strings, :field, :scopes)
 
       # convert array to hash
+      enum_hash = ActiveSupport::HashWithIndifferentAccess.new
+      singleton_class.send(:define_method, enum.to_s.pluralize) do |key = nil|
+        key ? enum_hash[key] : enum_hash
+      end
+
+      pairs = values.respond_to?(:each_pair) ? values.each_pair : values.each_with_index
+      pairs.each do |name, value|
+        enum_hash[name] = value
+      end
+
       values = SimpleEnum::EnumHash.new(values, options[:strings])
       values_inverted = values.invert
 
@@ -214,13 +224,13 @@ module SimpleEnum
       enum_attr = :"#{attr_name.downcase}_enum_hash"
 
       class_eval(<<-RUBY, __FILE__, __LINE__ + 1)
-        class_attribute #{enum_attr.inspect}, :instance_writer => false, :instance_reader => false
+        #class_attribute #{enum_attr.inspect}, :instance_writer => false, :instance_reader => false
 
-        def self.#{attr_name}(*args)
-          return #{enum_attr} if args.first.nil?
-          return #{enum_attr}[args.first] if args.size == 1
-          args.inject([]) { |ary, sym| ary << #{enum_attr}[sym]; ary }
-        end
+        #def self.#{attr_name}(*args)
+        #  return #{enum_attr} if args.first.nil?
+        #  return #{enum_attr}[args.first] if args.size == 1
+        #  args.inject([]) { |ary, sym| ary << #{enum_attr}[sym]; ary }
+        #end
 
         def self.#{attr_name}_for_select(attr = :key, &block)
           self.#{attr_name}.map do |k,v|
@@ -230,7 +240,7 @@ module SimpleEnum
       RUBY
 
       # write values
-      self.send "#{enum_attr}=", values
+      #self.send "#{enum_attr}=", values
 
       if options.fetch(:scopes, true) && respond_to?(:scope)
         values.each do |k,code|
