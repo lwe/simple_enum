@@ -13,6 +13,7 @@ require 'i18n'
 require 'active_support'
 
 require 'simple_enum/enum_hash'
+require 'simple_enum/attributes'
 require 'simple_enum/validation'
 require 'simple_enum/translation'
 
@@ -49,6 +50,7 @@ module SimpleEnum
     class_attribute :enum_definitions, instance_write: false, instance_reader: false
     self.enum_definitions = {}
 
+    include SimpleEnum::Attributes
     extend SimpleEnum::Translation
   end
 
@@ -207,7 +209,7 @@ module SimpleEnum
       # raise error if enum == column
       raise ArgumentError, "[simple_enum] use different names for #{enum}'s name and column name." if enum.to_s == options[:column].to_s
 
-      generate_enum_getter_for(enum, options, enum_hash)
+      generate_enum_attribute_methods_for(enum)
       generate_enum_setter_for(enum, options, enum_hash)
       generate_enum_presence_for(enum)
 
