@@ -210,7 +210,6 @@ module SimpleEnum
       raise ArgumentError, "[simple_enum] use different names for #{enum}'s name and column name." if enum.to_s == options[:column].to_s
 
       generate_enum_attribute_methods_for(enum)
-      generate_enum_setter_for(enum, options, enum_hash)
       generate_enum_presence_for(enum)
 
       # support dirty attributes by delegating to column, currently opt-in
@@ -232,24 +231,8 @@ module SimpleEnum
     private
 
     # generate getter
-    def generate_enum_getter_for(enum, options, values)
-      define_method(enum.to_s) do
-        id = send(options[:column])
-        values.key(id).try(:to_sym)
-      end
-    end
 
     def generate_enum_setter_for(enum, options, values)
-      define_method("#{enum}=") do |new_value|
-        return send("#{options[:column]}=", nil) if new_value.blank?
-
-        new_value = new_value.to_s if options[:strings]
-        real = values[new_value]
-        real = new_value if values.key(new_value)
-
-        raise ArgumentError, "Invalid enumeration value: #{new_value}" if options[:whiny] && !real
-        send("#{options[:column]}=", real)
-      end
     end
 
     def generate_enum_presence_for(enum)
