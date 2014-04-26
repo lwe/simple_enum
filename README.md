@@ -20,7 +20,7 @@ Add this to a model:
 
 ```ruby
 class User < ActiveRecord::Base
-  as_enum :gender, :female: 1, male: 0
+  as_enum :gender, female: 1, male: 0
 end
 ```
 
