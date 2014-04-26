@@ -5,7 +5,7 @@ module SimpleEnum
   class Enum
     attr_reader :name, :hash, :source, :prefix
 
-    def self.enum(name, values, options)
+    def self.enum(name, values, options = {})
       enum_hash = {}
       pairs = values.respond_to?(:each_pair) ? values.each_pair : values.each_with_index
       pairs.each { |name, value| enum_hash[name.to_s] = value }
@@ -43,6 +43,10 @@ module SimpleEnum
       value
     end
     alias_method :[], :value
+
+    def each_pair(&block)
+      hash.each_pair(&block)
+    end
 
     def to_s
       name

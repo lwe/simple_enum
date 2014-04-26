@@ -57,7 +57,7 @@ module SimpleEnum
 
     def generate_enum_query_methods_for(enum, accessor)
       simple_enum_module.module_eval do
-        enum.hash.each do |key, value|
+        enum.each_pair do |key, value|
           define_method("#{enum.prefix}#{key}?") { accessor.selected?(self, key) }
         end
       end
@@ -65,7 +65,7 @@ module SimpleEnum
 
     def generate_enum_bang_methods_for(enum, accessor)
       simple_enum_module.module_eval do
-        enum.hash.each do |key, value|
+        enum.each_pair do |key, value|
           define_method("#{enum.prefix}#{key}!") { accessor.write(self, key) }
         end
       end
@@ -74,7 +74,7 @@ module SimpleEnum
     def generate_enum_scope_methods_for(enum, accessor)
       return unless respond_to?(:scope)
 
-      enum.hash.each do |key, value|
+      enum.each_pair do |key, value|
         scope "#{enum.prefix}#{key}", -> { where(enum.source => value) }
       end
     end
