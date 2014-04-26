@@ -1,5 +1,5 @@
 module SimpleEnum
 
-  # +SimpleEnum+ version string.
-  VERSION = "1.6.8"
+  # The current `SimpleEnum` version.
+  VERSION = "2.0.0.rc1"
 end
