@@ -1,10 +1,12 @@
+require 'active_support/hash_with_indifferent_access'
+
 module SimpleEnum
   class Enum
     attr_reader :name, :hash, :source, :prefix
 
-    def initialize(name, hash, source, prefix)
+    def initialize(name, hash, source = nil, prefix = nil)
       @name = name.to_s
-      @hash = hash
+      @hash = ActiveSupport::HashWithIndifferentAccess.new(hash)
       @source = source.to_s.presence || "#{name}_cd"
       @prefix = prefix
     end
@@ -35,11 +37,11 @@ module SimpleEnum
     end
 
     def changed?(object)
-      object.send("#{source}_changed?")
+      object.attribute_changed?(source)
     end
 
     def was(object)
-      key = hash.key(object.send("#{source}_was"))
+      key = hash.key(object.attribute_was(source))
       key.try(:to_sym)
     end
 
@@ -51,6 +53,7 @@ module SimpleEnum
 
     def write_after_type_cast(object, value)
       source == name ? object[source] = value : object.send("#{source}=", value)
+      value
     end
   end
 end

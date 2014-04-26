@@ -34,12 +34,11 @@ module SimpleEnum
       private
 
       def build_simple_enum(name, values, options)
-        hash = ActiveSupport::HashWithIndifferentAccess.new.tap do |enum_hash|
-          pairs = values.respond_to?(:each_pair) ? values.each_pair : values.each_with_index
-          pairs.each { |name, value| enum_hash[name.to_s] = value }
-        end
+        enum_hash = {}
+        pairs = values.respond_to?(:each_pair) ? values.each_pair : values.each_with_index
+        pairs.each { |name, value| enum_hash[name.to_s] = value }
 
-        SimpleEnum::Enum.new name, hash.freeze, options[:source], options[:prefix]
+        SimpleEnum::Enum.new name, enum_hash.freeze, options[:source], options[:prefix]
       end
 
       def simple_enum_module
