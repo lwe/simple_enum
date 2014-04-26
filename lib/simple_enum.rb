@@ -24,6 +24,9 @@ module SimpleEnum
 
   mattr_accessor :accessor
   @@accessor = nil
+
+  mattr_accessor :field
+  @@field = nil
 end
 
 # include in AR

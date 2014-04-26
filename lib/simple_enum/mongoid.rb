@@ -34,7 +34,7 @@ module SimpleEnum
       # column options
       def as_enum(name, values, options = {})
         field_options = options.delete(:field)
-        field(SimpleEnum::Enum.source_for(name, options[:source]), field_options || {}) unless field_options === false
+        field(SimpleEnum::Enum.source_for(name, options[:source]), field_options || SimpleEnum.field || {}) unless field_options === false
 
         super
       end
