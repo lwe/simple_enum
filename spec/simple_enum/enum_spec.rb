@@ -61,8 +61,8 @@ describe SimpleEnum::Enum do
   context '#hash' do
     subject { described_class.new(:gender, hash).hash }
 
-    it 'returns the hash that was set in the constructor, but with indifferent access' do
-      expect(subject).to be_a(ActiveSupport::HashWithIndifferentAccess)
+    it 'returns a frozen hash that was set in the constructor' do
+      expect(subject).to be_a(Hash)
       expect(subject.keys).to eq %w{male female}
       expect(subject.values).to eq [0, 1]
     end

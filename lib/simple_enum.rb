@@ -25,6 +25,9 @@ module SimpleEnum
   mattr_accessor :accessor
   @@accessor = nil
 
+  mattr_accessor :builder
+  @@accessor = nil
+
   mattr_accessor :field
   @@field = nil
 end
