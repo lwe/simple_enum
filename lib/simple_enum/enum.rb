@@ -28,6 +28,7 @@ module SimpleEnum
     def each_pair(&block)
       hash.each_pair(&block)
     end
+    alias_method :each, :each_pair
 
     def to_s
       name
