@@ -4,4 +4,4 @@ rvm:
   - 1.9.3
   - 2.0.0
   - 2.1.1
-  - jruby-19mode
+  # - jruby-19mode disable jruby until jruby/mongoid issues are sorted out
