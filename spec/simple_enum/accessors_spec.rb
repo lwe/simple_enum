@@ -10,7 +10,7 @@ describe SimpleEnum::Accessors do
   let(:object) { OtherFakeObject.new }
 
   let(:enum) { SimpleEnum::Enum.new(:gender, hash) }
-  let(:direct_enum) { SimpleEnum::Enum.new(:gender_cd, hash, :gender_cd) }
+  let(:direct_enum) { SimpleEnum::Enum.new(:gender_cd, hash, source: :gender_cd) }
 
   context '.accessor' do
     it 'returns Accessor instance' do

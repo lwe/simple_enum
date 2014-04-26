@@ -15,11 +15,11 @@ module SimpleEnum
     def as_enum(name, values, options = {})
       options.assert_valid_keys(:source, :prefix, :with, :accessor)
 
-      enum     = SimpleEnum::Enum.enum(name, values, options)
+      enum     = SimpleEnum::Enum.new(name, values, options)
       accessor = SimpleEnum::Accessors.accessor(enum, options)
 
       generate_enum_class_methods_for(enum, accessor)
-      generate_enum_attribute_methods_for(enum, accessor)
+      generate_enum_accessor_methods_for(enum, accessor)
 
       Array.wrap(options[:with] || SimpleEnum.with).each do |feature|
         send "generate_enum_#{feature}_methods_for", enum, accessor
@@ -40,11 +40,10 @@ module SimpleEnum
       singleton_class.send(:define_method, "#{name}_accessor") { accessor }
     end
 
-    def generate_enum_attribute_methods_for(enum, accessor)
+    def generate_enum_accessor_methods_for(enum, accessor)
       simple_enum_module.module_eval do
         define_method("#{enum}")  { accessor.read(self) }
         define_method("#{enum}=") { |value| accessor.write(self, value) }
-        define_method("#{enum}?") { |value = nil| accessor.selected?(self, value) }
       end
     end
 
@@ -55,17 +54,11 @@ module SimpleEnum
       end
     end
 
-    def generate_enum_query_methods_for(enum, accessor)
+    def generate_enum_attribute_methods_for(enum, accessor)
       simple_enum_module.module_eval do
+        define_method("#{enum}?") { |value = nil| accessor.selected?(self, value) }
         enum.each_pair do |key, value|
           define_method("#{enum.prefix}#{key}?") { accessor.selected?(self, key) }
-        end
-      end
-    end
-
-    def generate_enum_bang_methods_for(enum, accessor)
-      simple_enum_module.module_eval do
-        enum.each_pair do |key, value|
           define_method("#{enum.prefix}#{key}!") { accessor.write(self, key) }
         end
       end

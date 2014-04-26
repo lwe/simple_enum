@@ -5,23 +5,33 @@ module SimpleEnum
   class Enum
     attr_reader :name, :hash, :source, :prefix
 
-    def self.enum(name, values, options = {})
-      enum_hash = {}
+    def self.default_builder(values)
+      enum_hash = ActiveSupport::HashWithIndifferentAccess.new
       pairs = values.respond_to?(:each_pair) ? values.each_pair : values.each_with_index
       pairs.each { |name, value| enum_hash[name.to_s] = value }
+      enum_hash
+    end
 
-      self.new name, enum_hash.freeze, options[:source], options[:prefix]
+    def self.string_builder(values)
+      enum_hash = ActiveSupport::HashWithIndifferentAccess.new
+      values.each { |name, *args| enum_hash[name.to_s] = name.to_s }
+      enum_hash
+    end
+
+    def self.build_hash(values, options)
+      hash = send("#{options[:builder] || 'default'}_builder", values)
+      hash.freeze
     end
 
     def self.source_for(name, source = nil)
       source.to_s.presence || "#{name}_cd"
     end
 
-    def initialize(name, hash, source = nil, prefix = nil)
+    def initialize(name, values, options = {})
       @name = name.to_s
-      @hash = ActiveSupport::HashWithIndifferentAccess.new(hash).freeze
-      @source = self.class.source_for(name, source)
-      @prefix = prefix
+      @hash = self.class.build_hash(values, options)
+      @source = self.class.source_for(name, options[:source])
+      @prefix = options[:prefix]
     end
 
     def prefix

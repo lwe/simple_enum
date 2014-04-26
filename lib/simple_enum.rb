@@ -20,7 +20,7 @@ require 'simple_enum/translation'
 # of +SimpleEnum::ClassMethods+ for more details.
 module SimpleEnum
   mattr_accessor :with
-  @@with = [:query, :bang, :scope]
+  @@with = [:attribute, :dirty, :scope]
 
   mattr_accessor :accessor
   @@accessor = nil

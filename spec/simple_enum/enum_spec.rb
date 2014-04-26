@@ -11,7 +11,7 @@ describe SimpleEnum::Enum do
 
   subject { described_class.new(:gender, hash) }
 
-  context '.enum' do
+  context '#initialize' do
     shared_examples_for "creates an Enum instance" do
       it 'is an Enum' do
         expect(subject).to be_a(described_class)
@@ -36,12 +36,12 @@ describe SimpleEnum::Enum do
     end
 
     context 'with Array' do
-      subject { described_class.enum(:gender, %w{male female}, source: :src, prefix: :pfx) }
+      subject { described_class.new(:gender, %w{male female}, source: :src, prefix: :pfx) }
       it_behaves_like 'creates an Enum instance'
     end
 
     context 'with Hash' do
-      subject { described_class.enum(:gender, hash, source: :src, prefix: :pfx) }
+      subject { described_class.new(:gender, hash, source: :src, prefix: :pfx) }
       it_behaves_like 'creates an Enum instance'
     end
   end
@@ -74,29 +74,29 @@ describe SimpleEnum::Enum do
 
   context '#prefix' do
     it 'returns empty string when prefix is nil' do
-      expect(described_class.new(:gender, {}, nil, nil).prefix).to eq ''
+      expect(described_class.new(:gender, hash).prefix).to eq ''
     end
 
     it 'returns gender_ when prefix is true' do
-      expect(described_class.new(:gender, {}, nil, true).prefix).to eq 'gender_'
+      expect(described_class.new(:gender, hash, prefix: true).prefix).to eq 'gender_'
     end
 
     it 'returns other_ when prefix is "other"' do
-      expect(described_class.new(:gender, {}, nil, 'other').prefix).to eq 'other_'
+      expect(described_class.new(:gender, hash, prefix: 'other').prefix).to eq 'other_'
     end
   end
 
   context '#source' do
     it 'returns gender_cd when source is nil' do
-      expect(described_class.new(:gender, {}, nil, nil).source).to eq 'gender_cd'
+      expect(described_class.new(:gender, hash).source).to eq 'gender_cd'
     end
 
     it 'returns "some_column" when source is set to :some_column' do
-      expect(described_class.new(:gender, {}, :some_column, nil).source).to eq 'some_column'
+      expect(described_class.new(:gender, hash, source: :some_column).source).to eq 'some_column'
     end
 
     it 'returns "gender" when source is set to "gender"' do
-      expect(described_class.new(:gender, {}, 'gender', nil).source).to eq 'gender'
+      expect(described_class.new(:gender, hash, source: 'gender').source).to eq 'gender'
     end
   end
 
