@@ -59,7 +59,8 @@ class User
 end
 ```
 
-== Working with enums
+Working with enums
+------------------
 
 Now it's possible to pull some neat tricks on the new column, yet the original
 db column (`gender_cd`) is still intact and not touched by any fancy metaclass
@@ -88,11 +89,11 @@ useful when creating queries, displaying option elements or similar:
 
 ```ruby
 User.genders            # => { "male" => 0, "female" => 1 } - HashWithIndifferentAccess
-User.genders(:male)     # => 0, same as User.genders[:male]
-User.female             # => ActiveRecord::Relation
+User.genders[:male]     # => 0
+User.female             # => #<ActiveRecord::Relation:0x0.....>
 ```
 
-== Wait, there's more!
+### Wait, there's more!
 * Too tired of always adding the integer values? Try:
 
         class User < ActiveRecord::Base
@@ -238,28 +239,23 @@ User.female             # => ActiveRecord::Relation
         # e.g. setting :prefix => true (globally)
         SimpleEnum.default_options[:prefix] = true
 
-== Best practices
-
-Do not use the same name for the enum as for the column, note that this mode of use is
-deprecated since version 1.4.1 and raises an ArgumentError starting from version 1.6.0:
-
-    # BAD: raises ArgumentError
-    as_enum :status, [:active, :inactive, :archived], :column => "status"
-
-    # GOOD
-    as_enum :project_status, [:active, :inactive, :archived], :column => "status"
+## Best practices
 
 Do not use states named after existing, or well known method names, like `new` or `create`, e.g.
 
-    # BAD, conflicts with Rails ActiveRecord Methods (!)
-    as_enum :handle, [:new, :create, :update]
+```ruby
+# BAD, conflicts with Rails ActiveRecord Methods (!)
+as_enum :handle, [:new, :create, :update]
 
-    # BETTER, prefixes all methods
-    as_enum :handle, [:new, :create, :update], :prefix => true
+# GOOD, prefixes all methods
+as_enum :handle, [:new, :create, :update], :prefix => true
+```
 
 Searching for certain values by using the finder methods:
 
-    User.where(:gender_cd => User.female)
+```ruby
+User.female
+```
 
 Working with database backed values, now assuming that there exists a +genders+ table:
 
