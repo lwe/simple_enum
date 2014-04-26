@@ -13,7 +13,13 @@ describe SimpleEnum::Enum do
 
   context '#name' do
     it 'returns the enum name as string' do
-      expect(described_class.new(:gender, {}).name).to eq 'gender'
+      expect(subject.name).to eq 'gender'
+    end
+  end
+
+  context '#to_s' do
+    it 'returns the name' do
+      expect(subject.to_s).to eq 'gender'
     end
   end
 

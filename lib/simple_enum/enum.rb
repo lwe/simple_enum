@@ -45,6 +45,10 @@ module SimpleEnum
       key.try(:to_sym)
     end
 
+    def to_s
+      name
+    end
+
     private
 
     def read_before_type_cast(object)

@@ -55,16 +55,16 @@ module SimpleEnum
 
       def generate_enum_attribute_methods_for(enum)
         simple_enum_module.module_eval do
-          define_method("#{enum.name}")  { enum.read(self) }
-          define_method("#{enum.name}=") { |value| enum.write(self, value) }
-          define_method("#{enum.name}?") { |value = nil| enum.selected?(self, value) }
+          define_method("#{enum}")  { enum.read(self) }
+          define_method("#{enum}=") { |value| enum.write(self, value) }
+          define_method("#{enum}?") { |value = nil| enum.selected?(self, value) }
         end
       end
 
       def generate_enum_dirty_methods_for(enum)
         simple_enum_module.module_eval do
-          define_method("#{enum.name}_changed?") { enum.changed?(self) }
-          define_method("#{enum.name}_was") { enum.was(self) }
+          define_method("#{enum}_changed?") { enum.changed?(self) }
+          define_method("#{enum}_was")      { enum.was(self) }
         end
       end
 
