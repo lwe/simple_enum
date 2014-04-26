@@ -30,6 +30,9 @@ module SimpleEnum
 
   mattr_accessor :field
   @@field = nil
+
+  mattr_accessor :suffix
+  @@suffix = "_cd"
 end
 
 # include in AR
