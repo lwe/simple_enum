@@ -23,29 +23,21 @@ module SimpleEnum
   #   as_enum :gender, [:female, :male], :field => { :type => Integer }
   #
   module Mongoid
-    extend ActiveSupport::Concern
-
-    included do
-      # create class level methods
-      class_attribute :simple_enum_definitions, :instance_writer => false, :instance_reader => false
+    def self.included(base)
+      base.extend SimpleEnum::Attribute
+      base.extend SimpleEnum::Translation
+      base.extend SimpleEnum::Mongoid::ClassMethods
     end
 
     module ClassMethods
-      include SimpleEnum::ClassMethods
-
       # Wrap method chain to create mongoid field and additional
       # column options
-      def as_enum_with_mongoid(enum_cd, values, options = {})
-        options = SimpleEnum.default_options.merge({ :column => "#{enum_cd}_cd" }).deep_merge(options)
-
-        # forward custom field options
+      def as_enum(name, values, options = {})
         field_options = options.delete(:field)
-        field(options[:column], field_options.is_a?(Hash) ? field_options : {}) unless field_options === false
+        field(SimpleEnum::Enum.source_for(name, options[:source]), field_options || {}) unless field_options === false
 
-        # call original as_enum method
-        as_enum_without_mongoid(enum_cd, values, options)
+        super
       end
-      alias_method_chain :as_enum, :mongoid
     end
   end
 end

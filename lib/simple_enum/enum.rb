@@ -1,3 +1,4 @@
+require 'active_support/core_ext/string'
 require 'active_support/hash_with_indifferent_access'
 
 module SimpleEnum
@@ -12,10 +13,14 @@ module SimpleEnum
       self.new name, enum_hash.freeze, options[:source], options[:prefix]
     end
 
+    def self.source_for(name, source = nil)
+      source.to_s.presence || "#{name}_cd"
+    end
+
     def initialize(name, hash, source = nil, prefix = nil)
       @name = name.to_s
       @hash = ActiveSupport::HashWithIndifferentAccess.new(hash).freeze
-      @source = source.to_s.presence || "#{name}_cd"
+      @source = self.class.source_for(name, source)
       @prefix = prefix
     end
 
