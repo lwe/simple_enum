@@ -1,10 +1,17 @@
 module SimpleEnum
   module Accessors
     class Accessor
-      attr_reader :enum
+      attr_reader :name, :enum, :source
 
-      def initialize(enum)
+      def initialize(name, enum, source = nil, prefix = nil)
+        @name = name.to_s
         @enum = enum
+        @source = source.to_s.presence || "#{name}_cd"
+        @prefix = prefix
+      end
+
+      def prefix
+        @cached_prefix ||= @prefix && "#{@prefix == true ? name : @prefix}_" || ""
       end
 
       def read(object)
@@ -31,20 +38,12 @@ module SimpleEnum
 
       private
 
-      def source
-        enum.source
-      end
-
-      def hash_access?
-        source == enum.name
-      end
-
       def read_before_type_cast(object)
-        hash_access? ? object[source] : object.send(source)
+        source == name ? object[source] : object.send(source)
       end
 
       def write_after_type_cast(object, value)
-        hash_access? ? object[source] = value : object.send("#{source}=", value)
+        source == name ? object[source] = value : object.send("#{source}=", value)
         value
       end
     end

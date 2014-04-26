@@ -33,34 +33,6 @@ describe SimpleEnum::Enum do
     end
   end
 
-  context '#prefix' do
-    it 'returns empty string when prefix is nil' do
-      expect(described_class.new(:gender, hash).prefix).to eq ''
-    end
-
-    it 'returns gender_ when prefix is true' do
-      expect(described_class.new(:gender, hash, prefix: true).prefix).to eq 'gender_'
-    end
-
-    it 'returns other_ when prefix is "other"' do
-      expect(described_class.new(:gender, hash, prefix: 'other').prefix).to eq 'other_'
-    end
-  end
-
-  context '#source' do
-    it 'returns gender_cd when source is nil' do
-      expect(described_class.new(:gender, hash).source).to eq 'gender_cd'
-    end
-
-    it 'returns "some_column" when source is set to :some_column' do
-      expect(described_class.new(:gender, hash, source: :some_column).source).to eq 'some_column'
-    end
-
-    it 'returns "gender" when source is set to "gender"' do
-      expect(described_class.new(:gender, hash, source: 'gender').source).to eq 'gender'
-    end
-  end
-
   context '#value (aliased to #[])' do
     it 'looks up by string' do
       expect(subject.value('male')).to eq 0

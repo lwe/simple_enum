@@ -2,21 +2,12 @@ require 'active_support/core_ext/string'
 
 module SimpleEnum
   class Enum
-    def self.source_for(name, source = nil)
-      source.to_s.presence || "#{name}_cd"
-    end
-
-    attr_reader :name, :hash, :source, :prefix
+    attr_reader :name, :hash, :options
 
     def initialize(name, hash, options = {})
       @name = name.to_s
       @hash = hash
-      @source = self.class.source_for(name, options[:source])
-      @prefix = options[:prefix]
-    end
-
-    def prefix
-      @cached_prefix ||= @prefix && "#{@prefix == true ? name : @prefix}_" || ""
+      @options = options
     end
 
     def include?(key)

@@ -3,14 +3,12 @@ require 'spec_helper'
 describe SimpleEnum::Accessors do
   OtherFakeObject = Struct.new(:gender_cd)
 
-  let(:hash) do
-    ActiveSupport::HashWithIndifferentAccess.new(female: 1, male: 0)
+  let(:enum) do
+    hash = { "male" => 0, "female" => 1 }
+    SimpleEnum::Enum.new(:gender, hash)
   end
 
   let(:object) { OtherFakeObject.new }
-
-  let(:enum) { SimpleEnum::Enum.new(:gender, hash) }
-  let(:direct_enum) { SimpleEnum::Enum.new(:gender_cd, hash, source: :gender_cd) }
 
   context '.accessor' do
     it 'returns Accessor instance' do
@@ -23,7 +21,35 @@ describe SimpleEnum::Accessors do
   end
 
   context 'Accessor' do
-    subject { described_class::Accessor.new(enum) }
+    subject { described_class::Accessor.new(:gender, enum) }
+
+    context '#prefix' do
+      it 'returns empty string when prefix is nil' do
+        expect(described_class::Accessor.new(:gender, enum).prefix).to eq ''
+      end
+
+      it 'returns gender_ when prefix is true' do
+        expect(described_class::Accessor.new(:gender, enum, nil, true).prefix).to eq 'gender_'
+      end
+
+      it 'returns other_ when prefix is "other"' do
+        expect(described_class::Accessor.new(:gender, hash, nil, 'other').prefix).to eq 'other_'
+      end
+    end
+
+    context '#source' do
+      it 'returns gender_cd when source is nil' do
+        expect(described_class::Accessor.new(:gender, hash, nil).source).to eq 'gender_cd'
+      end
+
+      it 'returns "some_column" when source is set to :some_column' do
+        expect(described_class::Accessor.new(:gender, hash, :some_column).source).to eq 'some_column'
+      end
+
+      it 'returns "gender" when source is set to "gender"' do
+        expect(described_class::Accessor.new(:gender, hash, 'gender').source).to eq 'gender'
+      end
+    end
 
     context '#read' do
       shared_examples_for 'reading an enum' do
@@ -43,7 +69,7 @@ describe SimpleEnum::Accessors do
       it_behaves_like 'reading an enum'
 
       context 'with name == source' do
-        subject { described_class::Accessor.new(direct_enum) }
+        subject { described_class::Accessor.new(:gender_cd, enum, :gender_cd) }
         it_behaves_like 'reading an enum'
       end
     end
@@ -81,7 +107,7 @@ describe SimpleEnum::Accessors do
       it_behaves_like 'writing an enum'
 
       context 'with name == source' do
-        subject { described_class::Accessor.new(direct_enum) }
+        subject { described_class::Accessor.new(:gender_cd, enum, :gender_cd) }
         it_behaves_like 'writing an enum'
       end
     end
@@ -126,7 +152,7 @@ describe SimpleEnum::Accessors do
   end
 
   context 'IgnoreAccessor' do
-    subject { described_class::IgnoreAccessor.new(enum) }
+    subject { described_class::IgnoreAccessor.new(:gender, enum) }
 
     it 'sets gender_cd to 0 with symbol' do
       expect(subject.write(object, :male)).to_not be_false
@@ -151,7 +177,7 @@ describe SimpleEnum::Accessors do
   end
 
   context 'WhinyAccessor' do
-    subject { described_class::WhinyAccessor.new(enum) }
+    subject { described_class::WhinyAccessor.new(:gender, enum) }
 
     it 'raises no error when setting existing key' do
       expect { subject.write(object, :male) }.to_not raise_error

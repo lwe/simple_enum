@@ -60,8 +60,8 @@ module SimpleEnum
       simple_enum_module.module_eval do
         define_method("#{enum}?") { |value = nil| accessor.selected?(self, value) }
         enum.each_pair do |key, value|
-          define_method("#{enum.prefix}#{key}?") { accessor.selected?(self, key) }
-          define_method("#{enum.prefix}#{key}!") { accessor.write(self, key) }
+          define_method("#{accessor.prefix}#{key}?") { accessor.selected?(self, key) }
+          define_method("#{accessor.prefix}#{key}!") { accessor.write(self, key) }
         end
       end
     end
@@ -70,7 +70,7 @@ module SimpleEnum
       return unless respond_to?(:scope)
 
       enum.each_pair do |key, value|
-        scope "#{enum.prefix}#{key}", -> { where(enum.source => value) }
+        scope "#{accessor.prefix}#{key}", -> { where(accessor.source => value) }
       end
     end
   end
