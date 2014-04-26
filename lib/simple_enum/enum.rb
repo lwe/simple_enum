@@ -6,7 +6,7 @@ module SimpleEnum
 
     def initialize(name, hash, source = nil, prefix = nil)
       @name = name.to_s
-      @hash = ActiveSupport::HashWithIndifferentAccess.new(hash)
+      @hash = ActiveSupport::HashWithIndifferentAccess.new(hash).freeze
       @source = source.to_s.presence || "#{name}_cd"
       @prefix = prefix
     end
