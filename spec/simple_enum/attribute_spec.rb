@@ -8,6 +8,12 @@ describe SimpleEnum::Attribute do
 
     subject { SomeEnum.new }
 
+    context '.genders' do
+      it 'returns a SimpleEnum::Enum' do
+        expect(SomeEnum.genders).to be_a(SimpleEnum::Enum)
+      end
+    end
+
     context '#gender & #gender=' do
       it 'gender should be nil when not set' do
         expect(SomeEnum.new.gender).to be_nil
