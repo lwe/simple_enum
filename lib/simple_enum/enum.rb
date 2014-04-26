@@ -1,26 +1,8 @@
 require 'active_support/core_ext/string'
+require 'simple_enum/hasher'
 
 module SimpleEnum
   class Enum
-    def self.build_hash(values, options)
-      method = options[:builder] || SimpleEnum.builder || 'default'
-      hash = send("#{method}_hash_builder", values)
-      hash.freeze
-    end
-
-    def self.default_hash_builder(values)
-      enum_hash = {}
-      pairs = values.respond_to?(:each_pair) ? values.each_pair : values.each_with_index
-      pairs.each { |name, value| enum_hash[name.to_s] = value }
-      enum_hash
-    end
-
-    def self.string_hash_builder(values)
-      enum_hash = {}
-      values.each { |name, *args| enum_hash[name.to_s] = name.to_s }
-      enum_hash
-    end
-
     def self.source_for(name, source = nil)
       source.to_s.presence || "#{name}_cd"
     end
@@ -29,7 +11,7 @@ module SimpleEnum
 
     def initialize(name, values, options = {})
       @name = name.to_s
-      @hash = self.class.build_hash(values, options)
+      @hash = SimpleEnum::Hasher.hash(values, options)
       @source = self.class.source_for(name, options[:source])
       @prefix = options[:prefix]
     end

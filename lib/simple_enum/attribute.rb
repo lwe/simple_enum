@@ -15,7 +15,8 @@ module SimpleEnum
     def as_enum(name, values, options = {})
       options.assert_valid_keys(:source, :prefix, :with, :accessor)
 
-      enum     = SimpleEnum::Enum.new(name, values, options)
+      hash     = SimpleEnum::Hasher.hash(values, options)
+      enum     = SimpleEnum::Enum.new(name, hash, options)
       accessor = SimpleEnum::Accessors.accessor(enum, options)
 
       generate_enum_class_methods_for(enum, accessor)
