@@ -40,12 +40,14 @@ describe SimpleEnum::Attribute do
     end
 
     shared_examples_for 'question mark methods' do |male, female|
-      it "is #{male ? 'is' : 'is not'} #male?" do
-        expect(subject.male?).to be male
+      it "#{male ? 'is' : 'is not'} #male?" do
+        result = male ? be_true : be_false
+        expect(subject.male?).to result
       end
 
-      it "is #{female ? 'is' : 'is not'} #female?" do
-        expect(subject.female?).to be female
+      it "#{female ? 'is' : 'is not'} #female?" do
+        result = female ? be_true : be_false
+        expect(subject.female?).to result
       end
 
       if male || female
