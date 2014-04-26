@@ -1,13 +1,13 @@
 require 'spec_helper'
 
 describe SimpleEnum::Accessors do
-  FakeObject = Struct.new(:gender_cd)
+  OtherFakeObject = Struct.new(:gender_cd)
 
   let(:hash) do
     { female: 1, male: 0 }
   end
 
-  let(:object) { FakeObject.new }
+  let(:object) { OtherFakeObject.new }
 
   let(:enum) { SimpleEnum::Enum.new(:gender, hash) }
   let(:direct_enum) { SimpleEnum::Enum.new(:gender_cd, hash, :gender_cd) }
@@ -32,11 +32,11 @@ describe SimpleEnum::Accessors do
         end
 
         it 'returns :male when gender_cd is 0' do
-          expect(subject.read(FakeObject.new(0))).to eq :male
+          expect(subject.read(OtherFakeObject.new(0))).to eq :male
         end
 
         it 'returns :female when gender_cd is 1' do
-          expect(subject.read(FakeObject.new(1))).to eq :female
+          expect(subject.read(OtherFakeObject.new(1))).to eq :female
         end
       end
 
@@ -51,7 +51,7 @@ describe SimpleEnum::Accessors do
     context '#write' do
       shared_examples_for 'writing an enum' do
         it 'writes nil to object' do
-          object = FakeObject.new(0)
+          object = OtherFakeObject.new(0)
           expect(subject.write(object, nil)).to be_nil
           expect(object.gender_cd).to be_nil
         end
@@ -72,7 +72,7 @@ describe SimpleEnum::Accessors do
         end
 
         it 'writes nil to object with :other' do
-          object = FakeObject.new(1)
+          object = OtherFakeObject.new(1)
           expect(subject.write(object, :other)).to be_nil
           expect(object.gender_cd).to be_nil
         end
@@ -93,20 +93,20 @@ describe SimpleEnum::Accessors do
       end
 
       it 'returns true when gender_cd is != nil' do
-        expect(subject.selected?(FakeObject.new(0))).to be_true
-        expect(subject.selected?(FakeObject.new(1))).to be_true
+        expect(subject.selected?(OtherFakeObject.new(0))).to be_true
+        expect(subject.selected?(OtherFakeObject.new(1))).to be_true
       end
 
       it 'returns true when gender_cd is 0 and :male is passed' do
-        expect(subject.selected?(FakeObject.new(0), :male)).to be_true
+        expect(subject.selected?(OtherFakeObject.new(0), :male)).to be_true
       end
 
       it 'returns false when gender_cd is 0 and :female is passed' do
-        expect(subject.selected?(FakeObject.new(0), :female)).to be_false
+        expect(subject.selected?(OtherFakeObject.new(0), :female)).to be_false
       end
 
       it 'returns false when gender_cd is 1 and :other is passed' do
-        expect(subject.selected?(FakeObject.new(0), :other)).to be_false
+        expect(subject.selected?(OtherFakeObject.new(0), :other)).to be_false
       end
     end
 
