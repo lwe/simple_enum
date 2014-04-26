@@ -4,17 +4,6 @@ module SimpleEnum
   class Enum
     attr_reader :name, :hash, :source, :prefix
 
-    def self.build(name, values, options = {})
-      options.assert_valid_keys(:source, :prefix, :with)
-
-      hash = ActiveSupport::HashWithIndifferentAccess.new.tap do |enum_hash|
-        pairs = values.respond_to?(:each_pair) ? values.each_pair : values.each_with_index
-        pairs.each { |name, value| enum_hash[name.to_s] = value }
-      end
-
-      new name, hash.freeze, options[:source], options[:prefix]
-    end
-
     def initialize(name, hash, source, prefix)
       @name = name.to_s
       @hash = hash

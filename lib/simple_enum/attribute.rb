@@ -19,17 +19,28 @@ module SimpleEnum
     module ClassMethods
       def as_enum(name, values, options = {})
         options = SimpleEnum.default_options.merge(options)
-        simple_enum = SimpleEnum::Enum.build(name, values, options)
+        options.assert_valid_keys(:source, :prefix, :with)
 
-        generate_enum_class_methods_for(simple_enum)
-        generate_enum_attribute_methods_for(simple_enum)
+        enum = build_simple_enum(name, values, options)
+
+        generate_enum_class_methods_for(enum)
+        generate_enum_attribute_methods_for(enum)
 
         options[:with].each do |feature|
-          send "generate_enum_#{feature}_methods_for", simple_enum
+          send "generate_enum_#{feature}_methods_for", enum
         end
       end
 
       private
+
+      def build_simple_enum(name, values, options)
+        hash = ActiveSupport::HashWithIndifferentAccess.new.tap do |enum_hash|
+          pairs = values.respond_to?(:each_pair) ? values.each_pair : values.each_with_index
+          pairs.each { |name, value| enum_hash[name.to_s] = value }
+        end
+
+        SimpleEnum::Enum.new name, hash.freeze, options[:source], options[:prefix]
+      end
 
       def simple_enum_module
         @simple_enum_module ||= begin
