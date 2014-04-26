@@ -9,8 +9,9 @@ module SimpleEnum
       :whiny => WhinyAccessor
     }
 
-    def self.accessor(enum, options = {})
-      klass = ACCESSORS[options[:accessor] || SimpleEnum.accessor] || Accessor
+    def self.accessor(name, enum, options = {})
+      access = options.fetch(:accessor, SimpleEnum.accessor)
+      klass = ACCESSORS[access] || Accessor
       klass.new(enum)
     end
   end

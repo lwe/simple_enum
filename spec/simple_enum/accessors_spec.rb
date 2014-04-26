@@ -14,11 +14,11 @@ describe SimpleEnum::Accessors do
 
   context '.accessor' do
     it 'returns Accessor instance' do
-      expect(described_class.accessor(enum)).to be_a(described_class::Accessor)
+      expect(described_class.accessor(:gender, enum)).to be_a(described_class::Accessor)
     end
 
     it 'returns a WhinyWriteAccessor instance if accessor: :whiny' do
-      expect(described_class.accessor(enum, accessor: :whiny)).to be_a(described_class::WhinyAccessor)
+      expect(described_class.accessor(:gender, enum, accessor: :whiny)).to be_a(described_class::WhinyAccessor)
     end
   end
 

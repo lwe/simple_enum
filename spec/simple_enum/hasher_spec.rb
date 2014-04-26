@@ -5,7 +5,7 @@ describe SimpleEnum::Hasher do
   subject { described_class }
 
   context '.map' do
-    subject { described_class.map(%w{male female}, :string) }
+    subject { described_class.map(%w{male female}, builder: :string) }
 
     it 'uses DefaultHasher by default' do
       result = { "male" => 0, "female" => 1 }

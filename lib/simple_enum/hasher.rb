@@ -17,7 +17,8 @@ module SimpleEnum
       string: StringHasher
     }
 
-    def self.map(values, builder = nil)
+    def self.map(values, options = {})
+      builder = options.fetch(:builder, SimpleEnum.builder)
       hasher = HASHERS[builder] || DefaultHasher
       hasher.call(values).freeze
     end

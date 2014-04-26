@@ -14,16 +14,16 @@ module SimpleEnum
   #
   module Attribute
     def as_enum(name, values, options = {})
-      options.assert_valid_keys(:source, :prefix, :with, :accessor)
+      options.assert_valid_keys(:source, :prefix, :with, :accessor, :builder)
 
-      hash     = SimpleEnum::Hasher.map(values, options[:builder] || SimpleEnum.builder)
+      hash     = SimpleEnum::Hasher.map(values, options)
       enum     = SimpleEnum::Enum.new(name, hash, options)
-      accessor = SimpleEnum::Accessors.accessor(enum, options)
+      accessor = SimpleEnum::Accessors.accessor(name, enum, options)
 
       generate_enum_class_methods_for(enum, accessor)
       generate_enum_accessor_methods_for(enum, accessor)
 
-      Array.wrap(options[:with] || SimpleEnum.with).each do |feature|
+      Array.wrap(options.fetch(:with, SimpleEnum.with)).each do |feature|
         send "generate_enum_#{feature}_methods_for", enum, accessor
       end
 
