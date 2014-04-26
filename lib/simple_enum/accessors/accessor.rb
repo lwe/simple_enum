@@ -36,6 +36,10 @@ module SimpleEnum
         enum.key(object.attribute_was(source))
       end
 
+      def to_s
+        name
+      end
+
       private
 
       def read_before_type_cast(object)

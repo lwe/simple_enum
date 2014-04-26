@@ -23,6 +23,18 @@ describe SimpleEnum::Accessors do
   context 'Accessor' do
     subject { described_class::Accessor.new(:gender, enum) }
 
+    context '#name' do
+      it 'returns the enum name as string' do
+        expect(subject.name).to eq 'gender'
+      end
+    end
+
+    context '#to_s' do
+      it 'returns the name' do
+        expect(subject.to_s).to eq 'gender'
+      end
+    end
+
     context '#prefix' do
       it 'returns empty string when prefix is nil' do
         expect(described_class::Accessor.new(:gender, enum).prefix).to eq ''

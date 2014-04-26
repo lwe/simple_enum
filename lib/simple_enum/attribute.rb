@@ -37,28 +37,28 @@ module SimpleEnum
     end
 
     def generate_enum_class_methods_for(enum, accessor)
-      name = enum.name.pluralize
+      name = accessor.name.pluralize
       singleton_class.send(:define_method, name) { enum }
       singleton_class.send(:define_method, "#{name}_accessor") { accessor }
     end
 
     def generate_enum_accessor_methods_for(enum, accessor)
       simple_enum_module.module_eval do
-        define_method("#{enum}")  { accessor.read(self) }
-        define_method("#{enum}=") { |value| accessor.write(self, value) }
+        define_method("#{accessor}")  { accessor.read(self) }
+        define_method("#{accessor}=") { |value| accessor.write(self, value) }
       end
     end
 
     def generate_enum_dirty_methods_for(enum, accessor)
       simple_enum_module.module_eval do
-        define_method("#{enum}_changed?") { accessor.changed?(self) }
-        define_method("#{enum}_was")      { accessor.was(self) }
+        define_method("#{accessor}_changed?") { accessor.changed?(self) }
+        define_method("#{accessor}_was")      { accessor.was(self) }
       end
     end
 
     def generate_enum_attribute_methods_for(enum, accessor)
       simple_enum_module.module_eval do
-        define_method("#{enum}?") { |value = nil| accessor.selected?(self, value) }
+        define_method("#{accessor}?") { |value = nil| accessor.selected?(self, value) }
         enum.each_pair do |key, value|
           define_method("#{accessor.prefix}#{key}?") { accessor.selected?(self, key) }
           define_method("#{accessor.prefix}#{key}!") { accessor.write(self, key) }
