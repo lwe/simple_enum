@@ -4,12 +4,47 @@ describe SimpleEnum::Enum do
   FakeObject = Struct.new(:gender_cd)
 
   let(:hash) do
-    { female: 1, male: 0 }
+    { male: 0, female: 1 }
   end
 
   let(:object) { FakeObject.new }
 
   subject { described_class.new(:gender, hash) }
+
+  context '.enum' do
+    shared_examples_for "creates an Enum instance" do
+      it 'is an Enum' do
+        expect(subject).to be_a(described_class)
+      end
+
+      it 'sets name to "gender"' do
+        expect(subject.name).to eq 'gender'
+      end
+
+      it 'sets source to "src"' do
+        expect(subject.source).to eq 'src'
+      end
+
+      it 'sets prefix to "pfx_"' do
+        expect(subject.prefix).to eq 'pfx_'
+      end
+
+      it 'sets hash to { "male" => 0, "female" => 1 }' do
+        expect(subject.hash.keys).to eq %w{male female}
+        expect(subject.hash.values).to eq [0, 1]
+      end
+    end
+
+    context 'with Array' do
+      subject { described_class.enum(:gender, %w{male female}, source: :src, prefix: :pfx) }
+      it_behaves_like 'creates an Enum instance'
+    end
+
+    context 'with Hash' do
+      subject { described_class.enum(:gender, hash, source: :src, prefix: :pfx) }
+      it_behaves_like 'creates an Enum instance'
+    end
+  end
 
   context '#name' do
     it 'returns the enum name as string' do
@@ -28,8 +63,8 @@ describe SimpleEnum::Enum do
 
     it 'returns the hash that was set in the constructor, but with indifferent access' do
       expect(subject).to be_a(ActiveSupport::HashWithIndifferentAccess)
-      expect(subject.keys).to eq %w{female male}
-      expect(subject.values).to eq [1, 0]
+      expect(subject.keys).to eq %w{male female}
+      expect(subject.values).to eq [0, 1]
     end
 
     it 'is frozen' do
