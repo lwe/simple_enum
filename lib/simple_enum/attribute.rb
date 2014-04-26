@@ -20,8 +20,8 @@ module SimpleEnum
       enum     = SimpleEnum::Enum.new(name, hash)
       accessor = SimpleEnum::Accessors.accessor(name, enum, options)
 
-      generate_enum_class_methods_for(enum, accessor)
-      generate_enum_accessor_methods_for(enum, accessor)
+      generate_enum_class_accessors_for(enum, accessor)
+      generate_enum_instance_accessors_for(enum, accessor)
 
       Array.wrap(options.fetch(:with, SimpleEnum.with)).each do |feature|
         send "generate_enum_#{feature}_methods_for", enum, accessor
@@ -36,13 +36,13 @@ module SimpleEnum
       @simple_enum_module ||= Module.new.tap { |mod| include mod }
     end
 
-    def generate_enum_class_methods_for(enum, accessor)
+    def generate_enum_class_accessors_for(enum, accessor)
       name = accessor.name.pluralize
       singleton_class.send(:define_method, name) { enum }
       singleton_class.send(:define_method, "#{name}_accessor") { accessor }
     end
 
-    def generate_enum_accessor_methods_for(enum, accessor)
+    def generate_enum_instance_accessors_for(enum, accessor)
       simple_enum_module.module_eval do
         define_method("#{accessor}")  { accessor.read(self) }
         define_method("#{accessor}=") { |value| accessor.write(self, value) }
