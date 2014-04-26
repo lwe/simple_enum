@@ -65,117 +65,55 @@ describe SimpleEnum::Enum do
     end
   end
 
-  context '#[]' do
-    subject { described_class.new(:gender, hash) }
-
+  context '#value (aliased to #[])' do
     it 'looks up by string' do
+      expect(subject.value('male')).to eq 0
       expect(subject['male']).to eq 0
     end
 
     it 'looks up by symbol' do
+      expect(subject.value(:female)).to eq 1
       expect(subject[:female]).to eq 1
     end
 
+    it 'looks up by value' do
+      expect(subject.value(0)).to be 0
+      expect(subject[0]).to be 0
+    end
+
     it 'returns nil when key is not found' do
+      expect(subject.value(:inexistent)).to be_nil
       expect(subject[:inexistent]).to be_nil
     end
   end
 
-  context '#read' do
-    shared_examples_for 'reading an enum' do
-      it 'returns nil then gender_cd is nil' do
-        expect(subject.read(object)).to be_nil
-      end
-
-      it 'returns :male when gender_cd is 0' do
-        expect(subject.read(FakeObject.new(0))).to eq :male
-      end
-
-      it 'returns :female when gender_cd is 1' do
-        expect(subject.read(FakeObject.new(1))).to eq :female
-      end
+  context '#key' do
+    it 'returns symbolized key for supplied value' do
+      expect(subject.key(0)).to eq :male
+      expect(subject.key(1)).to eq :female
     end
 
-    it_behaves_like 'reading an enum'
-
-    context 'with name == source' do
-      subject { described_class.new(:gender_cd, hash, :gender_cd) }
-      it_behaves_like 'reading an enum'
+    it 'returns nil if value is not found' do
+      expect(subject.key(12)).to be_nil
     end
   end
 
-  context '#write' do
-    shared_examples_for 'writing an enum' do
-      it 'writes nil to object' do
-        object = FakeObject.new(0)
-        expect(subject.write(object, nil)).to be_nil
-        expect(object.gender_cd).to be_nil
-      end
-
-      it 'writes 1 to object with :female' do
-        expect(subject.write(object, :female)).to eq :female
-        expect(object.gender_cd).to eq 1
-      end
-
-      it 'writes 0 to object with "male"' do
-        expect(subject.write(object, 'male')).to eq 'male'
-        expect(object.gender_cd).to eq 0
-      end
-
-      it 'writes 1 to object with 1' do
-        expect(subject.write(object, 1)).to eq 1
-        expect(object.gender_cd).to eq 1
-      end
-
-      it 'writes nil to object with :other' do
-        object = FakeObject.new(1)
-        expect(subject.write(object, :other)).to be_nil
-        expect(object.gender_cd).to be_nil
-      end
+  context '#include?' do
+    it 'returns true by string' do
+      expect(subject.include?('male')).to be_true
     end
 
-    it_behaves_like 'writing an enum'
-
-    context 'with name == source' do
-      it_behaves_like 'writing an enum'
-    end
-  end
-
-  context '#selected?' do
-    it 'returns false when gender_cd is nil' do
-      expect(subject.selected?(object)).to be_false
-      expect(subject.selected?(object, :male)).to be_false
+    it 'returns true by symbol' do
+      expect(subject.include?(:female)).to be_true
     end
 
-    it 'returns true when gender_cd is != nil' do
-      expect(subject.selected?(FakeObject.new(0))).to be_true
-      expect(subject.selected?(FakeObject.new(1))).to be_true
+    it 'returns true by checking actual value' do
+      expect(subject.include?(1)).to be_true
     end
 
-    it 'returns true when gender_cd is 0 and :male is passed' do
-      expect(subject.selected?(FakeObject.new(0), :male)).to be_true
-    end
-
-    it 'returns false when gender_cd is 0 and :female is passed' do
-      expect(subject.selected?(FakeObject.new(0), :female)).to be_false
-    end
-
-    it 'returns false when gender_cd is 1 and :other is passed' do
-      expect(subject.selected?(FakeObject.new(0), :other)).to be_false
-    end
-  end
-
-  context '#changed?' do
-    it 'delegates to attribute_changed?' do
-      expect(object).to receive(:attribute_changed?).with('gender_cd') { true }
-      expect(subject.changed?(object)).to be_true
-    end
-  end
-
-  context 'was' do
-    it 'delegates to attribute_was and resolves symbol' do
-      expect(object).to receive(:attribute_was).with('gender_cd') { 1 }
-      expect(subject.was(object)).to eq :female
+    it 'returns false when neither in keys nor values' do
+      expect(subject.include?(:other)).to be_false
+      expect(subject.include?(2)).to be_false
     end
   end
 end

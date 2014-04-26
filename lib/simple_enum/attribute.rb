@@ -1,5 +1,6 @@
 require 'simple_enum/translation'
 require 'simple_enum/enum'
+require 'simple_enum/accessors'
 
 module SimpleEnum
 
@@ -19,27 +20,20 @@ module SimpleEnum
     module ClassMethods
       def as_enum(name, values, options = {})
         options = SimpleEnum.default_options.merge(options)
-        options.assert_valid_keys(:source, :prefix, :with)
+        options.assert_valid_keys(:source, :prefix, :with, :whiny)
 
-        enum = build_simple_enum(name, values, options)
+        enum     = SimpleEnum::Enum.enum(name, values, options)
+        accessor = SimpleEnum::Accessors.accessor(enum, options)
 
-        generate_enum_class_methods_for(enum)
-        generate_enum_attribute_methods_for(enum)
+        generate_enum_class_methods_for(enum, accessor)
+        generate_enum_attribute_methods_for(enum, accessor)
 
         options[:with].each do |feature|
-          send "generate_enum_#{feature}_methods_for", enum
+          send "generate_enum_#{feature}_methods_for", enum, accessor
         end
       end
 
       private
-
-      def build_simple_enum(name, values, options)
-        enum_hash = {}
-        pairs = values.respond_to?(:each_pair) ? values.each_pair : values.each_with_index
-        pairs.each { |name, value| enum_hash[name.to_s] = value }
-
-        SimpleEnum::Enum.new name, enum_hash.freeze, options[:source], options[:prefix]
-      end
 
       def simple_enum_module
         @simple_enum_module ||= begin
@@ -49,42 +43,43 @@ module SimpleEnum
         end
       end
 
-      def generate_enum_class_methods_for(enum)
+      def generate_enum_class_methods_for(enum, accessor)
         singleton_class.send(:define_method, enum.name.pluralize) { enum }
+        singleton_class.send(:define_method, "#{enum.name.pluralize}_accessor") { accessor }
       end
 
-      def generate_enum_attribute_methods_for(enum)
+      def generate_enum_attribute_methods_for(enum, accessor)
         simple_enum_module.module_eval do
-          define_method("#{enum}")  { enum.read(self) }
-          define_method("#{enum}=") { |value| enum.write(self, value) }
-          define_method("#{enum}?") { |value = nil| enum.selected?(self, value) }
+          define_method("#{enum}")  { accessor.read(self) }
+          define_method("#{enum}=") { |value| accessor.write(self, value) }
+          define_method("#{enum}?") { |value = nil| accessor.selected?(self, value) }
         end
       end
 
-      def generate_enum_dirty_methods_for(enum)
+      def generate_enum_dirty_methods_for(enum, accessor)
         simple_enum_module.module_eval do
-          define_method("#{enum}_changed?") { enum.changed?(self) }
-          define_method("#{enum}_was")      { enum.was(self) }
+          define_method("#{enum}_changed?") { accessor.changed?(self) }
+          define_method("#{enum}_was")      { accessor.was(self) }
         end
       end
 
-      def generate_enum_query_methods_for(enum)
+      def generate_enum_query_methods_for(enum, accessor)
         simple_enum_module.module_eval do
           enum.hash.each do |key, value|
-            define_method("#{enum.prefix}#{key}?") { enum.selected?(self, key) }
+            define_method("#{enum.prefix}#{key}?") { accessor.selected?(self, key) }
           end
         end
       end
 
-      def generate_enum_bang_methods_for(enum)
+      def generate_enum_bang_methods_for(enum, accessor)
         simple_enum_module.module_eval do
           enum.hash.each do |key, value|
-            define_method("#{enum.prefix}#{key}!") { enum.write(self, key) }
+            define_method("#{enum.prefix}#{key}!") { accessor.write(self, key) }
           end
         end
       end
 
-      def generate_enum_scope_methods_for(enum)
+      def generate_enum_scope_methods_for(enum, accessor)
         return unless respond_to?(:scope)
 
         enum.hash.each do |key, value|

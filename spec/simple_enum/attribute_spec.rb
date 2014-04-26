@@ -14,6 +14,12 @@ describe SimpleEnum::Attribute do
       end
     end
 
+    context '.genders_accessor' do
+      it 'returns a SimpleEnum:Accessors::Accessor' do
+        expect(SomeEnum.genders_accessor).to be_a(SimpleEnum::Accessors::Accessor)
+      end
+    end
+
     context '#gender & #gender=' do
       it 'gender should be nil when not set' do
         expect(SomeEnum.new.gender).to be_nil
