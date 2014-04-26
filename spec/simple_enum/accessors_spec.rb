@@ -4,7 +4,7 @@ describe SimpleEnum::Accessors do
   OtherFakeObject = Struct.new(:gender_cd)
 
   let(:hash) do
-    { female: 1, male: 0 }
+    ActiveSupport::HashWithIndifferentAccess.new(female: 1, male: 0)
   end
 
   let(:object) { OtherFakeObject.new }

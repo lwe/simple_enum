@@ -1,5 +1,4 @@
 require 'active_support/core_ext/string'
-require 'simple_enum/hasher'
 
 module SimpleEnum
   class Enum
@@ -9,9 +8,9 @@ module SimpleEnum
 
     attr_reader :name, :hash, :source, :prefix
 
-    def initialize(name, values, options = {})
+    def initialize(name, hash, options = {})
       @name = name.to_s
-      @hash = SimpleEnum::Hasher.hash(values, options)
+      @hash = hash
       @source = self.class.source_for(name, options[:source])
       @prefix = options[:prefix]
     end

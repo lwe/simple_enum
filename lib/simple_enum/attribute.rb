@@ -1,6 +1,7 @@
 require 'active_support/core_ext/array'
 
 require 'simple_enum/enum'
+require 'simple_enum/hasher'
 require 'simple_enum/accessors'
 
 module SimpleEnum
@@ -15,7 +16,7 @@ module SimpleEnum
     def as_enum(name, values, options = {})
       options.assert_valid_keys(:source, :prefix, :with, :accessor)
 
-      hash     = SimpleEnum::Hasher.hash(values, options)
+      hash     = SimpleEnum::Hasher.map(values, options[:builder] || SimpleEnum.builder)
       enum     = SimpleEnum::Enum.new(name, hash, options)
       accessor = SimpleEnum::Accessors.accessor(enum, options)
 
