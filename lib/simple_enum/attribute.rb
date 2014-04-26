@@ -31,11 +31,7 @@ module SimpleEnum
     private
 
     def simple_enum_module
-      @simple_enum_module ||= begin
-        mod = Module.new
-        include mod
-        mod
-      end
+      @simple_enum_module ||= Module.new.tap { |mod| include mod }
     end
 
     def generate_enum_class_methods_for(enum, accessor)
