@@ -20,8 +20,7 @@ module SimpleEnum
     end
 
     def read(object)
-      key = hash.key(read_before_type_cast(object))
-      key.try :to_sym
+      key(read_before_type_cast(object))
     end
 
     def write(object, key)
@@ -41,8 +40,7 @@ module SimpleEnum
     end
 
     def was(object)
-      key = hash.key(object.attribute_was(source))
-      key.try(:to_sym)
+      key(object.attribute_was(source))
     end
 
     def to_s
@@ -50,6 +48,11 @@ module SimpleEnum
     end
 
     private
+
+    def key(value)
+      key = hash.key(value)
+      key.to_sym if key
+    end
 
     def read_before_type_cast(object)
       source == name ? object[source] : object.send(source)
