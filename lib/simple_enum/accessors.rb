@@ -10,7 +10,7 @@ module SimpleEnum
     }
 
     def self.accessor(enum, options = {})
-      klass = ACCESSORS[options[:accessor]] || Accessor
+      klass = ACCESSORS[options[:accessor] || SimpleEnum.accessor] || Accessor
       klass.new(enum)
     end
   end

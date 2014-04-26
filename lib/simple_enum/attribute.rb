@@ -1,4 +1,3 @@
-require 'simple_enum/translation'
 require 'simple_enum/enum'
 require 'simple_enum/accessors'
 
@@ -17,8 +16,7 @@ module SimpleEnum
 
     module ClassMethods
       def as_enum(name, values, options = {})
-        options = SimpleEnum.default_options.merge(options)
-        options.assert_valid_keys(:source, :prefix, :with, :whiny)
+        options.assert_valid_keys(:source, :prefix, :with, :accessor)
 
         enum     = SimpleEnum::Enum.enum(name, values, options)
         accessor = SimpleEnum::Accessors.accessor(enum, options)
@@ -26,7 +24,7 @@ module SimpleEnum
         generate_enum_class_methods_for(enum, accessor)
         generate_enum_attribute_methods_for(enum, accessor)
 
-        options[:with].each do |feature|
+        Array.wrap(options[:with] || SimpleEnum.with).each do |feature|
           send "generate_enum_#{feature}_methods_for", enum, accessor
         end
       end
@@ -42,8 +40,9 @@ module SimpleEnum
       end
 
       def generate_enum_class_methods_for(enum, accessor)
-        singleton_class.send(:define_method, enum.name.pluralize) { enum }
-        singleton_class.send(:define_method, "#{enum.name.pluralize}_accessor") { accessor }
+        name = enum.name.pluralize
+        singleton_class.send(:define_method, name) { enum }
+        singleton_class.send(:define_method, "#{name}_accessor") { accessor }
       end
 
       def generate_enum_attribute_methods_for(enum, accessor)
