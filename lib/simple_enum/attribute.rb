@@ -11,10 +11,8 @@ module SimpleEnum
   # original method.
   #
   module Attribute
-    extend ActiveSupport::Concern
-
-    included do
-      extend SimpleEnum::Translation
+    def self.included(base)
+      base.extend ClassMethods
     end
 
     module ClassMethods

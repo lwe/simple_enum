@@ -41,6 +41,7 @@ end
 # include in AR
 ActiveSupport.on_load(:active_record) do
   ActiveRecord::Base.send(:include, SimpleEnum::Attribute)
+  ActiveRecord::Base.send(:extend, SimpleEnum::Translation)
 end
 
 # setup i18n load path...
