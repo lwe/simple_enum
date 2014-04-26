@@ -33,8 +33,9 @@ module SimpleEnum
       # Wrap method chain to create mongoid field and additional
       # column options
       def as_enum(name, values, options = {})
+        source = options[:source] || "#{name_cd}"
         field_options = options.delete(:field)
-        field(SimpleEnum::Enum.source_for(name, options[:source]), field_options || SimpleEnum.field || {}) unless field_options === false
+        field(source, field_options || SimpleEnum.field || {}) unless field_options === false
 
         super
       end

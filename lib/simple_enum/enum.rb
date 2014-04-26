@@ -2,12 +2,11 @@ require 'active_support/core_ext/string'
 
 module SimpleEnum
   class Enum
-    attr_reader :name, :hash, :options
+    attr_reader :name, :hash
 
-    def initialize(name, hash, options = {})
+    def initialize(name, hash)
       @name = name.to_s
       @hash = hash
-      @options = options
     end
 
     def include?(key)
