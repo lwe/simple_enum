@@ -33,6 +33,16 @@ describe SimpleEnum::Enum do
     end
   end
 
+  context '#each_pair (aliased to #each)' do
+    it 'yields twice with #each_pair' do
+      expect { |b| subject.each_pair(&b) }.to yield_control.exactly(2).times
+    end
+
+    it 'yields twice with #each' do
+      expect { |b| subject.each(&b) }.to yield_control.exactly(2).times
+    end
+  end
+
   context '#value (aliased to #[])' do
     it 'looks up by string' do
       expect(subject.value('male')).to eq 0
