@@ -1,7 +1,7 @@
 SimpleEnum
 ==========
 
-[![Travis CI](https://secure.travis-ci.org/lwe/simple_enum.png)][https://travis-ci.org/lwe/simple_enum]
+[![Build Status](https://travis-ci.org/lwe/simple_enum.svg?branch=lwe-v2)](https://travis-ci.org/lwe/simple_enum)
 [![Code Climate](https://codeclimate.com/github/lwe/simple_enum.png)](https://codeclimate.com/github/lwe/simple_enum)
 
 Unobtrusive enum-like fields for ActiveRecord and Ruby, brings enums functionality
