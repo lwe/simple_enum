@@ -7,8 +7,8 @@ rvm:
   - jruby-19mode
 
 matrix:
-  allow_failure:
-    rvm: jruby-19mode
+  allow_failures:
+    - rvm: jruby-19mode
 
 env:
   global:
