@@ -8,8 +8,6 @@
 #
 # See the +as_enum+ documentation for more details.
 
-# because we depend on i18n and activesupport
-require 'i18n'
 require 'active_support'
 
 require 'simple_enum/version'
@@ -40,6 +38,3 @@ ActiveSupport.on_load(:active_record) do
   ActiveRecord::Base.send(:extend, SimpleEnum::Attribute)
   ActiveRecord::Base.send(:extend, SimpleEnum::Translation)
 end
-
-# setup i18n load path...
-I18n.load_path << File.join(File.dirname(__FILE__), '..', 'locales', 'en.yml')
