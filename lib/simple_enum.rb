@@ -21,16 +21,20 @@ module SimpleEnum
   @@with = [:attribute, :dirty, :scope]
 
   mattr_accessor :accessor
-  @@accessor = nil
+  @@accessor = :default
 
   mattr_accessor :builder
-  @@accessor = nil
-
-  mattr_accessor :field
-  @@field = nil
+  @@builder = :default
 
   mattr_accessor :suffix
   @@suffix = "_cd"
+
+  mattr_accessor :field
+  @@field = {}
+
+  def self.configure
+    yield(self)
+  end
 end
 
 # include in AR

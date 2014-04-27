@@ -1,13 +1,8 @@
 require 'spec_helper'
+require 'simple_enum/mongoid'
 
-describe SimpleEnum do
-  context 'Mongoid' do
-
-    before {
-      pending 'MongoDB not running -> skipped'
-    }
-
-    it 'tests something, right?' do
-    end
+describe SimpleEnum::Mongoid, mongoid: true do
+  it 'tests something, right?' do
+    raise 'fail'
   end
 end

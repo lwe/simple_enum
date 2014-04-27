@@ -1,13 +1,11 @@
 module ActiveRecordSupport
-  extend ActiveSupport::Concern
-
   def self.connection
     @connection_pool ||= ActiveRecord::Base.establish_connection adapter: 'sqlite3', database: ':memory:'
     ActiveRecord::Base.connection
   end
 
-  included do
-    before(:each) { self.reset_active_record }
+  def self.included(base)
+    base.before(:each) { self.reset_active_record }
   end
 
   def reset_active_record

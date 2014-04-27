@@ -34,8 +34,8 @@ module SimpleEnum
       # column options
       def as_enum(name, values, options = {})
         source = options[:source].to_s.presence || "#{name}#{SimpleEnum.suffix}"
-        field_options = options.delete(:field)
-        field(source, field_options || SimpleEnum.field || {}) unless field_options === false
+        field_options = options.delete(:field) || SimpleEnum.field
+        field(source, field_options) if field_options
 
         super
       end
