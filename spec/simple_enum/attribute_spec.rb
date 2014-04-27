@@ -1,125 +1,177 @@
 require 'spec_helper'
 
-describe SimpleEnum::Attribute, active_record: true do
-  context 'attributes' do
-    fake_active_record(:klass) {
-      as_enum :gender, [:male, :female], with: [:attribute]
-    }
+describe SimpleEnum::Attribute do
+  fake_model(:klass) { as_enum :gender, %w{male female}, with: [] }
+  let(:accessor) { subject.class.genders_accessor }
 
-    subject { klass.new }
+  context '.as_enum' do
+    fake_model(:klass)
 
+    it 'returns a SimpleEnum::Enum' do
+      expect(klass.as_enum(:gender, %w{male female})).to be_a(SimpleEnum::Enum)
+    end
+  end
+
+  context 'generate_enum_class_accessors_for' do
     context '.genders' do
+      subject { klass.genders }
+
       it 'returns a SimpleEnum::Enum' do
-        expect(klass.genders).to be_a(SimpleEnum::Enum)
+        expect(subject).to be_a(SimpleEnum::Enum)
       end
     end
 
     context '.genders_accessor' do
-      it 'returns a SimpleEnum:Accessors::Accessor' do
-        expect(klass.genders_accessor).to be_a(SimpleEnum::Accessors::Accessor)
+      subject { klass.genders_accessor }
+
+      it 'returns a SimpleEnum::Accessor' do
+        expect(subject).to be_a(SimpleEnum::Accessors::Accessor)
       end
-    end
-
-    context '#gender & #gender=' do
-      it 'gender should be nil when not set' do
-        expect(klass.new.gender).to be_nil
-      end
-
-      it 'sets gender to :male via constructor' do
-        expect(klass.new(gender: :male).gender).to eq :male
-      end
-
-      it 'when setting #gender= it sets actually #gender_cd as well' do
-        subject.gender = :female
-        expect(subject.gender).to eq :female
-        expect(subject.gender_cd).to eq 1
-      end
-
-      it 'can set #gender using the actual value' do
-        subject.gender = 1
-        expect(subject.gender).to eq :female
-      end
-
-      it 'can set #gender using a String' do
-        subject.gender = "female"
-        expect(subject.gender).to eq :female
-      end
-
-      it 'raises an ArgumentError if invalid value is passed' do
-        pending
-        expect { subject.gender = :something }.to raise_error(ArgumentError)
-      end
-    end
-
-    shared_examples_for 'question mark methods' do |male, female|
-      it "#{male ? 'is' : 'is not'} #male?" do
-        result = male ? be_true : be_false
-        expect(subject.male?).to result
-      end
-
-      it "#{female ? 'is' : 'is not'} #female?" do
-        result = female ? be_true : be_false
-        expect(subject.female?).to result
-      end
-
-      if male || female
-        it 'returns true for #gender?' do
-          expect(subject.gender?).to be_true
-        end
-
-        it "returns #{male ? 'true' : 'false'} for #gender?(:male)" do
-          expect(subject.gender?(:male)).to eq male
-        end
-
-        it "returns #{female ? 'true' : 'false'} for #gender?(:female)" do
-          expect(subject.gender?(:female)).to eq female
-        end
-      else
-        it 'returns false for #gender?' do
-          expect(subject.gender?).to be_false
-        end
-      end
-
-      it 'returns false for #gender?(:something)' do
-        expect(subject.gender?(:something)).to be_false
-      end
-    end
-
-    context '#gender?, #male? & #female?' do
-      context 'when gender is nil' do
-        subject { klass.new }
-        it_behaves_like "question mark methods", false, false
-      end
-
-      context 'when gender is :male' do
-        subject { klass.new(gender: :male) }
-        it_behaves_like "question mark methods", true, false
-      end
-
-      context 'when gender is :female' do
-        subject { klass.new(gender: :female) }
-        it_behaves_like "question mark methods", false, true
-      end
-    end
-
-    shared_examples_for 'sets gender to' do |key, value|
-      it "sets gender to #{key.inspect}" do
-        expect(subject.gender).to eq key
-      end
-
-      it "sets gender_cd to #{value}" do
-        expect(subject.gender_cd).to eq value
-      end
-    end
-
-    context '#male!' do
-      before { subject.male! }
-      it_behaves_like 'sets gender to', :male, 0
-    end
-
-    context '#female!' do
-      before { subject.female! }
-      it_behaves_like 'sets gender to', :female, 1
     end
   end
+
+  context 'generate_enum_instance_accessors_for' do
+    subject { klass.new(1) }
+
+    context '#gender' do
+      it 'delegates to accessor' do
+        expect(accessor).to receive(:read).with(subject) { :female }
+        expect(subject.gender).to eq :female
+      end
+    end
+
+    context '#gender=' do
+      it 'delegates to accessor' do
+        expect(accessor).to receive(:write).with(subject, :male) { 0 }
+        subject.gender = :male
+      end
+    end
+  end
+
+  context 'generate_enum_dirty_methods_for' do
+    subject { klass.new }
+
+    it 'does not respond to #gender_changed?' do
+      expect(subject).to_not respond_to(:gender_changed?)
+    end
+
+    it 'does not responds to #gender_was' do
+      expect(subject).to_not respond_to(:gender_was)
+    end
+
+    context 'with: :dirty' do
+      fake_model(:klass_with_dirty) { as_enum :gender, %w{male female}, with: [:dirty] }
+      subject { klass_with_dirty.new }
+
+      it 'delegates #gender_changed? to accessor' do
+        expect(accessor).to receive(:changed?).with(subject) { true }
+        expect(subject.gender_changed?).to be_true
+      end
+
+      it 'delegates #gender_was to accesso' do
+        expect(accessor).to receive(:was).with(subject) { :female }
+        expect(subject.gender_was).to eq :female
+      end
+    end
+  end
+
+  context 'generate_enum_attribute_methods_for' do
+    subject { klass.new }
+
+    it 'does not respond to #gender?' do
+      expect(subject).to_not respond_to(:gender?)
+    end
+
+    it 'does not respond to #male? or #female?' do
+      expect(subject).to_not respond_to(:male?)
+      expect(subject).to_not respond_to(:female?)
+    end
+
+    it 'does not respond to #male! or #female!' do
+      expect(subject).to_not respond_to(:male!)
+      expect(subject).to_not respond_to(:female!)
+    end
+
+    context 'with: :attribute' do
+      fake_model(:klass_with_attributes) { as_enum :gender, %w{male female}, with: [:attribute] }
+      subject { klass_with_attributes.new }
+
+      it 'delegates #gender? to accessor' do
+        expect(accessor).to receive(:selected?).with(subject, nil) { :female }
+        expect(subject.gender?).to be_true
+      end
+
+      it 'delegates #male? to accessor' do
+        expect(accessor).to receive(:selected?).with(subject, 'male') { true }
+        expect(subject.male?).to be_true
+      end
+
+      it 'delegeates #female? to accessor' do
+        expect(accessor).to receive(:selected?).with(subject, 'female') { false }
+        expect(subject.female?).to be_false
+      end
+
+      it 'responds to #male! and #female!' do
+        expect(subject).to respond_to(:male!)
+        expect(subject).to respond_to(:female!)
+      end
+    end
+  end
+
+  context 'generate_enum_scope_methods_for', active_record: true do
+    fake_active_record(:klass) {
+      as_enum :gender, [:male, :female], with: [:scope]
+    }
+
+    fake_model(:klass_without_scope_method) {
+      as_enum :gender, [:male, :female], with: [:scope]
+    }
+
+    shared_examples_for 'returning a relation' do |value|
+      it 'returns an ActiveRecord::Relation' do
+        expect(subject).to be_a(ActiveRecord::Relation)
+      end
+
+      it "queries for gender_cd = #{value}" do
+        values_hash = { "gender_cd" => value }
+        expect(subject.where_values_hash).to eq values_hash
+      end
+    end
+
+    context '.male' do
+      subject { klass.male }
+      it_behaves_like 'returning a relation', 0
+    end
+
+    context '.female' do
+      subject { klass.female }
+      it_behaves_like 'returning a relation', 1
+    end
+
+    context 'with prefix' do
+      fake_active_record(:klass) {
+        as_enum :gender, [:male, :female], with: [:scope], prefix: true
+      }
+
+      context '.gender_male' do
+        subject { klass.gender_male }
+        it_behaves_like 'returning a relation', 0
+      end
+
+      context '.gender_female' do
+        subject { klass.gender_female }
+        it_behaves_like 'returning a relation', 1
+      end
+    end
+
+    context 'without scope method' do
+      subject { klass_without_scope_method }
+
+      it 'does not add .male nor .female' do
+        expect(subject).to_not respond_to(:male)
+        expect(subject).to_not respond_to(:female)
+      end
+    end
+  end
+
 end
