@@ -15,7 +15,7 @@ Gem::Specification.new do |s|
   s.email    = ["lukas.westermann@gmail.com"]
   s.homepage = "http://lwe.github.com/simple_enum/"
 
-  s.files            = %w{.gitignore Rakefile Gemfile README.rdoc LICENSE simple_enum.gemspec} + Dir['**/*.{rb,yml}']
+  s.files            = %w{.gitignore Rakefile Gemfile README.md LICENSE simple_enum.gemspec} + Dir['**/*.{rb,yml}']
   s.test_files       = s.files.grep(%r{^(test|spec|locales)/})
   s.require_paths    = %w{lib}
 
