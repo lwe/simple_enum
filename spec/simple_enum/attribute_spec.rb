@@ -106,24 +106,55 @@ describe SimpleEnum::Attribute do
         expect(subject.male?).to be_true
       end
 
-      it 'delegeates #female? to accessor' do
+      it 'delegates #female? to accessor' do
         expect(accessor).to receive(:selected?).with(subject, 'female') { false }
         expect(subject.female?).to be_false
       end
 
-      it 'responds to #male! and #female!' do
-        expect(subject).to respond_to(:male!)
-        expect(subject).to respond_to(:female!)
+      it 'delegates #male! to accessor' do
+        expect(accessor).to receive(:write).with(subject, 'male') { 0 }
+        expect(subject.male!).to eq 0
+      end
+
+      it 'delegates #female! to accessor' do
+        expect(accessor).to receive(:write).with(subject, 'female') { 1 }
+        expect(subject.female!).to eq 1
+      end
+    end
+
+    context 'with a prefix' do
+      fake_model(:klass_with_prefix) { as_enum :gender, %w{male female}, with: [:attribute], prefix: true }
+      subject { klass_with_prefix.new }
+
+      it 'delegates #gender? to accessor' do
+        expect(accessor).to receive(:selected?).with(subject, nil) { :female }
+        expect(subject.gender?).to be_true
+      end
+
+      it 'delegates #gender_male? to accessor' do
+        expect(accessor).to receive(:selected?).with(subject, 'male') { true }
+        expect(subject.gender_male?).to be_true
+      end
+
+      it 'delegates #gender_female? to accessor' do
+        expect(accessor).to receive(:selected?).with(subject, 'female') { false }
+        expect(subject.gender_female?).to be_false
+      end
+
+      it 'delegates #gender_male! to accessor' do
+        expect(accessor).to receive(:write).with(subject, 'male') { 0 }
+        expect(subject.gender_male!).to eq 0
+      end
+
+      it 'delegates #gender_female! to accessor' do
+        expect(accessor).to receive(:write).with(subject, 'female') { 1 }
+        expect(subject.gender_female!).to eq 1
       end
     end
   end
 
   context 'generate_enum_scope_methods_for', active_record: true do
     fake_active_record(:klass) {
-      as_enum :gender, [:male, :female], with: [:scope]
-    }
-
-    fake_model(:klass_without_scope_method) {
       as_enum :gender, [:male, :female], with: [:scope]
     }
 
@@ -165,6 +196,9 @@ describe SimpleEnum::Attribute do
     end
 
     context 'without scope method' do
+      fake_model(:klass_without_scope_method) {
+        as_enum :gender, [:male, :female], with: [:scope]
+      }
       subject { klass_without_scope_method }
 
       it 'does not add .male nor .female' do
@@ -173,5 +207,4 @@ describe SimpleEnum::Attribute do
       end
     end
   end
-
 end
