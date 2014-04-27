@@ -5,8 +5,8 @@ require 'simple_enum/accessors/whiny_accessor'
 module SimpleEnum
   module Accessors
     ACCESSORS = {
-      :ignore => IgnoreAccessor,
-      :whiny => WhinyAccessor
+      ignore: IgnoreAccessor,
+      whiny:  WhinyAccessor
     }
 
     def self.accessor(name, enum, options = {})
