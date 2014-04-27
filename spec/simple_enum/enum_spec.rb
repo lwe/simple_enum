@@ -1,13 +1,12 @@
 require 'spec_helper'
 
 describe SimpleEnum::Enum do
-  FakeObject = Struct.new(:gender_cd)
-
   let(:hash) do
     { "male" => 0, "female" => 1 }
   end
 
-  let(:object) { FakeObject.new }
+  fake_model(:klass)
+  let(:object) { klass.new }
 
   subject { described_class.new(:gender, hash) }
 

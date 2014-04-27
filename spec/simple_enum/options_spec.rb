@@ -3,15 +3,15 @@ require 'spec_helper'
 describe SimpleEnum do
   context '.as_enum' do
     context 'with prefix: true' do
-      DefaultWithPrefix = DatabaseSupport.dummy do
+      fake_active_record(:klass_with_prefix) {
         as_enum :gender, [:male, :female], prefix: true
-      end
+      }
 
-      subject { DefaultWithPrefix.new }
+      subject { klass_with_prefix.new }
 
       it 'adds prefixed scopes (gender_male & gender_female)' do
-        expect(DefaultWithPrefix).to respond_to(:gender_male)
-        expect(DefaultWithPrefix).to respond_to(:gender_female)
+        expect(klass_with_prefix).to respond_to(:gender_male)
+        expect(klass_with_prefix).to respond_to(:gender_female)
       end
 
       it 'adds prefixed question methods (gender_male? & gender_female?)' do
@@ -26,15 +26,15 @@ describe SimpleEnum do
     end
 
     context 'with prefix: "geschlecht"' do
-      GeschlechtWithPrefix = DatabaseSupport.dummy do
+      fake_active_record(:klass_with_prefix) {
         as_enum :gender, [:male, :female], prefix: 'geschlecht'
-      end
+      }
 
-      subject { GeschlechtWithPrefix.new }
+      subject { klass_with_prefix.new }
 
       it 'adds prefixed scopes (geschlecht_male & geschlecht_female)' do
-        expect(GeschlechtWithPrefix).to respond_to(:geschlecht_male)
-        expect(GeschlechtWithPrefix).to respond_to(:geschlecht_female)
+        expect(klass_with_prefix).to respond_to(:geschlecht_male)
+        expect(klass_with_prefix).to respond_to(:geschlecht_female)
       end
 
       it 'adds prefixed question methods (geschlecht_male? & geschlecht_female?)' do
@@ -49,11 +49,11 @@ describe SimpleEnum do
     end
 
     context 'with slim: true' do
-      SlimAndLight = DatabaseSupport.dummy do
+      fake_model(:klass_without_features) {
         as_enum :gender, [:male, :female], with: []
-      end
+      }
 
-      subject { SlimAndLight.new }
+      subject { klass_without_features.new }
 
       it 'does not have #male? and #female?' do
         expect(subject).to_not respond_to(:male?)

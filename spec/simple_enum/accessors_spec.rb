@@ -1,22 +1,21 @@
 require 'spec_helper'
 
 describe SimpleEnum::Accessors do
-  OtherFakeObject = Struct.new(:gender_cd)
-
-  let(:enum) do
-    hash = { "male" => 0, "female" => 1 }
-    SimpleEnum::Enum.new(:gender, hash)
-  end
-
-  let(:object) { OtherFakeObject.new }
+  let(:enum) { SimpleEnum::Enum.new(:gender, "male" => 0, "female" => 1) }
+  fake_model(:klass)
+  let(:object) { klass.new }
 
   context '.accessor' do
     it 'returns Accessor instance' do
       expect(described_class.accessor(:gender, enum)).to be_a(described_class::Accessor)
     end
 
-    it 'returns a WhinyWriteAccessor instance if accessor: :whiny' do
+    it 'returns a WhinyAccessor instance if accessor: :whiny' do
       expect(described_class.accessor(:gender, enum, accessor: :whiny)).to be_a(described_class::WhinyAccessor)
+    end
+
+    it 'sets source to "gender" if source: :gender' do
+      expect(described_class.accessor(:gender, enum, source: :gender).source).to eq 'gender'
     end
   end
 
@@ -70,11 +69,11 @@ describe SimpleEnum::Accessors do
         end
 
         it 'returns :male when gender_cd is 0' do
-          expect(subject.read(OtherFakeObject.new(0))).to eq :male
+          expect(subject.read(klass.new(0))).to eq :male
         end
 
         it 'returns :female when gender_cd is 1' do
-          expect(subject.read(OtherFakeObject.new(1))).to eq :female
+          expect(subject.read(klass.new(1))).to eq :female
         end
       end
 
@@ -89,7 +88,7 @@ describe SimpleEnum::Accessors do
     context '#write' do
       shared_examples_for 'writing an enum' do
         it 'writes nil to object' do
-          object = OtherFakeObject.new(0)
+          object = klass.new(0)
           expect(subject.write(object, nil)).to be_nil
           expect(object.gender_cd).to be_nil
         end
@@ -110,7 +109,7 @@ describe SimpleEnum::Accessors do
         end
 
         it 'writes nil to object with :other' do
-          object = OtherFakeObject.new(1)
+          object = klass.new(1)
           expect(subject.write(object, :other)).to be_nil
           expect(object.gender_cd).to be_nil
         end
@@ -131,20 +130,20 @@ describe SimpleEnum::Accessors do
       end
 
       it 'returns true when gender_cd is != nil' do
-        expect(subject.selected?(OtherFakeObject.new(0))).to be_true
-        expect(subject.selected?(OtherFakeObject.new(1))).to be_true
+        expect(subject.selected?(klass.new(0))).to be_true
+        expect(subject.selected?(klass.new(1))).to be_true
       end
 
       it 'returns true when gender_cd is 0 and :male is passed' do
-        expect(subject.selected?(OtherFakeObject.new(0), :male)).to be_true
+        expect(subject.selected?(klass.new(0), :male)).to be_true
       end
 
       it 'returns false when gender_cd is 0 and :female is passed' do
-        expect(subject.selected?(OtherFakeObject.new(0), :female)).to be_false
+        expect(subject.selected?(klass.new(0), :female)).to be_false
       end
 
       it 'returns false when gender_cd is 1 and :other is passed' do
-        expect(subject.selected?(OtherFakeObject.new(0), :other)).to be_false
+        expect(subject.selected?(klass.new(0), :other)).to be_false
       end
     end
 

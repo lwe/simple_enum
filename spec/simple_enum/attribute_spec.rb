@@ -1,32 +1,32 @@
 require 'spec_helper'
 
-describe SimpleEnum::Attribute do
+describe SimpleEnum::Attribute, active_record: true do
   context 'attributes' do
-    SomeEnum = DatabaseSupport.dummy do
+    fake_active_record(:klass) {
       as_enum :gender, [:male, :female], with: [:attribute]
-    end
+    }
 
-    subject { SomeEnum.new }
+    subject { klass.new }
 
     context '.genders' do
       it 'returns a SimpleEnum::Enum' do
-        expect(SomeEnum.genders).to be_a(SimpleEnum::Enum)
+        expect(klass.genders).to be_a(SimpleEnum::Enum)
       end
     end
 
     context '.genders_accessor' do
       it 'returns a SimpleEnum:Accessors::Accessor' do
-        expect(SomeEnum.genders_accessor).to be_a(SimpleEnum::Accessors::Accessor)
+        expect(klass.genders_accessor).to be_a(SimpleEnum::Accessors::Accessor)
       end
     end
 
     context '#gender & #gender=' do
       it 'gender should be nil when not set' do
-        expect(SomeEnum.new.gender).to be_nil
+        expect(klass.new.gender).to be_nil
       end
 
       it 'sets gender to :male via constructor' do
-        expect(SomeEnum.new(gender: :male).gender).to eq :male
+        expect(klass.new(gender: :male).gender).to eq :male
       end
 
       it 'when setting #gender= it sets actually #gender_cd as well' do
@@ -87,17 +87,17 @@ describe SimpleEnum::Attribute do
 
     context '#gender?, #male? & #female?' do
       context 'when gender is nil' do
-        subject { SomeEnum.new }
+        subject { klass.new }
         it_behaves_like "question mark methods", false, false
       end
 
       context 'when gender is :male' do
-        subject { SomeEnum.new(gender: :male) }
+        subject { klass.new(gender: :male) }
         it_behaves_like "question mark methods", true, false
       end
 
       context 'when gender is :female' do
-        subject { SomeEnum.new(gender: :female) }
+        subject { klass.new(gender: :female) }
         it_behaves_like "question mark methods", false, true
       end
     end

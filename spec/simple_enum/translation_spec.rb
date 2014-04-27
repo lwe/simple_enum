@@ -2,11 +2,8 @@ require 'spec_helper'
 
 describe SimpleEnum::Translation do
   context '.human_enum_name', i18n: true do
-    I18nDummy = DatabaseSupport.dummy do
-      as_enum :gender, [:male, :female]
-    end
-
-    subject { I18nDummy }
+    fake_model(:klass) { extend SimpleEnum::Translation }
+    subject { klass }
 
     shared_examples_for 'translating gender' do
       it 'translates :male to "Mr."' do
@@ -20,9 +17,9 @@ describe SimpleEnum::Translation do
 
     context '{i18n_scope}.enums.{i18n_key}.gender.{key}' do
       before do
-        store_translations :en, 'activerecord' => {
+        store_translations :en, 'activemodel' => {
           'enums' => {
-            'i18n_dummy' => {
+            'fake_model' => {
               'gender' => { 'male' => 'Mr.', 'female' => 'Mrs.' }
             }
           }
@@ -35,7 +32,7 @@ describe SimpleEnum::Translation do
     context 'enums.{i18n_key}.gender.{key}' do
       before do
         store_translations :en, 'enums' => {
-          'i18n_dummy' => {
+          'fake_model' => {
             'gender' => { 'male' => 'Mr.', 'female' => 'Mrs.' }
           }
         }
