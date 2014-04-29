@@ -287,6 +287,7 @@ or <em>b)</em> a custom method to convert an object to a symbolized form named +
 * @sled - mongoid support
 * @abrom - <tt>find_by_...</tt> method
 * @mhuggins - translations fixes
+* @Mic92 - reported Symbol DDoS possibility #61
 * and all others: https://github.com/lwe/simple_enum/graphs/contributors thanks
 
 == Licence & Copyright
