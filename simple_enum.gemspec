@@ -16,7 +16,7 @@ Gem::Specification.new do |s|
   s.homepage = "http://lwe.github.com/simple_enum/"
 
   s.files            = %w{.gitignore Rakefile Gemfile README.md LICENSE simple_enum.gemspec} + Dir['**/*.{rb,yml}']
-  s.test_files       = s.files.grep(%r{^(test|spec|locales)/})
+  s.test_files       = s.files.grep(%r{^(test|spec)/})
   s.require_paths    = %w{lib}
 
   s.license          = 'MIT'
@@ -25,6 +25,6 @@ Gem::Specification.new do |s|
 
   s.add_development_dependency 'rake', '>= 0.9.2'
   s.add_development_dependency 'activerecord', '>= 4.0.0'
-  s.add_development_dependency 'mongoid', '4.0.0.beta1'
+  s.add_development_dependency 'mongoid', '>= 4.0.0.beta1'
   s.add_development_dependency 'rspec', '~> 2.14'
 end
