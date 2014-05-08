@@ -8,7 +8,7 @@ Unobtrusive enum-like fields for ActiveRecord and Ruby, brings enums functionali
 to ActiveRecord and Mongoid models (built for Rails 4+).
 
 Since version 2.0, simple_enum is no longer compatible with Rails 3.x or Ruby 1.8,
-use version 1.6 instead: https://github.com/lwe/simple_enum/tree/v1.x
+use version 1.6 instead: https://github.com/lwe/simple_enum/tree/legacy-1.x
 
 *Note*: a recent search on github for `enum` turned out, that there are many,
 many similar solutions. In fact starting with Rails 4.1, there's `ActiveRecord::Enum`
@@ -47,10 +47,10 @@ Due to the dependency on ActiveModel 4.x, the Mongoid integration is only
 available for mongoid 4.0.0 (which is at beta1 at the moment). If you intend
 to use simple_enum with another version of mongoid, use version 1.6 instead.
 
-Load mongoid in the Gemfile:
+Load mongoid support in the `Gemfile`:
 
 ```ruby
-gem 'simple_enum', '~> 2.0.0' , require: 'simple_enum/mongoid'
+gem 'simple_enum', '2.0.0.rc1' , require: 'simple_enum/mongoid'
 ```
 
 Add this to a model:
