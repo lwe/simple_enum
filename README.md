@@ -247,4 +247,4 @@ Contributors
 License & Copyright
 -------------------
 
-Copyright (c) 2011-2014 by Lukas Westermann, Licensed under MIT Licence (see LICENCE file)
+Copyright (c) 2011-2014 by Lukas Westermann, Licensed under MIT Licence (see LICENSE file)
