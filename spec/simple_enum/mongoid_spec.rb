@@ -8,7 +8,7 @@ describe SimpleEnum::Mongoid, mongoid: true do
 
   let(:field) { klass.fields['gender_cd'] }
 
-  context '#as_enum' do
+  context '.as_enum' do
     subject { klass }
 
     it 'has the genders enum' do
