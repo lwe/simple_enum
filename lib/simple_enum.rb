@@ -3,8 +3,8 @@
 # but instead on integer columns.
 #
 # Author:: Lukas Westermann
-# Copyright:: Copyright (c) 2009 Lukas Westermann (Zurich, Switzerland)
-# Licence:: MIT-Licence (http://www.opensource.org/licenses/mit-license.php)
+# Copyright:: Copyright (c) 2009-2014 Lukas Westermann (Zurich, Switzerland)
+# License:: MIT-Licence (http://www.opensource.org/licenses/mit-license.php)
 #
 # See the +as_enum+ documentation for more details.
 
