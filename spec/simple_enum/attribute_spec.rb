@@ -5,8 +5,6 @@ describe SimpleEnum::Attribute do
   let(:accessor) { subject.class.genders_accessor }
 
   context '.as_enum' do
-    fake_model(:klass)
-
     it 'returns a SimpleEnum::Enum' do
       expect(klass.as_enum(:gender, %w{male female})).to be_a(SimpleEnum::Enum)
     end
