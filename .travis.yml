@@ -5,3 +5,11 @@ rvm:
   - 2.0.0
   - 2.1.1
   - jruby-19mode
+
+matrix:
+  allow_failures:
+    - rvm: jruby-19mode
+
+env:
+  global:
+    secure: Uco0icktul54bwvQOP4PHME1fKIkWvJTBSYYgLxkJfpT6epeuzRMTs+/vH1Ysvs5s4E2hx2yAYyu2VEu3R5sjxkuPpvQFUJbr8Vxm7g2DczeIL3WlZiSctt0zqJqToyhIW8Fpsza2/GSr1eHkMIk6rnWp4miARtbGAXpH5K4d2s=

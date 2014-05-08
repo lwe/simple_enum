@@ -8,23 +8,23 @@ Gem::Specification.new do |s|
   s.summary     = "Simple enum-like field support for models."
   s.description = "Provides enum-like fields for ActiveRecord, ActiveModel and Mongoid models."
 
-  s.required_ruby_version     = ">= 1.8.7"
-  s.required_rubygems_version = ">= 1.3.6"
+  s.required_ruby_version     = ">= 1.9.3"
+  s.required_rubygems_version = ">= 2.0.0"
 
   s.authors  = ["Lukas Westermann"]
   s.email    = ["lukas.westermann@gmail.com"]
   s.homepage = "http://lwe.github.com/simple_enum/"
 
-  s.files            = %w{.gitignore Rakefile Gemfile README.rdoc LICENSE simple_enum.gemspec} + Dir['**/*.{rb,yml}']
-  s.test_files       = s.files.grep(%r{^(test|spec|locales)/})
+  s.files            = %w{.gitignore Rakefile Gemfile README.md LICENSE simple_enum.gemspec} + Dir['**/*.{rb,yml}']
+  s.test_files       = s.files.grep(%r{^(test|spec)/})
   s.require_paths    = %w{lib}
 
   s.license          = 'MIT'
 
-  s.add_dependency "activesupport", '>= 3.0.0'
+  s.add_dependency 'activesupport', '>= 4.0.0'
 
-  s.add_development_dependency 'rake', '>= 0.9.2'
-  s.add_development_dependency 'minitest', '~> 2.0'
-  s.add_development_dependency 'activerecord', '>= 3.0.0'
-  s.add_development_dependency 'mongoid', '~> 2.0'
+  s.add_development_dependency 'rake', '>= 10.1.0'
+  s.add_development_dependency 'activerecord', '>= 4.0.0'
+  s.add_development_dependency 'mongoid', '>= 4.0.0.beta1'
+  s.add_development_dependency 'rspec', '~> 2.14'
 end
