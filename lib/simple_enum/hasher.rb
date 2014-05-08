@@ -18,9 +18,9 @@ module SimpleEnum
     }
 
     def self.map(values, options = {})
-      builder = options.fetch(:builder, SimpleEnum.builder)
-      hasher = HASHERS[builder] || DefaultHasher
-      hasher.call(values).freeze
+      mapper = options.fetch(:map, SimpleEnum.builder)
+      mapper = HASHERS[mapper] || DefaultHasher unless mapper.respond_to?(:call)
+      mapper.call(values).freeze
     end
   end
 end

@@ -5,7 +5,7 @@ describe SimpleEnum::Hasher do
   subject { described_class }
 
   context '.map' do
-    subject { described_class.map(%w{male female}, builder: :string) }
+    subject { described_class.map(%w{male female}, map: :string) }
 
     it 'uses DefaultHasher by default' do
       result = { "male" => 0, "female" => 1 }
@@ -20,6 +20,12 @@ describe SimpleEnum::Hasher do
     it 'uses the builder supplied if available' do
       result = { "male" => "male", "female" => "female" }
       expect(subject).to eq result
+    end
+
+    it 'accepts a Proc as well' do
+      proc =  ->(hash) { { "static" => 1 } }
+      result = { "static" => 1 }
+      expect(described_class.map(%w{male female}, map: proc) ).to eq result
     end
   end
 
