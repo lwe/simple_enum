@@ -14,7 +14,7 @@ module SimpleEnum
   #
   module Attribute
     def as_enum(name, values, options = {})
-      options.assert_valid_keys(:source, :prefix, :with, :accessor, :builder)
+      options.assert_valid_keys(:source, :prefix, :with, :accessor, :map)
 
       hash     = SimpleEnum::Hasher.map(values, options)
       enum     = SimpleEnum::Enum.new(name, hash)
