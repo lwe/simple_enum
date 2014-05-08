@@ -46,6 +46,7 @@ module SimpleEnum
       simple_enum_module.module_eval do
         define_method("#{accessor}")  { accessor.read(self) }
         define_method("#{accessor}=") { |value| accessor.write(self, value) }
+        define_method("#{accessor}?") { |value = nil| accessor.selected?(self, value) }
       end
     end
 
@@ -58,7 +59,6 @@ module SimpleEnum
 
     def generate_enum_attribute_methods_for(enum, accessor)
       simple_enum_module.module_eval do
-        define_method("#{accessor}?") { |value = nil| accessor.selected?(self, value) }
         enum.each_pair do |key, value|
           define_method("#{accessor.prefix}#{key}?") { accessor.selected?(self, key) }
           define_method("#{accessor.prefix}#{key}!") { accessor.write(self, key) }

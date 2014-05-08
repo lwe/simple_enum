@@ -44,6 +44,13 @@ describe SimpleEnum::Attribute do
         subject.gender = :male
       end
     end
+
+    context '#gender?' do
+      it 'delegates to accessor' do
+        expect(accessor).to receive(:selected?).with(subject, nil) { nil }
+        expect(subject.gender?).to be_false
+      end
+    end
   end
 
   context 'generate_enum_dirty_methods_for' do
@@ -75,10 +82,6 @@ describe SimpleEnum::Attribute do
 
   context 'generate_enum_attribute_methods_for' do
     subject { klass.new }
-
-    it 'does not respond to #gender?' do
-      expect(subject).to_not respond_to(:gender?)
-    end
 
     it 'does not respond to #male? or #female?' do
       expect(subject).to_not respond_to(:male?)
