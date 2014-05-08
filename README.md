@@ -181,11 +181,9 @@ User.female             # => #<ActiveRecord::Relation:0x0.....> (WHERE gender_cd
 - To define which methods are generated it's possible to set `with:` option, by
   default `with:` is set to `[:attribute, :dirty, :scope]`.
 
-  `:attribute` - generates the `male?` and `male!` accessor methods
-
-  `:dirty` - adds the `gender_was` and `gender_changed?` dirty methods
-
-  `:scope` - adds the class level scopes, **if** the `scope` method is present
+  1. `:attribute` - generates the `male?` and `male!` accessor methods
+  2. `:dirty` - adds the `gender_was` and `gender_changed?` dirty methods
+  3. `:scope` - adds the class level scopes, **if** the `scope` method is present
 
 - By default the value is set to `nil` when the user sets an invalid value,
   this behavior can be changed by setting the `accessor:` option. At the moment
