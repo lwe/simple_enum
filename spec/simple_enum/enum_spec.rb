@@ -32,6 +32,12 @@ describe SimpleEnum::Enum do
     end
   end
 
+  context '#keys' do
+    it 'returns the keys in the order added' do
+      expect(subject.keys).to eq %w{male female}
+    end
+  end
+
   context '#each_pair (aliased to #each)' do
     it 'yields twice with #each_pair' do
       expect { |b| subject.each_pair(&b) }.to yield_control.exactly(2).times
