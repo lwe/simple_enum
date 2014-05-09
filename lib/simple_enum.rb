@@ -13,6 +13,7 @@ require 'active_support'
 require 'simple_enum/version'
 require 'simple_enum/attribute'
 require 'simple_enum/translation'
+require 'simple_enum/view_helpers'
 
 # Base module which gets included in <tt>ActiveRecord::Base</tt>. See documentation
 # of +SimpleEnum::ClassMethods+ for more details.

@@ -1,3 +1,5 @@
+require 'i18n'
+
 module SimpleEnum
   module Translation
     def human_enum_name(enum, key, options = {})

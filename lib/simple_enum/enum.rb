@@ -30,6 +30,10 @@ module SimpleEnum
     end
     alias_method :each, :each_pair
 
+    def map(&block)
+      hash.map(&block)
+    end
+
     def keys
       hash.keys
     end
