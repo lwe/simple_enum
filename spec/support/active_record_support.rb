@@ -21,3 +21,7 @@ module ActiveRecordSupport
     end
   end
 end
+
+# Behave like the railtie.rb
+ActiveRecord::Base.send :extend, SimpleEnum::Attribute
+ActiveRecord::Base.send :extend, SimpleEnum::Translation

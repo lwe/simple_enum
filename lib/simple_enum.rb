@@ -37,8 +37,5 @@ module SimpleEnum
   end
 end
 
-# include in AR
-ActiveSupport.on_load(:active_record) do
-  ActiveRecord::Base.send(:extend, SimpleEnum::Attribute)
-  ActiveRecord::Base.send(:extend, SimpleEnum::Translation)
-end
+# Load rails support
+require 'simple_enum/railtie' if defined?(Rails)
