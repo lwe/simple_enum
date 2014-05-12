@@ -6,6 +6,10 @@ rvm:
   - 2.1.1
   - jruby-19mode
 
+gemfile:
+  - Gemfile
+  - gemfiles/4.0.gemfile
+
 matrix:
   allow_failures:
     - rvm: jruby-19mode
