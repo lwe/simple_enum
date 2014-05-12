@@ -11,7 +11,7 @@ module SimpleEnum
     end
 
     initializer 'simple_enum.view_helpers' do
-      ActiveView::Base.send :include, SimpleEnum::ViewHelpers
+      ActionView::Base.send :include, SimpleEnum::ViewHelpers
     end
   end
 end
