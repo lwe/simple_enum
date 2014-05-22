@@ -12,7 +12,7 @@ module SimpleEnum
       defaults << options.delete(:default) if options[:default]
       defaults << key.to_s.humanize
 
-      options.reverse_merge! :count => 1, :default => defaults
+      options.reverse_merge! count: 1, default: defaults
       I18n.translate(defaults.shift, options)
     end
   end

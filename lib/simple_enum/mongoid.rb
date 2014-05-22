@@ -15,12 +15,12 @@ module SimpleEnum
   #
   # When no field is requested:
   #
-  #   field :gender_cd, :type => Integer
-  #   as_enum :gender, [:female, :male], :field => false
+  #   field :gender_cd, type: Integer
+  #   as_enum :gender, [:female, :male], field: false
   #
   # or custom field options (like e.g. type want to be passed):
   #
-  #   as_enum :gender, [:female, :male], :field => { :type => Integer }
+  #   as_enum :gender, [:female, :male], field: { type: Integer }
   #
   module Mongoid
     def self.included(base)
