@@ -10,9 +10,9 @@ gemfile:
   - Gemfile
   - gemfiles/4.0.gemfile
 
-matrix:
-  allow_failures:
-    - rvm: jruby-19mode
+#matrix:
+#  allow_failures:
+#    - rvm: jruby-19mode
 
 env:
   global:
