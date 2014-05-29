@@ -14,7 +14,7 @@ module SimpleEnum
   #
   module Attribute
     def as_enum(name, values, options = {})
-      options.assert_valid_keys(:source, :prefix, :with, :accessor, :map)
+      options.assert_valid_keys(:source, :prefix, :with, :accessor, :map, :plural_scopes)
 
       hash     = SimpleEnum::Hasher.map(values, options)
       enum     = SimpleEnum::Enum.new(name, hash)
@@ -70,7 +70,7 @@ module SimpleEnum
       return unless respond_to?(:scope)
 
       enum.each_pair do |key, value|
-        scope "#{accessor.prefix}#{key}", -> { where(accessor.source => value) }
+        scope "#{accessor.prefix}#{accessor.plural_scopes ? key.pluralize : key}", -> { where(accessor.source => value) }
       end
     end
   end
