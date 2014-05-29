@@ -180,6 +180,22 @@ describe SimpleEnum::Attribute do
       it_behaves_like 'returning a relation', 1
     end
 
+    context 'with plural_scopes' do
+      fake_active_record(:klass) {
+        as_enum :gender, [:male, :female], with: [:scope], plural_scopes: true
+      }
+
+      context '.males' do
+        subject { klass.males }
+        it_behaves_like 'returning a relation', 0
+      end
+
+      context '.females' do
+        subject { klass.females }
+        it_behaves_like 'returning a relation', 1
+      end
+    end
+
     context 'with prefix' do
       fake_active_record(:klass) {
         as_enum :gender, [:male, :female], with: [:scope], prefix: true

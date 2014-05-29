@@ -62,6 +62,16 @@ describe SimpleEnum::Accessors do
       end
     end
 
+    context '#plural_scopes' do
+      it 'returns false when plural_scopes is nil' do
+        expect(described_class::Accessor.new(:gender, enum).plural_scopes).to eq false
+      end
+
+      it 'returns true when plural_scopes is true' do
+        expect(described_class::Accessor.new(:gender, enum, nil, nil, true).plural_scopes).to eq true
+      end
+    end
+
     context '#read' do
       shared_examples_for 'reading an enum' do
         it 'returns nil then gender_cd is nil' do

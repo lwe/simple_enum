@@ -1,13 +1,14 @@
 module SimpleEnum
   module Accessors
     class Accessor
-      attr_reader :name, :enum, :source
+      attr_reader :name, :enum, :source, :plural_scopes
 
-      def initialize(name, enum, source = nil, prefix = nil)
+      def initialize(name, enum, source = nil, prefix = nil, plural_scopes = nil)
         @name = name.to_s
         @enum = enum
         @source = source.to_s.presence || "#{name}#{SimpleEnum.suffix}"
         @prefix = prefix
+        @plural_scopes = plural_scopes == true
       end
 
       def prefix

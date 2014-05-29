@@ -167,17 +167,26 @@ User.female             # => #<ActiveRecord::Relation:0x0.....> (WHERE gender_cd
   If an invalid value is assigned, the gender is set to `nil` by default.
 - If the shortcut methods (like `female?`, `female!` or `User.male`) conflict with something in your class, it's possible to
   define a prefix:
+  
+  ```ruby
+  class User < ActiveRecord::Base
+    as_enum :gender, %w{male female}, prefix: true
+  end
 
-        class User < ActiveRecord::Base
-          as_enum :gender, %w{male female}, prefix: true
-        end
-
-        jane = User.new gender: :female
-        jane.gender_female? # => true
-        User.gender_female  # => <ActiveRecord::Relation...WHERE gender_cd = 1.>
-
+  jane = User.new gender: :female
+  jane.gender_female? # => true
+  User.gender_female  # => <ActiveRecord::Relation...WHERE gender_cd = 1.>
+  ```
   The `:prefix` option not only takes a boolean value as an argument, but instead can also be supplied a custom
   prefix, so with `prefix: 'foo'` all shortcut methods would look like: `foo_<symbol>`
+- Want default scopes to be plural? Not a problem. You can use `:plural_scopes` option, like this:
+  ```ruby
+  class User < ActiveRecord::Base
+    as_enum :gender, %w{male female}, plural_scopes: true
+  end
+
+  User.males  # => <ActiveRecord::Relation...WHERE gender_cd = 0.>
+  ```
 - To define which methods are generated it's possible to set `with:` option, by
   default `with:` is set to `[:attribute, :dirty, :scope]`.
 
