@@ -98,7 +98,7 @@ Accessing actual enum values is possible at the class level:
 ```ruby
 User.genders            # => #<SimpleEnum::Enum:0x0....>
 User.genders[:male]     # => 0
-User.female             # => #<ActiveRecord::Relation:0x0.....> (WHERE gender_cd = 1)
+User.females            # => #<ActiveRecord::Relation:0x0.....> (WHERE gender_cd = 1)
 ```
 
 ### Wait, there's more!
@@ -167,15 +167,15 @@ User.female             # => #<ActiveRecord::Relation:0x0.....> (WHERE gender_cd
   If an invalid value is assigned, the gender is set to `nil` by default.
 - If the shortcut methods (like `female?`, `female!` or `User.male`) conflict with something in your class, it's possible to
   define a prefix:
+  ```ruby
+  class User < ActiveRecord::Base
+    as_enum :gender, %w{male female}, prefix: true
+  end
 
-        class User < ActiveRecord::Base
-          as_enum :gender, %w{male female}, prefix: true
-        end
-
-        jane = User.new gender: :female
-        jane.gender_female? # => true
-        User.gender_female  # => <ActiveRecord::Relation...WHERE gender_cd = 1.>
-
+  jane = User.new gender: :female
+  jane.gender_female? # => true
+  User.gender_female  # => <ActiveRecord::Relation...WHERE gender_cd = 1.>
+  ```
   The `:prefix` option not only takes a boolean value as an argument, but instead can also be supplied a custom
   prefix, so with `prefix: 'foo'` all shortcut methods would look like: `foo_<symbol>`
 - To define which methods are generated it's possible to set `with:` option, by
@@ -225,7 +225,7 @@ as_enum :handle, [:new, :create, :update], :prefix => true
 Searching for certain values by using the finder methods:
 
 ```ruby
-User.female # => returns an ActiveRecord::Relation
+User.females # => returns an ActiveRecord::Relation
 ```
 
 Contributors
