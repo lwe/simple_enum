@@ -70,7 +70,7 @@ module SimpleEnum
       return unless respond_to?(:scope)
 
       enum.each_pair do |key, value|
-        scope "#{accessor.prefix}#{key}", -> { where(accessor.source => value) }
+        scope "#{accessor.prefix}#{key.pluralize}", -> { where(accessor.source => value) }
       end
     end
   end
