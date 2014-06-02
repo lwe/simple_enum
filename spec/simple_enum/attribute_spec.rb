@@ -170,13 +170,13 @@ describe SimpleEnum::Attribute do
       end
     end
 
-    context '.male' do
-      subject { klass.male }
+    context '.males' do
+      subject { klass.males }
       it_behaves_like 'returning a relation', 0
     end
 
-    context '.female' do
-      subject { klass.female }
+    context '.females' do
+      subject { klass.females }
       it_behaves_like 'returning a relation', 1
     end
 
@@ -185,13 +185,13 @@ describe SimpleEnum::Attribute do
         as_enum :gender, [:male, :female], with: [:scope], prefix: true
       }
 
-      context '.gender_male' do
-        subject { klass.gender_male }
+      context '.gender_males' do
+        subject { klass.gender_males }
         it_behaves_like 'returning a relation', 0
       end
 
-      context '.gender_female' do
-        subject { klass.gender_female }
+      context '.gender_females' do
+        subject { klass.gender_females }
         it_behaves_like 'returning a relation', 1
       end
     end
@@ -202,9 +202,9 @@ describe SimpleEnum::Attribute do
       }
       subject { klass_without_scope_method }
 
-      it 'does not add .male nor .female' do
-        expect(subject).to_not respond_to(:male)
-        expect(subject).to_not respond_to(:female)
+      it 'does not add .males nor .females' do
+        expect(subject).to_not respond_to(:males)
+        expect(subject).to_not respond_to(:females)
       end
     end
   end
