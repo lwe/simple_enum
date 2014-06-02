@@ -174,7 +174,7 @@ User.females            # => #<ActiveRecord::Relation:0x0.....> (WHERE gender_cd
 
   jane = User.new gender: :female
   jane.gender_female? # => true
-  User.gender_female  # => <ActiveRecord::Relation...WHERE gender_cd = 1.>
+  User.gender_females  # => <ActiveRecord::Relation...WHERE gender_cd = 1.>
   ```
   The `:prefix` option not only takes a boolean value as an argument, but instead can also be supplied a custom
   prefix, so with `prefix: 'foo'` all shortcut methods would look like: `foo_<symbol>`
