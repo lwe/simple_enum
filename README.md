@@ -50,7 +50,7 @@ to use simple_enum with another version of mongoid, use version 1.6 instead.
 Load mongoid support in the `Gemfile`:
 
 ```ruby
-gem 'simple_enum', '2.0.0.rc1' , require: 'simple_enum/mongoid'
+gem 'simple_enum', '~> 2.0.0' , require: 'simple_enum/mongoid'
 ```
 
 Add this to a model:
