@@ -6,4 +6,5 @@ pkg
 .*.sw?
 tmp
 Gemfile.lock
+gemfiles/*.lock
 :memory*
