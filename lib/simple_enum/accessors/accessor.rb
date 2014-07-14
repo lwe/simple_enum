@@ -29,11 +29,11 @@ module SimpleEnum
       end
 
       def changed?(object)
-        object.attribute_changed?(source)
+        object.send(:attribute_changed?, source)
       end
 
       def was(object)
-        enum.key(object.attribute_was(source))
+        enum.key(object.send(:attribute_was, source))
       end
 
       def to_s

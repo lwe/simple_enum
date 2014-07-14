@@ -159,6 +159,20 @@ describe SimpleEnum::Accessors do
         expect(object).to receive(:attribute_was).with('gender_cd') { 1 }
         expect(subject.was(object)).to eq :female
       end
+
+    end
+  end
+
+  context 'dirty attributes on ActiveModel', active_record: true do
+    fake_active_record(:klass) { as_enum :gender, %w{male female} }
+    let(:object) { klass.create(gender: :male) }
+
+    it 'does not raise error "private method attribute_was called"' do
+      object.gender = :female
+      expect do
+        expect(object.gender_changed?).to be_true
+        expect(object.gender_was).to eq :male
+      end.to_not raise_error
     end
   end
 
