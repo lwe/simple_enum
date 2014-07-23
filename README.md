@@ -96,9 +96,10 @@ joe.gender_cd # => 0
 Accessing actual enum values is possible at the class level:
 
 ```ruby
-User.genders            # => #<SimpleEnum::Enum:0x0....>
-User.genders[:male]     # => 0
-User.females            # => #<ActiveRecord::Relation:0x0.....> (WHERE gender_cd = 1)
+User.genders                            # => #<SimpleEnum::Enum:0x0....>
+User.genders[:male]                     # => 0
+User.genders.values_at(:male, :female)  # => [0, 1]
+User.females                            # => #<ActiveRecord::Relation:0x0.....> (WHERE gender_cd = 1)
 ```
 
 ### Wait, there's more!
