@@ -99,4 +99,14 @@ describe SimpleEnum::Enum do
       expect(subject.include?(2)).to be_false
     end
   end
+
+  context '#values_at' do
+    it 'fetches multiple values by string' do
+      expect(subject.values_at("male", "female")).to eq [0, 1]
+    end
+
+    it 'fetches multiple values by symbol' do
+      expect(subject.values_at(:male)).to eq [0]
+    end
+  end
 end
