@@ -212,6 +212,16 @@ User.females                            # => #<ActiveRecord::Relation:0x0.....> 
   SimpleEnum.with = [:accessor, :scope]
   ```
 
+### ViewHelpers
+
+#### Select tag with enum options
+
+- symbol as value:
+`` select :user, :gender, enum_option_pairs(User, :gender) ``
+
+- index as value:
+`` select :user, :gender, enum_option_pairs(User, :gender, true) ``
+
 ## Best practices
 
 Do not use values named after existing, or well known method names, like `new`, `create` etc.
