@@ -218,15 +218,18 @@ details and functions. _Disclaimer_: these methods are release candidate quality
 so expect them to change in future versions of SimpleEnum.
 
 - Translate the current value in a view:
+
   ```ruby
   translate_enum user, :gender # => "Frau" # assuming :de and translations exist
   te user, :gender # translate_enum is also aliased to te
   ```
 - Build a select tag with a translated dropdown and symbol as value:
+
   ```ruby
   select :user, :gender, enum_option_pairs(User, :gender)
   ```
 - ...and one with the index as value:
+
   ```ruby
   select :user, :gender_cd, enum_option_pairs(User, :gender, true)
   ```
