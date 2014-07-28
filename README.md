@@ -154,6 +154,7 @@ User.females                            # => #<ActiveRecord::Relation:0x0.....> 
   user.gender_was
   # => :male
   ```
+- Require translated enum values? See [SimpleEnum::ViewHelpers](https://github.com/lwe/simple_enum/blob/master/lib/simple_enum/view_helpers.rb)
 - Need to provide custom options for the mongoid field, or skip the automatically generated field?
 
   ```ruby
@@ -220,7 +221,7 @@ Do not use values named after existing, or well known method names, like `new`, 
 as_enum :handle, [:new, :create, :update]
 
 # GOOD, prefixes all methods
-as_enum :handle, [:new, :create, :update], :prefix => true
+as_enum :handle, [:new, :create, :update], prefix: true
 ```
 
 Searching for certain values by using the finder methods:
@@ -232,16 +233,17 @@ User.females # => returns an ActiveRecord::Relation
 Contributors
 ------------
 
-* @dmitry - bugfixes and other improvements
-* @tarsolya - implemented all the ruby 1.9 and rails 3 goodness!
-* @dbalatero - rails 2.3.5 bugfix & validator fixes
-* @johnthethird - feature for <tt>_for_select</tt> to return the values
-* @sinsiliux - ruby 1.9 fixes and removed AR dependency
-* @sled - mongoid support
-* @abrom - <tt>find_by_...</tt> method
-* @mhuggins - translations fixes
-* @patbenatar - for helping move towards 2.0 (scopes et all)
-* and all others: https://github.com/lwe/simple_enum/graphs/contributors thanks
+- @dmitry - bugfixes and other improvements
+- @tarsolya - implemented all the ruby 1.9 and rails 3 goodness!
+- @dbalatero - rails 2.3.5 bugfix & validator fixes
+- @johnthethird - feature for `_for_select` to return the values
+- @sinsiliux - ruby 1.9 fixes and removed AR dependency
+- @sled - mongoid support
+- @abrom - `find_by_...` method
+- @mhuggins - translations fixes
+- @patbenatar - for helping move towards 2.0 (scopes et all)
+- @abacha - translation helpers
+- and all others: https://github.com/lwe/simple_enum/graphs/contributors thanks
 
 License & Copyright
 -------------------
