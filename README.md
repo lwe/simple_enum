@@ -270,6 +270,6 @@ Contributors
 License & Copyright
 -------------------
 
-Copyright (c) 2011-2014 by Lukas Westermann, Licensed under MIT Licence (see LICENSE file)
+Copyright (c) 2011-2014 by Lukas Westermann, Licensed under MIT License (see LICENSE file)
 
 [VE.rb]: https://github.com/lwe/simple_enum/blob/master/lib/simple_enum/view_helpers.rb
