@@ -29,6 +29,11 @@ module SimpleEnum
       }
     end
 
+    def translate_enum(object, key)
+      object.class.human_enum_name(key, object.public_send(key))
+    end
+    alias_method :te, :translate_enum
+
     private
 
     def translate_enum_key(enum, key)

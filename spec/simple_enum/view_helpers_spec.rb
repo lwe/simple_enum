@@ -59,4 +59,13 @@ describe SimpleEnum::ViewHelpers, i18n: true do
       end
     end
   end
+
+  context '#translate_enum' do
+    let(:fake_object) { klass.new }
+    it "translates with object scope" do
+      fake_object.gender = :male
+      expect(klass).to receive(:human_enum_name).with(:gender, :male) { "Mr." }
+      expect(helper.translate_enum(fake_object, :gender)).to eq "Mr."
+    end
+  end
 end
