@@ -154,7 +154,6 @@ User.females                            # => #<ActiveRecord::Relation:0x0.....> 
   user.gender_was
   # => :male
   ```
-- Require translated enum values? See [SimpleEnum::ViewHelpers](https://github.com/lwe/simple_enum/blob/master/lib/simple_enum/view_helpers.rb)
 - Need to provide custom options for the mongoid field, or skip the automatically generated field?
 
   ```ruby
@@ -212,15 +211,25 @@ User.females                            # => #<ActiveRecord::Relation:0x0.....> 
   SimpleEnum.with = [:accessor, :scope]
   ```
 
-### ViewHelpers
+#### View Helpers
 
-#### Select tag with enum options
+Require translated enum values? See [SimpleEnum::ViewHelpers][VE.rb] for more
+details and functions. _Disclaimer_: these methods are release candidate quality
+so expect them to change in future versions of SimpleEnum.
 
-- symbol as value:
-`` select :user, :gender, enum_option_pairs(User, :gender) ``
-
-- index as value:
-`` select :user, :gender, enum_option_pairs(User, :gender, true) ``
+- Translate the current value in a view:
+  ```ruby
+  translate_enum user, :gender # => "Frau" # assuming :de and translations exist
+  te user, :gender # translate_enum is also aliased to te
+  ```
+- Build a select tag with a translated dropdown and symbol as value:
+  ```ruby
+  select :user, :gender, enum_option_pairs(User, :gender)
+  ```
+- ...and one with the index as value:
+  ```ruby
+  select :user, :gender_cd, enum_option_pairs(User, :gender, true)
+  ```
 
 ## Best practices
 
@@ -252,10 +261,12 @@ Contributors
 - @abrom - `find_by_...` method
 - @mhuggins - translations fixes
 - @patbenatar - for helping move towards 2.0 (scopes et all)
-- @abacha - translation helpers
+- @abacha - translation helpers, README fixes
 - and all others: https://github.com/lwe/simple_enum/graphs/contributors thanks
 
 License & Copyright
 -------------------
 
 Copyright (c) 2011-2014 by Lukas Westermann, Licensed under MIT Licence (see LICENSE file)
+
+[VE.rb]: https://github.com/lwe/simple_enum/blob/master/lib/simple_enum/view_helpers.rb
