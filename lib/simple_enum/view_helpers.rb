@@ -29,8 +29,19 @@ module SimpleEnum
       }
     end
 
-    def translate_enum(object, key)
-      object.class.human_enum_name(key, object.public_send(key))
+    # Helper method to return the translated value of an enum.
+    #
+    #     translate_enum(user, :gender) # => "Frau"
+    #
+    # Has been aliased to `te` as a convenience method as well.
+    #
+    # record - The model instance holding the enum
+    # key - The Symbol with the name of the enum, i.e. same key as used in the
+    #       `as_enum` call
+    #
+    # Returns String with translation of enum
+    def translate_enum(record, key)
+      record.class.human_enum_name(key, record.public_send(key))
     end
     alias_method :te, :translate_enum
 
