@@ -211,7 +211,7 @@ User.females                            # => #<ActiveRecord::Relation:0x0.....> 
   SimpleEnum.with = [:accessor, :scope]
   ```
 
-#### View Helpers
+### View Helpers
 
 Require translated enum values? See [SimpleEnum::ViewHelpers][VE.rb] for more
 details and functions. _Disclaimer_: these methods are release candidate quality
