@@ -13,7 +13,7 @@ module SimpleEnum
       defaults << key.to_s.humanize
 
       options.reverse_merge! count: 1, default: defaults
-      I18n.translate(defaults.shift, options)
+      I18n.translate(defaults.shift, options) if key
     end
   end
 end
