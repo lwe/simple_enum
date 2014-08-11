@@ -48,7 +48,7 @@ describe SimpleEnum::Attribute do
     context '#gender?' do
       it 'delegates to accessor' do
         expect(accessor).to receive(:selected?).with(subject, nil) { nil }
-        expect(subject.gender?).to be_false
+        expect(subject.gender?).to be_falsey
       end
     end
   end
@@ -70,7 +70,7 @@ describe SimpleEnum::Attribute do
 
       it 'delegates #gender_changed? to accessor' do
         expect(accessor).to receive(:changed?).with(subject) { true }
-        expect(subject.gender_changed?).to be_true
+        expect(subject.gender_changed?).to be_truthy
       end
 
       it 'delegates #gender_was to accesso' do
@@ -99,17 +99,17 @@ describe SimpleEnum::Attribute do
 
       it 'delegates #gender? to accessor' do
         expect(accessor).to receive(:selected?).with(subject, nil) { :female }
-        expect(subject.gender?).to be_true
+        expect(subject.gender?).to be_truthy
       end
 
       it 'delegates #male? to accessor' do
         expect(accessor).to receive(:selected?).with(subject, 'male') { true }
-        expect(subject.male?).to be_true
+        expect(subject.male?).to be_truthy
       end
 
       it 'delegates #female? to accessor' do
         expect(accessor).to receive(:selected?).with(subject, 'female') { false }
-        expect(subject.female?).to be_false
+        expect(subject.female?).to be_falsey
       end
 
       it 'delegates #male! to accessor' do
@@ -129,17 +129,17 @@ describe SimpleEnum::Attribute do
 
       it 'delegates #gender? to accessor' do
         expect(accessor).to receive(:selected?).with(subject, nil) { :female }
-        expect(subject.gender?).to be_true
+        expect(subject.gender?).to be_truthy
       end
 
       it 'delegates #gender_male? to accessor' do
         expect(accessor).to receive(:selected?).with(subject, 'male') { true }
-        expect(subject.gender_male?).to be_true
+        expect(subject.gender_male?).to be_truthy
       end
 
       it 'delegates #gender_female? to accessor' do
         expect(accessor).to receive(:selected?).with(subject, 'female') { false }
-        expect(subject.gender_female?).to be_false
+        expect(subject.gender_female?).to be_falsey
       end
 
       it 'delegates #gender_male! to accessor' do

@@ -83,20 +83,20 @@ describe SimpleEnum::Enum do
 
   context '#include?' do
     it 'returns true by string' do
-      expect(subject.include?('male')).to be_true
+      expect(subject.include?('male')).to be_truthy
     end
 
     it 'returns true by symbol' do
-      expect(subject.include?(:female)).to be_true
+      expect(subject.include?(:female)).to be_truthy
     end
 
     it 'returns true by checking actual value' do
-      expect(subject.include?(1)).to be_true
+      expect(subject.include?(1)).to be_truthy
     end
 
     it 'returns false when neither in keys nor values' do
-      expect(subject.include?(:other)).to be_false
-      expect(subject.include?(2)).to be_false
+      expect(subject.include?(:other)).to be_falsey
+      expect(subject.include?(2)).to be_falsey
     end
   end
 

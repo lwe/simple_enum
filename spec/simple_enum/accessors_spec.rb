@@ -125,32 +125,32 @@ describe SimpleEnum::Accessors do
 
     context '#selected?' do
       it 'returns false when gender_cd is nil' do
-        expect(subject.selected?(object)).to be_false
-        expect(subject.selected?(object, :male)).to be_false
+        expect(subject.selected?(object)).to be_falsey
+        expect(subject.selected?(object, :male)).to be_falsey
       end
 
       it 'returns true when gender_cd is != nil' do
-        expect(subject.selected?(klass.new(0))).to be_true
-        expect(subject.selected?(klass.new(1))).to be_true
+        expect(subject.selected?(klass.new(0))).to be_truthy
+        expect(subject.selected?(klass.new(1))).to be_truthy
       end
 
       it 'returns true when gender_cd is 0 and :male is passed' do
-        expect(subject.selected?(klass.new(0), :male)).to be_true
+        expect(subject.selected?(klass.new(0), :male)).to be_truthy
       end
 
       it 'returns false when gender_cd is 0 and :female is passed' do
-        expect(subject.selected?(klass.new(0), :female)).to be_false
+        expect(subject.selected?(klass.new(0), :female)).to be_falsey
       end
 
       it 'returns false when gender_cd is 1 and :other is passed' do
-        expect(subject.selected?(klass.new(0), :other)).to be_false
+        expect(subject.selected?(klass.new(0), :other)).to be_falsey
       end
     end
 
     context '#changed?' do
       it 'delegates to attribute_changed?' do
         expect(object).to receive(:attribute_changed?).with('gender_cd') { true }
-        expect(subject.changed?(object)).to be_true
+        expect(subject.changed?(object)).to be_truthy
       end
     end
 
@@ -170,7 +170,7 @@ describe SimpleEnum::Accessors do
     it 'does not raise error "private method attribute_was called"' do
       object.gender = :female
       expect do
-        expect(object.gender_changed?).to be_true
+        expect(object.gender_changed?).to be_truthy
         expect(object.gender_was).to eq :male
       end.to_not raise_error
     end
@@ -180,23 +180,23 @@ describe SimpleEnum::Accessors do
     subject { described_class::IgnoreAccessor.new(:gender, enum) }
 
     it 'sets gender_cd to 0 with symbol' do
-      expect(subject.write(object, :male)).to_not be_false
+      expect(subject.write(object, :male)).to_not be_falsey
       expect(object.gender_cd).to eq 0
     end
 
     it 'sets gender_cd to 1 via value (1)' do
-      expect(subject.write(object, 1)).to_not be_false
+      expect(subject.write(object, 1)).to_not be_falsey
       expect(object.gender_cd).to eq 1
     end
 
     it 'sets gender_cd to nil' do
-      expect(subject.write(object, nil)).to be_false
+      expect(subject.write(object, nil)).to be_falsey
       expect(object.gender_cd).to be_nil
     end
 
     it 'keeps existing value when unknown value is passed' do
       object.gender_cd = 1
-      expect(subject.write(object, :other)).to be_false
+      expect(subject.write(object, :other)).to be_falsey
       expect(object.gender_cd).to eq 1
     end
   end

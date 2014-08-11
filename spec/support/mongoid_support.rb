@@ -14,7 +14,7 @@ module MongoidSupport
       begin
         MongoidSupport.connection.collection_names
       rescue Moped::Errors::ConnectionFailure
-        pending "Start MongoDB server to run Mongoid integration tests..."
+        skip "Start MongoDB server to run Mongoid integration tests..."
       end
     }
   end
