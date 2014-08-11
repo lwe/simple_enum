@@ -13,6 +13,10 @@ describe SimpleEnum::Translation do
       it 'translates :female to "Mrs."' do
         expect(subject.human_enum_name(:gender, :female)).to eq 'Mrs.'
       end
+
+      it 'returns empty string when key is missing' do
+        expect(subject.human_enum_name(:gender, nil)).to eq ''
+      end
     end
 
     context '{i18n_scope}.enums.{i18n_key}.gender.{key}' do

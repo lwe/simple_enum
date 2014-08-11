@@ -3,6 +3,8 @@ require 'i18n'
 module SimpleEnum
   module Translation
     def human_enum_name(enum, key, options = {})
+      return '' unless key.present?
+
       defaults = lookup_ancestors.map do |klass|
         :"#{self.i18n_scope}.enums.#{klass.model_name.i18n_key}.#{enum}.#{key}"
       end
