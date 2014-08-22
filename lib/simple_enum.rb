@@ -33,6 +33,9 @@ module SimpleEnum
   mattr_accessor :field
   @@field = {}
 
+  mattr_accessor :persistence_method
+  @@persistence_method = nil
+
   def self.configure
     yield(self)
   end

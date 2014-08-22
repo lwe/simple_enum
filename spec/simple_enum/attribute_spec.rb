@@ -121,6 +121,14 @@ describe SimpleEnum::Attribute do
         expect(accessor).to receive(:write).with(subject, 'female') { 1 }
         expect(subject.female!).to eq 1
       end
+
+      it 'calls the persistence_method if specified' do
+        SimpleEnum.persistence_method = "some_method"
+        subject.stub(SimpleEnum.persistence_method)
+        expect(subject).to receive(SimpleEnum.persistence_method)
+        subject.female!
+        SimpleEnum.persistence_method = nil
+      end
     end
 
     context 'with a prefix' do

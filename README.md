@@ -83,7 +83,7 @@ jane.gender    # => :female
 jane.gender_cd # => 1
 ```
 
-Easily switch to another value using the bang methods, this does not save
+Easily switch to another value using the bang methods. By default, this does not save
 the record, only switch the value.
 
 ```ruby
@@ -92,6 +92,20 @@ joe.male!     # => :male
 joe.gender    # => :male
 joe.gender_cd # => 0
 ```
+
+To change the behavior so that a method is called to save the value (e.g. in case of ActiveRecord
+this would be `save` or `save!`):
+
+In `config/initializers/simple_enum.rb` add:
+
+`SimpleEnum.persistence_method = "save!"`
+
+```
+joe = User.new
+joe.male!         # => :male
+User.last.male?   # => true
+```
+
 
 Accessing actual enum values is possible at the class level:
 

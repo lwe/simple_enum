@@ -61,7 +61,13 @@ module SimpleEnum
       simple_enum_module.module_eval do
         enum.each_pair do |key, value|
           define_method("#{accessor.prefix}#{key}?") { accessor.selected?(self, key) }
-          define_method("#{accessor.prefix}#{key}!") { accessor.write(self, key) }
+          define_method("#{accessor.prefix}#{key}!") {
+            result = accessor.write(self, key)
+            if SimpleEnum.persistence_method
+              self.send(SimpleEnum.persistence_method)
+            end
+            result
+          }
         end
       end
     end

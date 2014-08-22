@@ -113,6 +113,7 @@ describe SimpleEnum::Accessors do
           expect(subject.write(object, :other)).to be_nil
           expect(object.gender_cd).to be_nil
         end
+
       end
 
       it_behaves_like 'writing an enum'
