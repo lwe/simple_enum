@@ -33,6 +33,30 @@ describe SimpleEnum::Translation do
       it_behaves_like 'translating gender'
     end
 
+    context '{i18n_scope}.enums.{i18n_key}.gender.{key}_html' do
+      before do
+        store_translations :en, 'activemodel' => {
+          'enums' => {
+            'fake_model' => {
+              'gender' => { 'male_html' => 'Mr / Sir / Jr', 'female_html' => 'Ms / Miss / Mrs' }
+            }
+          }
+        }
+      end
+
+      it 'translates :male to "Mr / Sir / Jr"' do
+        expect(subject.human_enum_name(:gender, :male)).to eq 'Mr / Sir / Jr'
+      end
+
+      it 'translates :female to "Ms / Miss / Mrs"' do
+        expect(subject.human_enum_name(:gender, :female)).to eq 'Ms / Miss / Mrs'
+      end
+
+      it 'returns empty string when key is missing' do
+        expect(subject.human_enum_name(:gender, nil)).to eq ''
+      end
+    end
+
     context 'enums.{i18n_key}.gender.{key}' do
       before do
         store_translations :en, 'enums' => {

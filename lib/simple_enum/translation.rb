@@ -9,6 +9,8 @@ module SimpleEnum
         :"#{self.i18n_scope}.enums.#{klass.model_name.i18n_key}.#{enum}.#{key}"
       end
 
+      defaults << :"#{self.i18n_scope}.enums.#{self.model_name.i18n_key}.#{enum}.#{key}"
+      defaults << :"#{self.i18n_scope}.enums.#{self.model_name.i18n_key}.#{enum}.#{key}_html"
       defaults << :"enums.#{self.model_name.i18n_key}.#{enum}.#{key}"
       defaults << :"enums.#{enum}.#{key}"
       defaults << options.delete(:default) if options[:default]
