@@ -208,7 +208,7 @@ User.females                            # => #<ActiveRecord::Relation:0x0.....> 
 
   ```ruby
   # See lib/simple_enum.rb for other options
-  SimpleEnum.with = [:accessor, :scope]
+  SimpleEnum.with = [:attribute, :scope]
   ```
 
 ### View Helpers
