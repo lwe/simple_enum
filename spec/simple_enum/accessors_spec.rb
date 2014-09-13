@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe SimpleEnum::Accessors do
-  let(:enum) { SimpleEnum::Enum.new(:gender, "male" => 0, "female" => 1) }
+  let(:enum) { SimpleEnum::Enums.enum(:gender, "male" => 0, "female" => 1) }
   fake_model(:klass)
   let(:object) { klass.new }
 
@@ -59,6 +59,10 @@ describe SimpleEnum::Accessors do
 
       it 'returns "gender" when source is set to "gender"' do
         expect(described_class::Accessor.new(:gender, hash, 'gender').source).to eq 'gender'
+      end
+
+      it 'returns favorite_cds when multiple is set to true' do
+        expect(described_class::Accessor.new(:favorites, hash, nil, nil, true).source).to eq 'favorite_cds'
       end
     end
 

@@ -5,8 +5,8 @@ describe SimpleEnum::Attribute do
   let(:accessor) { subject.class.genders_accessor }
 
   context '.as_enum' do
-    it 'returns a SimpleEnum::Enum' do
-      expect(klass.as_enum(:gender, %w{male female})).to be_a(SimpleEnum::Enum)
+    it 'returns a SimpleEnum::Enums::Enum' do
+      expect(klass.as_enum(:gender, %w{male female})).to be_a(SimpleEnum::Enums::Enum)
     end
   end
 
@@ -14,8 +14,8 @@ describe SimpleEnum::Attribute do
     context '.genders' do
       subject { klass.genders }
 
-      it 'returns a SimpleEnum::Enum' do
-        expect(subject).to be_a(SimpleEnum::Enum)
+      it 'returns a SimpleEnum::Enums::Enum' do
+        expect(subject).to be_a(SimpleEnum::Enums::Enum)
       end
     end
 

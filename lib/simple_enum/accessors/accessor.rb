@@ -1,17 +1,18 @@
 module SimpleEnum
   module Accessors
     class Accessor
-      attr_reader :name, :enum, :source
+      attr_reader :name, :enum, :source, :prefix
 
-      def initialize(name, enum, source = nil, prefix = nil)
+      def initialize(name, enum, source = nil, prefix = nil, multiple = false)
         @name = name.to_s
         @enum = enum
-        @source = source.to_s.presence || "#{name}#{SimpleEnum.suffix}"
-        @prefix = prefix
-      end
-
-      def prefix
-        @cached_prefix ||= @prefix && "#{@prefix == true ? name : @prefix}_" || ""
+        @source = source.to_s.presence || if multiple
+            "#{name.to_s.singularize}"\
+            "#{SimpleEnum.multi_suffix || SimpleEnum.suffix.pluralize}"
+          else
+            "#{name}#{SimpleEnum.suffix}"
+          end
+        @prefix = prefix ? "#{prefix == true ? name : prefix}_" : ""
       end
 
       def read(object)
@@ -19,13 +20,13 @@ module SimpleEnum
       end
 
       def write(object, key)
-        write_after_type_cast(object, enum[key]) && key
+        write_after_type_cast(object, enum.value(key)) && key
       end
 
       def selected?(object, key = nil)
         current = read_before_type_cast(object)
-        return current && current == enum[key] if key
-        current
+        return current && enum.match?(key, current) if key
+        current.present?
       end
 
       def changed?(object)
