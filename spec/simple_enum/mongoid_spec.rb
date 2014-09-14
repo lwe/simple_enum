@@ -12,7 +12,7 @@ describe SimpleEnum::Mongoid, mongoid: true do
     subject { klass }
 
     it 'has the genders enum' do
-      expect(klass.genders).to be_a(SimpleEnum::Enum)
+      expect(klass.genders).to be_a(SimpleEnum::Enums::Enum)
     end
 
     it 'creates the :gender_cd field' do

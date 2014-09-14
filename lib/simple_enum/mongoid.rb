@@ -33,7 +33,7 @@ module SimpleEnum
       # Wrap method chain to create mongoid field and additional
       # column options
       def as_enum(name, values, options = {})
-        source = options[:source].to_s.presence || if multiple
+        source = options[:source].to_s.presence || if options[:multiple]
             "#{name.to_s.singularize}"\
             "#{SimpleEnum.multi_suffix || SimpleEnum.suffix.pluralize}"
           else
