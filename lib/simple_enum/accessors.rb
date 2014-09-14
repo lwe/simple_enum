@@ -10,9 +10,9 @@ module SimpleEnum
     }
 
     def self.accessor(name, enum, options = {})
-      access = options.fetch(:accessor, SimpleEnum.accessor)
+      access = options[:accessor] || SimpleEnum.accessor
       klass = ACCESSORS[access] || Accessor
-      klass.new(name, enum, options[:source], options[:prefix])
+      klass.new(name, enum, options[:source], options[:prefix], options[:multiple])
     end
   end
 end

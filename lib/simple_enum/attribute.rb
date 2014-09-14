@@ -1,6 +1,6 @@
 require 'active_support/core_ext/array'
 
-require 'simple_enum/enum'
+require 'simple_enum/enums'
 require 'simple_enum/hasher'
 require 'simple_enum/accessors'
 
@@ -14,17 +14,17 @@ module SimpleEnum
   #
   module Attribute
     def as_enum(name, values, options = {})
-      options.assert_valid_keys(:source, :prefix, :with, :accessor, :map)
+      options.assert_valid_keys(:source, :prefix, :with, :accessor, :map, :multiple)
 
       hash     = SimpleEnum::Hasher.map(values, options)
-      enum     = SimpleEnum::Enum.new(name, hash)
+      enum     = SimpleEnum::Enums.enum(name, hash, options)
       accessor = SimpleEnum::Accessors.accessor(name, enum, options)
 
       generate_enum_class_accessors_for(enum, accessor)
       generate_enum_instance_accessors_for(enum, accessor)
 
       Array.wrap(options.fetch(:with, SimpleEnum.with)).each do |feature|
-        send "generate_enum_#{feature}_methods_for", enum, accessor
+        send("generate_enum_#{feature}_methods_for", enum, accessor)
       end
 
       enum
