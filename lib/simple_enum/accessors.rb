@@ -1,12 +1,18 @@
 require 'simple_enum/accessors/accessor'
 require 'simple_enum/accessors/ignore_accessor'
 require 'simple_enum/accessors/whiny_accessor'
+require 'simple_enum/accessors/multiple_accessor'
+require 'simple_enum/accessors/join_table_accessor'
+require 'simple_enum/accessors/bitwise_accessor'
 
 module SimpleEnum
   module Accessors
     ACCESSORS = {
       ignore: IgnoreAccessor,
-      whiny:  WhinyAccessor
+      whiny:  WhinyAccessor,
+      multiple: MultipleAccessor,
+      join_table: JoinTableAccessor,
+      bitwise: BitwiseAccessor
     }
 
     def self.accessor(name, enum, options = {})

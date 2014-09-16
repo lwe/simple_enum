@@ -29,6 +29,21 @@ module ModelSupport
       }
     end
 
+    def fake_multiple_model(name, *fields, &block)
+      fields = [:favorite_cds] if fields.empty?
+      let(name) {
+        Struct.new(*fields) do
+          extend ActiveModel::Translation
+          extend SimpleEnum::Attribute
+          instance_eval &block if block_given?
+
+          def self.model_name
+            @model_name ||= ActiveModel::Name.new(self, nil, "FakeModel")
+          end
+        end
+      }
+    end
+
     def fake_model(name, *fields, &block)
       fields << :gender_cd
       let(name) {
