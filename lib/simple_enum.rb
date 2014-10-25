@@ -33,6 +33,9 @@ module SimpleEnum
   mattr_accessor :field
   @@field = {}
 
+  mattr_accessor :multi
+  @@multi = false
+
   def self.configure
     yield(self)
   end
