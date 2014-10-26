@@ -110,7 +110,7 @@ Add this to a model, here we use a serialized column to store an enum array:
 ```ruby
 class User < ActiveRecord::Base
   serialize :roles_cd
-  as_enum :roles, user: 0, manager: 1, admin: 2, multi: true
+  as_enum :roles, { user: 0, manager: 1, admin: 2 }, multi: true
 end
 ```
 
