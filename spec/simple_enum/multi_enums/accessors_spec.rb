@@ -171,6 +171,18 @@ describe SimpleEnum::Accessors do
         expect(subject.selected?(klass.new([0]), [:user])).to be_truthy
       end
 
+      it 'returns true when roles_cd is [0, 1] and [:user] is passed' do
+        expect(subject.selected?(klass.new([0, 1]), [:user])).to be_truthy
+      end
+
+      it 'returns true when roles_cd is [0, 1] and [:user, :manager] is passed' do
+        expect(subject.selected?(klass.new([0, 1]), [:user, :manager])).to be_truthy
+      end
+
+      it 'returns true when roles_cd is [0, 1, 2] and [:user, :manager] is passed' do
+        expect(subject.selected?(klass.new([0, 1, 2]), [:user, :manager])).to be_truthy
+      end
+
       it 'returns false when roles_cd is [0] and :manager is passed' do
         expect(subject.selected?(klass.new([0]), :manager)).to be_falsey
       end
@@ -181,6 +193,14 @@ describe SimpleEnum::Accessors do
 
       it 'returns false when roles_cd is [0] and [:user, :manager] is passed' do
         expect(subject.selected?(klass.new([0]), [:user, :manager])).to be_falsey
+      end
+
+      it 'returns false when roles_cd is [0, 2] and [:manager] is passed' do
+        expect(subject.selected?(klass.new([0, 2]), [:manager])).to be_falsey
+      end
+
+      it 'returns false when roles_cd is [0, 2] and [:user, :manager] is passed' do
+        expect(subject.selected?(klass.new([0, 2]), [:user, :manager])).to be_falsey
       end
 
       it 'returns false when roles_cd is [0] and :other is passed' do

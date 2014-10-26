@@ -15,9 +15,15 @@ module SimpleEnum
 
         def selected?(object, key = nil)
           values = read_before_type_cast(object)
-          keys = to_keys_array(values)
-          return keys && keys == to_keys_array(to_values_array(key)) if key
-          keys
+          ori_keys = to_keys_array(values)
+          if ori_keys && key
+            if given_keys = to_keys_array(to_values_array(key))
+              return (given_keys.reject { |gk| !ori_keys.include?(gk) } == given_keys)
+            else
+              return nil
+            end
+          end
+          ori_keys
         end
 
         def was(object)
