@@ -11,8 +11,8 @@ describe SimpleEnum::Mongoid, mongoid: true do
   context '.as_enum' do
     subject { klass }
 
-    it 'has the roless enum' do
-      expect(klass.roless).to be_a(SimpleEnum::Enum)
+    it 'has the roles enum' do
+      expect(klass.roles).to be_a(SimpleEnum::Enum)
     end
 
     it 'creates the :roles_cd field' do
