@@ -12,6 +12,7 @@ module ActiveRecordSupport
     ActiveRecordSupport.connection.create_table :dummies, :force => true do |t|
       t.column :name, :string
       t.column :gender_cd, :integer
+      t.column :roles_cd, :text
       t.column :word_cd, :string, :limit => 5
       t.column :role_cd, :string
       t.column :other, :integer

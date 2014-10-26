@@ -43,5 +43,20 @@ module ModelSupport
         end
       }
     end
+
+    def fake_model_multi(name, *fields, &block)
+      fields << :roles_cd
+      let(name) {
+        Struct.new(*fields) do
+          extend ActiveModel::Translation
+          extend SimpleEnum::Attribute
+          instance_eval &block if block_given?
+
+          def self.model_name
+            @model_name ||= ActiveModel::Name.new(self, nil, "FakeModel")
+          end
+        end
+      }
+    end
   end
 end
