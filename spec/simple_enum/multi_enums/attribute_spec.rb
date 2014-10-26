@@ -65,7 +65,7 @@ describe SimpleEnum::Attribute do
     end
 
     context 'with: :dirty' do
-      fake_model(:klass_with_dirty) { as_enum :roles, %w{user manager}, with: [:dirty] }
+      fake_model(:klass_with_dirty) { as_enum :roles, %w{user manager}, with: [:dirty], multi: true }
       subject { klass_with_dirty.new }
 
       it 'delegates #roles_changed? to accessor' do
@@ -94,7 +94,7 @@ describe SimpleEnum::Attribute do
     end
 
     context 'with: :attribute' do
-      fake_model(:klass_with_attributes) { as_enum :roles, %w{user manager}, with: [:attribute] }
+      fake_model(:klass_with_attributes) { as_enum :roles, %w{user manager}, with: [:attribute], multi: true }
       subject { klass_with_attributes.new }
 
       it 'delegates #roles? to accessor' do
@@ -124,7 +124,7 @@ describe SimpleEnum::Attribute do
     end
 
     context 'with a prefix' do
-      fake_model(:klass_with_prefix) { as_enum :roles, %w{user manager}, with: [:attribute], prefix: true }
+      fake_model(:klass_with_prefix) { as_enum :roles, %w{user manager}, with: [:attribute], prefix: true, multi: true }
       subject { klass_with_prefix.new }
 
       it 'delegates #roles? to accessor' do
