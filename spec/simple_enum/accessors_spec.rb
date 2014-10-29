@@ -19,6 +19,22 @@ describe SimpleEnum::Accessors do
     end
   end
 
+  context '.register_accessor' do
+    let(:accessor) { Class.new { def initialize(*args); end } }
+    subject { described_class.accessor(:gender, "enum", accessor: :would_be) }
+
+    before { SimpleEnum.register_accessor :would_be, accessor }
+    after { SimpleEnum::Accessors::ACCESSORS.delete(:would_be) }
+
+    it 'adds accessor to ACCESSORS' do
+      expect(SimpleEnum::Accessors::ACCESSORS[:would_be]).to eq accessor
+    end
+
+    it 'allows to create an instance of our WouldBeAccessor' do
+      expect(subject).to be_a accessor
+    end
+  end
+
   context 'Accessor' do
     subject { described_class::Accessor.new(:gender, enum) }
 
