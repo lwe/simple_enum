@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe SimpleEnum::CollectionProxy do
-  let(:enum) { SimpleEnum::Enum.new(:gender, "iphone" => 0, "ipad" => 1, "macbook" => 2) }
+  let(:enum) { SimpleEnum::Enum.new(:favorites, "iphone" => 0, "ipad" => 1, "macbook" => 2) }
   let(:accessor) { SimpleEnum::Accessors::MultipleAccessor.new(:favorites, enum) }
   let(:favorite_cds) { [] }
 

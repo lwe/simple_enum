@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe SimpleEnum::Accessors do
-  let(:enum) { SimpleEnum::Enum.new(:gender, "iphone" => 0, "ipad" => 1, "macbook" => 2) }
+  let(:enum) { SimpleEnum::Enum.new(:favorites, "iphone" => 0, "ipad" => 1, "macbook" => 2) }
   fake_multiple_model(:klass)
   let(:object) { klass.new }
 
@@ -32,7 +32,7 @@ describe SimpleEnum::Accessors do
           expect(subject.read(klass.new([0]))).to eq [:iphone]
         end
 
-        it 'returns [:iphone, :ipad] when gender_cd is [0, 1]' do
+        it 'returns [:iphone, :ipad] when favorite_cds is [0, 1]' do
           expect(subject.read(klass.new([0, 1]))).to eq [:iphone, :ipad]
         end
       end
@@ -107,17 +107,17 @@ describe SimpleEnum::Accessors do
         expect(subject.selected?(klass.new([0, 1]))).to be_truthy
       end
 
-      it 'returns true when gender_cd is 0 and :iphone is passed' do
+      it 'returns true when favorite_cds includes 0 and :iphone is passed' do
         expect(subject.selected?(klass.new([0]), :iphone)).to be_truthy
         expect(subject.selected?(klass.new([0, 1]), :iphone)).to be_truthy
       end
 
-      it 'returns false when gender_cd is 0 and :macbook is passed' do
+      it 'returns false when favorite_cds includes 0 and :macbook is passed' do
         expect(subject.selected?(klass.new([0]), :macbook)).to be_falsey
         expect(subject.selected?(klass.new([0, 1]), :macbook)).to be_falsey
       end
 
-      it 'returns false when gender_cd is 1 and :other is passed' do
+      it 'returns false when favorite_cds includes 0 and :other is passed' do
         expect(subject.selected?(klass.new([0]), :other)).to be_falsey
       end
     end
