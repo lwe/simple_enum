@@ -30,6 +30,9 @@ module SimpleEnum
   mattr_accessor :suffix
   @@suffix = "_cd"
 
+  mattr_accessor :multi_suffix
+  @@multi_suffix = nil
+
   mattr_accessor :field
   @@field = {}
 

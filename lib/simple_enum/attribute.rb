@@ -19,6 +19,7 @@ module SimpleEnum
       hash     = SimpleEnum::Hasher.map(values, options)
       enum     = SimpleEnum::Enum.new(name, hash)
       accessor = SimpleEnum::Accessors.accessor(name, enum, options)
+      accessor.init(self)
 
       generate_enum_class_accessors_for(enum, accessor)
       generate_enum_instance_accessors_for(enum, accessor)
@@ -70,7 +71,7 @@ module SimpleEnum
       return unless respond_to?(:scope)
 
       enum.each_pair do |key, value|
-        scope "#{accessor.prefix}#{key.pluralize}", -> { where(accessor.source => value) }
+        scope "#{accessor.prefix}#{key.pluralize}", -> { accessor.scope(self, key, value) }
       end
     end
   end
