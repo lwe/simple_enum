@@ -36,6 +36,10 @@ module SimpleEnum
         enum.key(object.send(:attribute_was, source))
       end
 
+      def scope(relation, value)
+        relation.where(source => value)
+      end
+
       def to_s
         name
       end
