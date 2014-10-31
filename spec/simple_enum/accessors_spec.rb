@@ -170,12 +170,11 @@ describe SimpleEnum::Accessors do
       end
     end
 
-    context 'was' do
+    context '#was' do
       it 'delegates to attribute_was and resolves symbol' do
         expect(object).to receive(:attribute_was).with('gender_cd') { 1 }
         expect(subject.was(object)).to eq :female
       end
-
     end
   end
 
@@ -189,6 +188,21 @@ describe SimpleEnum::Accessors do
         expect(object.gender_changed?).to be_truthy
         expect(object.gender_was).to eq :male
       end.to_not raise_error
+    end
+  end
+
+  context '#scope' do
+    fake_active_record(:klass) { as_enum :gender, [:male, :female] }
+    let(:accessor) { described_class::Accessor.new(:gender, enum) }
+    subject { accessor.scope(klass, 1) }
+
+    it 'returns an ActiveRecord::Relation' do
+      expect(subject).to be_a(ActiveRecord::Relation)
+    end
+
+    it "queries for gender_cd = 1" do
+      values_hash = { "gender_cd" => 1 }
+      expect(subject.where_values_hash).to eq values_hash
     end
   end
 

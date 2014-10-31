@@ -190,25 +190,23 @@ describe SimpleEnum::Attribute do
       as_enum :gender, [:male, :female], with: [:scope]
     }
 
-    shared_examples_for 'returning a relation' do |value|
-      it 'returns an ActiveRecord::Relation' do
-        expect(subject).to be_a(ActiveRecord::Relation)
-      end
+    let(:accessor) { klass.genders_accessor }
 
-      it "queries for gender_cd = #{value}" do
-        values_hash = { "gender_cd" => value }
-        expect(subject.where_values_hash).to eq values_hash
+    shared_examples_for 'delegates to accessor#scope' do |value|
+      it 'delegates to #scope' do
+        expect(accessor).to receive(:scope).with(klass, value)
+        subject
       end
     end
 
     context '.males' do
       subject { klass.males }
-      it_behaves_like 'returning a relation', 0
+      it_behaves_like 'delegates to accessor#scope', 0
     end
 
     context '.females' do
       subject { klass.females }
-      it_behaves_like 'returning a relation', 1
+      it_behaves_like 'delegates to accessor#scope', 1
     end
 
     context 'with prefix' do
@@ -218,12 +216,12 @@ describe SimpleEnum::Attribute do
 
       context '.gender_males' do
         subject { klass.gender_males }
-        it_behaves_like 'returning a relation', 0
+        it_behaves_like 'delegates to accessor#scope', 0
       end
 
       context '.gender_females' do
         subject { klass.gender_females }
-        it_behaves_like 'returning a relation', 1
+        it_behaves_like 'delegates to accessor#scope', 1
       end
     end
 
