@@ -15,4 +15,14 @@ module SimpleEnum
       klass.new(name, enum, options[:source], options[:prefix])
     end
   end
+
+  # Public: Extension method to register a custom accessor.
+  #
+  # key - The Symbol of the accessor key, e.g. `:bitwise`
+  # clazz - The Class with the accessor implementation
+  #
+  # Returns nothing
+  def self.register_accessor(key, clazz)
+    Accessors::ACCESSORS[key] = clazz
+  end
 end

@@ -13,6 +13,9 @@ module SimpleEnum
   # original method.
   #
   module Attribute
+    # Registered registrator methods from extensions
+    EXTENSIONS = []
+
     def as_enum(name, values, options = {})
       options.assert_valid_keys(:source, :prefix, :with, :accessor, :map)
 
@@ -25,6 +28,10 @@ module SimpleEnum
 
       Array.wrap(options.fetch(:with, SimpleEnum.with)).each do |feature|
         send "generate_enum_#{feature}_methods_for", enum, accessor
+      end
+
+      EXTENSIONS.uniq.each do |extension|
+        send "generate_enum_#{extension}_extension_for", enum, accessor
       end
 
       enum
@@ -73,5 +80,18 @@ module SimpleEnum
         scope "#{accessor.prefix}#{key.pluralize}", -> { where(accessor.source => value) }
       end
     end
+  end
+
+  # Public: Register a generator method and add module as part of
+  # SimpleEnum::Attribute. The generator method is called after all default
+  # generators have been created, this allows to override/change existing methods.
+  #
+  # name - The Symbol with the name of the extension
+  # mod - The Module implementing `generate_enum_{name}_extension_for` method
+  #
+  # Returns nothing
+  def self.register_generator(name, mod)
+    Attribute.send :include, mod
+    Attribute::EXTENSIONS << name.to_s
   end
 end

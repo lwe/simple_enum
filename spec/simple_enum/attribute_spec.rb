@@ -10,6 +10,37 @@ describe SimpleEnum::Attribute do
     end
   end
 
+  context '.register_generator' do
+    let(:mod) {
+      Module.new do
+        def generate_enum_spec_extension_for(enum, accessor)
+          module_eval { attr_accessor :some_reader }
+          simple_enum_module.module_eval do
+            define_method("extension_method") { "as_enum(#{enum.name})" }
+          end
+        end
+      end
+    }
+
+    before { SimpleEnum.register_generator :spec, mod }
+    after { described_class::EXTENSIONS.clear }
+
+    subject { klass.new }
+
+    it 'adds "spec" to EXTENSIONS' do
+      expect(described_class::EXTENSIONS).to eq %w{spec}
+    end
+
+    it 'calls generate_enum_spec_extension_for during as_enum' do
+      expect(subject.extension_method).to eq "as_enum(gender)"
+    end
+
+    it 'allows to add behavior to class itself (e.g. attr_accessor)' do
+      subject.some_reader = "some value"
+      expect(subject.some_reader).to eq "some value"
+    end
+  end
+
   context 'generate_enum_class_accessors_for' do
     context '.genders' do
       subject { klass.genders }
