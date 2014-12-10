@@ -192,9 +192,13 @@ useful when creating queries, displaying option elements or similar:
 
 * To make it easier to create dropdowns with values use:
 
-        <%= select(:user, :gender, User.genders.keys) %>
+        <%= select(:user, :gender, User.genders_for_select) %>
+        
+  This creates a `select` with options nicely formatted:
+        
+        [ [ "Male", 0 ], [ "Female", 1 ] ]
 
-* Need translated keys et al in your forms? SimpleEnum provides a <tt><enum>_for_select</tt> method:
+* Need *translated* keys et al in your forms? SimpleEnum provides a <tt><enum>_for_select</tt> method:
 
        # on the gender field
        <%= select("user", "gender", User.genders_for_select) %>
