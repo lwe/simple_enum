@@ -223,11 +223,23 @@ so expect them to change in future versions of SimpleEnum.
   translate_enum user, :gender # => "Frau" # assuming :de and translations exist
   te user, :gender # translate_enum is also aliased to te
   ```
+  
+  Provide translations in the i18n yaml file like:
+  
+  ```ruby
+    de:
+      enums:
+        gender:
+          female: 'Frau'
+          male: 'Mann'
+  ```
+  
 - Build a select tag with a translated dropdown and symbol as value:
 
   ```ruby
   select :user, :gender, enum_option_pairs(User, :gender)
   ```
+  
 - ...and one with the index as value:
 
   ```ruby
