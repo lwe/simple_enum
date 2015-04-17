@@ -228,6 +228,16 @@ so expect them to change in future versions of SimpleEnum.
   ```ruby
   select :user, :gender, enum_option_pairs(User, :gender)
   ```
+  
+  Provide translations in the i18n yaml file like:
+  
+  ```ruby
+    de:
+      enums:
+        gender:
+          female: 'Frau'
+          male: 'Mann'
+  ```
 - ...and one with the index as value:
 
   ```ruby
