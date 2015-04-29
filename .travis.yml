@@ -2,7 +2,8 @@ language: ruby
 services: mongodb
 rvm:
   - 2.0.0
-  - 2.1.1
+  - 2.2.0
+  - ruby-head
   - jruby-19mode
 
 gemfile:

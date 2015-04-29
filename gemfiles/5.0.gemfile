@@ -2,6 +2,7 @@ source "http://rubygems.org"
 
 gem 'activesupport', '5.0.0.alpha', github: 'rails/rails', branch: 'master'
 gem 'activerecord', '5.0.0.alpha', github: 'rails/rails', branch: 'master'
+gem 'arel', '7.0.0.alpha', github: 'rails/arel', branch: 'master'
 
 # some development deps
 gem 'activerecord-jdbcsqlite3-adapter', platform: :jruby
