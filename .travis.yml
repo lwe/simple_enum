@@ -1,7 +1,6 @@
 language: ruby
 services: mongodb
 rvm:
-  - 1.9.3
   - 2.0.0
   - 2.1.1
   - jruby-19mode
@@ -9,6 +8,7 @@ rvm:
 gemfile:
   - Gemfile
   - gemfiles/4.0.gemfile
+  - gemfiles/5.0.gemfile
 
 #matrix:
 #  allow_failures:
