@@ -267,16 +267,16 @@ User.females # => returns an ActiveRecord::Relation
 Contributors
 ------------
 
-- [@dmitry](https://twitter.com/dmitry) - bugfixes and other improvements
-- [@tarsolya](https://twitter.com/tarsolya) - implemented all the ruby 1.9 and rails 3 goodness!
-- [@dbalatero](https://twitter.com/dbalatero) - rails 2.3.5 bugfix & validator fixes
-- [@johnthethird](https://twitter.com/johnthethird) - feature for `_for_select` to return the values
-- [@sinsiliux](https://twitter.com/sinsiliux) - ruby 1.9 fixes and removed AR dependency
-- [@sled](https://twitter.com/sled) - mongoid support
-- [@abrom](https://twitter.com/abrom) - `find_by_...` method
-- [@mhuggins](https://twitter.com/mhuggins) - translations fixes
-- [@patbenatar](https://twitter.com/patbenatar) - for helping move towards 2.0 (scopes et all)
-- [@abacha](https://twitter.com/abacha) - translation helpers, README fixes
+- [@dmitry](https://github.com/dmitry) - bugfixes and other improvements
+- [@tarsolya](https://github.com/tarsolya) - implemented all the ruby 1.9 and rails 3 goodness!
+- [@dbalatero](https://github.com/dbalatero) - rails 2.3.5 bugfix & validator fixes
+- [@johnthethird](https://github.com/johnthethird) - feature for `_for_select` to return the values
+- @sinsiliux - ruby 1.9 fixes and removed AR dependency
+- [@sled](https://github.com/sled) - mongoid support
+- [@abrom](https://github.com/abrom) - `find_by_...` method
+- [@mhuggins](https://github.com/mhuggins) - translations fixes
+- [@patbenatar](https://github.com/patbenatar) - for helping move towards 2.0 (scopes et all)
+- [@abacha](https://github.com/abacha) - translation helpers, README fixes
 - and all others: https://github.com/lwe/simple_enum/graphs/contributors thanks
 
 License & Copyright
