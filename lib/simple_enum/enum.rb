@@ -25,6 +25,10 @@ module SimpleEnum
     end
     alias_method :[], :value
 
+    def fetch(key)
+      value(key) || raise("Key \"#{key}\" not found")
+    end
+
     def each_pair(&block)
       hash.each_pair(&block)
     end

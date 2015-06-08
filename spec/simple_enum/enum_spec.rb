@@ -70,6 +70,24 @@ describe SimpleEnum::Enum do
     end
   end
 
+  context '#fetch' do
+    it 'looks up by string' do
+      expect(subject.fetch('male')).to eq 0
+    end
+
+    it 'looks up by symbol' do
+      expect(subject.fetch(:female)).to eq 1
+    end
+
+    it 'looks up by value' do
+      expect(subject.fetch(0)).to be 0
+    end
+
+    it 'throws exception when key is not found' do
+      expect{subject.fetch(:inexistent)}.to raise_error(/not found/i)
+    end
+  end
+
   context '#key' do
     it 'returns symbolized key for supplied value' do
       expect(subject.key(0)).to eq :male
