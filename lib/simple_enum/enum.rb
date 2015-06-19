@@ -1,12 +1,14 @@
 require 'active_support/core_ext/string'
+require 'active_support/core_ext/hash'
 
 module SimpleEnum
   class Enum
-    attr_reader :name, :hash
+    attr_reader :name
 
     def initialize(name, hash)
       @name = name.to_s
       @hash = hash
+      @symbols_hash = hash.symbolize_keys
     end
 
     def include?(key)
@@ -30,16 +32,16 @@ module SimpleEnum
     end
 
     def each_pair(&block)
-      hash.each_pair(&block)
+      symbols_hash.each_pair(&block)
     end
     alias_method :each, :each_pair
 
     def map(&block)
-      hash.map(&block)
+      symbols_hash.map(&block)
     end
 
     def keys
-      hash.keys
+      symbols_hash.keys
     end
 
     def values_at(*keys)
@@ -50,5 +52,9 @@ module SimpleEnum
     def to_s
       name
     end
+
+    # Private access to hash and symbolized hash
+    private
+    attr_reader :hash, :symbols_hash
   end
 end

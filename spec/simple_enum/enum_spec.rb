@@ -22,29 +22,23 @@ describe SimpleEnum::Enum do
     end
   end
 
-  context '#hash' do
-    subject { described_class.new(:gender, hash).hash }
-
-    it 'returns hash that was set in the constructor' do
-      expect(subject).to be_a(Hash)
-      expect(subject.keys).to eq %w{male female}
-      expect(subject.values).to eq [0, 1]
-    end
-  end
-
   context '#keys' do
     it 'returns the keys in the order added' do
-      expect(subject.keys).to eq %w{male female}
+      expect(subject.keys).to eq [:male, :female]
     end
   end
 
   context '#each_pair (aliased to #each)' do
     it 'yields twice with #each_pair' do
-      expect { |b| subject.each_pair(&b) }.to yield_control.exactly(2).times
+      result = []
+      subject.each_pair { |b| result << b }
+      expect(result).to eq [[:male, 0], [:female, 1]]
     end
 
     it 'yields twice with #each' do
-      expect { |b| subject.each(&b) }.to yield_control.exactly(2).times
+      result = []
+      subject.each { |b| result << b }
+      expect(result).to eq [[:male, 0], [:female, 1]]
     end
   end
 

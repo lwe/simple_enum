@@ -23,6 +23,7 @@ module SimpleEnum
       record = record.class unless record.respond_to?(reader)
 
       record.send(reader).map { |key, value|
+        key = key.to_s
         name = record.human_enum_name(enum, key) if record.respond_to?(:human_enum_name)
         name ||= translate_enum_key(enum, key)
         [name, encode_as_value ? value : key]

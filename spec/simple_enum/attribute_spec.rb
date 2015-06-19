@@ -134,22 +134,22 @@ describe SimpleEnum::Attribute do
       end
 
       it 'delegates #male? to accessor' do
-        expect(accessor).to receive(:selected?).with(subject, 'male') { true }
+        expect(accessor).to receive(:selected?).with(subject, :male) { true }
         expect(subject.male?).to be_truthy
       end
 
       it 'delegates #female? to accessor' do
-        expect(accessor).to receive(:selected?).with(subject, 'female') { false }
+        expect(accessor).to receive(:selected?).with(subject, :female) { false }
         expect(subject.female?).to be_falsey
       end
 
       it 'delegates #male! to accessor' do
-        expect(accessor).to receive(:write).with(subject, 'male') { 0 }
+        expect(accessor).to receive(:write).with(subject, :male) { 0 }
         expect(subject.male!).to eq 0
       end
 
       it 'delegates #female! to accessor' do
-        expect(accessor).to receive(:write).with(subject, 'female') { 1 }
+        expect(accessor).to receive(:write).with(subject, :female) { 1 }
         expect(subject.female!).to eq 1
       end
     end
@@ -164,22 +164,22 @@ describe SimpleEnum::Attribute do
       end
 
       it 'delegates #gender_male? to accessor' do
-        expect(accessor).to receive(:selected?).with(subject, 'male') { true }
+        expect(accessor).to receive(:selected?).with(subject, :male) { true }
         expect(subject.gender_male?).to be_truthy
       end
 
       it 'delegates #gender_female? to accessor' do
-        expect(accessor).to receive(:selected?).with(subject, 'female') { false }
+        expect(accessor).to receive(:selected?).with(subject, :female) { false }
         expect(subject.gender_female?).to be_falsey
       end
 
       it 'delegates #gender_male! to accessor' do
-        expect(accessor).to receive(:write).with(subject, 'male') { 0 }
+        expect(accessor).to receive(:write).with(subject, :male) { 0 }
         expect(subject.gender_male!).to eq 0
       end
 
       it 'delegates #gender_female! to accessor' do
-        expect(accessor).to receive(:write).with(subject, 'female') { 1 }
+        expect(accessor).to receive(:write).with(subject, :female) { 1 }
         expect(subject.gender_female!).to eq 1
       end
     end
