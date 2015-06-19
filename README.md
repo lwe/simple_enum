@@ -113,7 +113,7 @@ User.females                            # => #<ActiveRecord::Relation:0x0.....> 
   end
   ```
 
-  **Disclaimer**: if you _ever_ decide to reorder this array, beaware that any
+  **Disclaimer**: if you _ever_ decide to reorder this array, beware that any
   previous mapping is lost. So it's recommended to create mappings (that might
   change) using hashes instead of arrays. For stuff like gender it might be
   probably perfectly fine to use arrays though.
