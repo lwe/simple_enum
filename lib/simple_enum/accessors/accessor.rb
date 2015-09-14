@@ -33,7 +33,9 @@ module SimpleEnum
       end
 
       def was(object)
-        enum.key(object.send(:attribute_was, source))
+        changes = object.send(:changed_attributes)
+        key = changes.fetch(source, read_before_type_cast(object))
+        enum.key(key) if key
       end
 
       def scope(relation, value)

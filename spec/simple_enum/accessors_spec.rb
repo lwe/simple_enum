@@ -171,8 +171,12 @@ describe SimpleEnum::Accessors do
     end
 
     context '#was' do
-      it 'delegates to attribute_was and resolves symbol' do
-        expect(object).to receive(:attribute_was).with('gender_cd') { 1 }
+      let(:changes) do
+        { 'gender_cd' => 1 }
+      end
+
+      it 'delegates to changed_attributes and resolves symbol' do
+        expect(object).to receive(:changed_attributes) { changes }
         expect(subject.was(object)).to eq :female
       end
     end
@@ -188,6 +192,44 @@ describe SimpleEnum::Accessors do
         expect(object.gender_changed?).to be_truthy
         expect(object.gender_was).to eq :male
       end.to_not raise_error
+    end
+
+    context 'github.com/lwe/simple_enum/issues/109' do
+      fake_active_record(:klass) {
+        as_enum(:gender_cd, %w{female male}, source: :gender_cd)
+        as_enum(:role_cd, %w{completed cap dnf dns}, map: :string, source: :role_cd)
+      }
+      let(:object) { klass.create(role_cd: "cap", gender_cd: :female) }
+
+      context '#gender_cd_was' do
+        it 'returns nil when nil' do
+          expect(klass.create.gender_cd_was).to be_nil
+        end
+
+        it 'returns the current gender' do
+          expect(object.gender_cd_was).to eq :female
+        end
+
+        it 'returns the old gender' do
+          object.gender_cd = :male
+          expect(object.gender_cd_was).to eq :female
+        end
+      end
+
+      context '#role_cd_was' do
+        it 'returns nil when nil' do
+          expect(klass.create.role_cd_was).to be_nil
+        end
+
+        it 'returns the current role' do
+          expect(object.role_cd_was).to eq :cap
+        end
+
+        it 'returns completed when changed' do
+          object.role_cd = :completed
+          expect(object.role_cd_was).to eq :cap
+        end
+      end
     end
   end
 
