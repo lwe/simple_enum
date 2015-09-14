@@ -38,6 +38,12 @@ describe SimpleEnum::Enum do
     end
   end
 
+  context '#values' do
+    it 'returns the values in the order added' do
+      expect(subject.values).to eq [0, 1]
+    end
+  end
+
   context '#each_pair (aliased to #each)' do
     it 'yields twice with #each_pair' do
       expect { |b| subject.each_pair(&b) }.to yield_control.exactly(2).times
