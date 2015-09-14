@@ -42,6 +42,10 @@ module SimpleEnum
       hash.keys
     end
 
+    def values
+      hash.values
+    end
+
     def values_at(*keys)
       keys = keys.map(&:to_s)
       hash.values_at(*keys)
