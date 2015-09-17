@@ -1,5 +1,6 @@
 require 'spec_helper'
 require 'simple_enum/mongoid'
+SimpleEnum::Attribute::EXTENSIONS.clear
 
 describe SimpleEnum::Mongoid, mongoid: true do
   fake_mongoid_model(:klass) {
@@ -7,6 +8,9 @@ describe SimpleEnum::Mongoid, mongoid: true do
   }
 
   let(:field) { klass.fields['gender_cd'] }
+
+  before { SimpleEnum.register_generator :mongoid, SimpleEnum::Mongoid::Extension }
+  after { SimpleEnum::Attribute::EXTENSIONS.clear }
 
   context '.as_enum' do
     subject { klass }

@@ -26,22 +26,20 @@ module SimpleEnum
     def self.included(base)
       base.extend SimpleEnum::Attribute
       base.extend SimpleEnum::Translation
-      base.extend SimpleEnum::Mongoid::ClassMethods
     end
 
-    module ClassMethods
+    module Extension
       # Wrap method chain to create mongoid field and additional
       # column options
-      def as_enum(name, values, options = {})
-        source = options[:source].to_s.presence || "#{name}#{SimpleEnum.suffix}"
+      def generate_enum_mongoid_extension_for(enum, accessor, options)
         field_options = options.delete(:field)
-        unless field_options === false
-          field_options ||= SimpleEnum.field
-          field(source, field_options) if field_options
-        end
-
-        super
+        return if field_options === false
+        field_options ||= SimpleEnum.field
+        field(accessor.source, field_options) if field_options
       end
     end
   end
 end
+
+SimpleEnum::Attribute::VALID_OPTION_KEYS.push :field
+SimpleEnum.register_generator :mongoid, SimpleEnum::Mongoid::Extension
