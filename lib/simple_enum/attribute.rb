@@ -16,8 +16,10 @@ module SimpleEnum
     # Registered registrator methods from extensions
     EXTENSIONS = []
 
+    VALID_OPTION_KEYS = [:source, :prefix, :with, :accessor, :map]
+
     def as_enum(name, values, options = {})
-      options.assert_valid_keys(:source, :prefix, :with, :accessor, :map)
+      options.assert_valid_keys(*VALID_OPTION_KEYS)
 
       hash     = SimpleEnum::Hasher.map(values, options)
       enum     = SimpleEnum::Enum.new(name, hash)
@@ -31,7 +33,7 @@ module SimpleEnum
       end
 
       EXTENSIONS.uniq.each do |extension|
-        send "generate_enum_#{extension}_extension_for", enum, accessor
+        send "generate_enum_#{extension}_extension_for", enum, accessor, options
       end
 
       enum

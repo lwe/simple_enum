@@ -13,7 +13,7 @@ describe SimpleEnum::Attribute do
   context '.register_generator' do
     let(:mod) {
       Module.new do
-        def generate_enum_spec_extension_for(enum, accessor)
+        def generate_enum_spec_extension_for(enum, accessor, options)
           module_eval { attr_accessor :some_reader }
           simple_enum_module.module_eval do
             define_method("extension_method") { "as_enum(#{enum.name})" }
