@@ -35,7 +35,7 @@ module SimpleEnum
       def as_enum(name, values, options = {})
         field_options = options.delete(:field)
         enum = super
-        accessor = enum.accessor
+        accessor = send("#{name.to_s.pluralize}_accessor")
 
         unless field_options === false
           field_options ||= SimpleEnum.field

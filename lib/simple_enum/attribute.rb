@@ -22,7 +22,6 @@ module SimpleEnum
       hash     = SimpleEnum::Hasher.map(values, options)
       enum     = SimpleEnum::Enum.new(name, hash)
       accessor = SimpleEnum::Accessors.accessor(name, enum, options)
-      enum.accessor = accessor
 
       generate_enum_class_accessors_for(enum, accessor)
       generate_enum_instance_accessors_for(enum, accessor)

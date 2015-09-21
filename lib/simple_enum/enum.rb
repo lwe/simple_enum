@@ -3,7 +3,6 @@ require 'active_support/core_ext/string'
 module SimpleEnum
   class Enum
     attr_reader :name, :hash
-    attr_accessor :accessor
 
     def initialize(name, hash)
       @name = name.to_s
