@@ -287,6 +287,7 @@ Contributors
 - [@mhuggins](https://github.com/mhuggins) - translations fixes
 - [@patbenatar](https://github.com/patbenatar) - for helping move towards 2.0 (scopes et all)
 - [@abacha](https://github.com/abacha) - translation helpers, README fixes
+- [@bbtfr](https://github.com/bbtfr) - for support, ideas and pushing extensions
 - and all others: https://github.com/lwe/simple_enum/graphs/contributors thanks
 
 License & Copyright
