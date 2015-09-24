@@ -5,11 +5,20 @@ require 'rake/testtask'
 Bundler::GemHelper.install_tasks
 
 desc 'Default: run all unit tests for both ActiveRecord & Mongoid.'
-task :default => :spec
+task :default => :'spec:all'
 
-desc 'Run rspec test suite'
-task :spec do
-  sh 'bundle exec rspec spec/'
+desc 'Run basic specs only (skips mongoid)'
+task :spec => :'spec:basic'
+
+namespace :spec do
+  desc 'Run all specs'
+  task :all do
+    sh 'bundle', 'exec', 'rspec', 'spec/'
+  end
+
+  task :basic do
+    sh 'bundle', 'exec', 'rspec', 'spec/', '-t', '~mongoid'
+  end
 end
 
 # Mongodb
