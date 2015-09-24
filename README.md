@@ -245,6 +245,15 @@ so expect them to change in future versions of SimpleEnum.
   ```ruby
   select :user, :gender_cd, enum_option_pairs(User, :gender, true)
   ```
+## Extensions
+
+`simple_enum` provides hooks to extend its functionality, starting with 2.3.0
+the following extensions can be used:
+
+- **Multi-select enum** support for SimpleEnum:
+  [simple_enum-multiple](https://github.com/bbtfr/simple_enum-multiple)
+- **Persistence values**, i.e. store values in the DB:
+  [simple_enum-persistence](https://github.com/bbtfr/simple_enum-persistence)
 
 ## Best practices
 
@@ -282,6 +291,6 @@ Contributors
 License & Copyright
 -------------------
 
-Copyright (c) 2011-2014 by Lukas Westermann, Licensed under MIT License (see LICENSE file)
+Copyright (c) 2011-2015 by Lukas Westermann, Licensed under MIT License (see LICENSE file)
 
 [VE.rb]: https://github.com/lwe/simple_enum/blob/master/lib/simple_enum/view_helpers.rb
