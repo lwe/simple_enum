@@ -245,6 +245,7 @@ so expect them to change in future versions of SimpleEnum.
   ```ruby
   select :user, :gender_cd, enum_option_pairs(User, :gender, true)
   ```
+
 ## Extensions
 
 `simple_enum` provides hooks to extend its functionality, starting with 2.3.0
