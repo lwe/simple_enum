@@ -2,7 +2,7 @@ SimpleEnum
 ==========
 
 [![Build Status](https://travis-ci.org/lwe/simple_enum.svg)](https://travis-ci.org/lwe/simple_enum)
-[![Code Climate](https://codeclimate.com/github/lwe/simple_enum.png)](https://codeclimate.com/github/lwe/simple_enum)
+[![Code Climate](https://codeclimate.com/github/lwe/simple_enum.svg)](https://codeclimate.com/github/lwe/simple_enum)
 
 Unobtrusive enum-like fields for ActiveRecord and Ruby, brings enums functionality
 to ActiveRecord and Mongoid models (built for Rails 4+).
