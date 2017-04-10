@@ -2,14 +2,53 @@ language: ruby
 services: mongodb
 rvm:
   - 1.9.3
-  - 2.1.7
-  - 2.2.3
+  - 2.2.6
+  - 2.3.3
+  - 2.4.0
+  - ruby-head
   - jruby-19mode
 
 gemfile:
   - Gemfile
-  - gemfiles/4.0.gemfile
-  - gemfiles/mongoid.gemfile
+  - gemfiles/rails-4.0.gemfile
+  - gemfiles/rails-4.1.gemfile
+  - gemfiles/rails-4.2.gemfile
+  - gemfiles/rails-5.1.gemfile
+  - gemfiles/mongoid-4.0.gemfile
+  - gemfiles/mongoid-5.0.gemfile
+  - gemfiles/mongoid-6.0.gemfile
+
+matrix:
+  exclude:
+    - rvm: 1.9.3
+      gemfile: Gemfile
+    - rvm: 1.9.3
+      gemfile: gemfiles/rails-5.1.gemfile
+    - rvm: 1.9.3
+      gemfile: gemfiles/mongoid-6.0.gemfile
+    - rvm: 2.4.0
+      gemfile: gemfiles/rails-4.0.gemfile
+    - rvm: 2.4.0
+      gemfile: gemfiles/rails-4.1.gemfile
+    - rvm: 2.4.0
+      gemfile: gemfiles/mongoid-4.0.gemfile
+    - rvm: 2.4.0
+      gemfile: gemfiles/mongoid-5.0.gemfile
+    - rvm: ruby-head
+      gemfile: gemfiles/rails-4.0.gemfile
+    - rvm: ruby-head
+      gemfile: gemfiles/rails-4.1.gemfile
+    - rvm: ruby-head
+      gemfile: gemfiles/mongoid-4.0.gemfile
+    - rvm: ruby-head
+      gemfile: gemfiles/mongoid-5.0.gemfile
+    - rvm: jruby-19mode
+      gemfile: Gemfile
+    - rvm: jruby-19mode
+      gemfile: gemfiles/rails-5.1.gemfile
+    - rvm: jruby-19mode
+      gemfile: gemfiles/mongoid-6.0.gemfile
+
 
 env:
   global:
