@@ -1,7 +1,6 @@
 source "http://rubygems.org"
 
-# Fix mongoid to 4.x
-gem 'mongoid', '~> 4.0'
+gem 'mongoid', '~> 6.0'
 
 # some development deps
 gem 'activerecord-jdbcsqlite3-adapter', platform: :jruby

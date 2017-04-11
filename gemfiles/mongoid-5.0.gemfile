@@ -1,9 +1,6 @@
 source "http://rubygems.org"
 
-gem 'activesupport', '~> 5.0.0'
-gem 'activerecord', '~> 5.0.0'
-
-gemspec
+gem 'mongoid', '~> 5.0'
 
 # some development deps
 gem 'activerecord-jdbcsqlite3-adapter', platform: :jruby
@@ -12,3 +9,5 @@ gem 'bson_ext', platform: :ruby
 
 # Code coverage on CI only
 gem 'codeclimate-test-reporter', group: :test, require: nil
+
+gemspec path: "../"
