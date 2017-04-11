@@ -49,6 +49,12 @@ matrix:
     - rvm: jruby-19mode
       gemfile: gemfiles/mongoid-6.0.gemfile
 
+addons:
+  code_climate:
+    repo_token: 3e2b0e4edbb60361d0355dff3aaa30689773a487e2cdb798c6ecf08177b7e506
+
+after_success:
+  - bundle exec codeclimate-test-reporter
 
 env:
   global:
