@@ -50,7 +50,7 @@ to use simple_enum with another version of mongoid, use version 1.6 instead.
 Load mongoid support in the `Gemfile`:
 
 ```ruby
-gem 'simple_enum', '~> 2.0.0' , require: 'simple_enum/mongoid'
+gem 'simple_enum', '~> 2.3.0' , require: 'simple_enum/mongoid'
 ```
 
 Add this to a model:
@@ -98,7 +98,7 @@ Accessing actual enum values is possible at the class level:
 ```ruby
 User.genders                            # => #<SimpleEnum::Enum:0x0....>
 User.genders[:male]                     # => 0
-User.genders.values_at(:male, :female)  # => [0, 1]
+User.genders.values_at(:male, :female)  # => [0, 1] (since 2.1.0)
 User.females                            # => #<ActiveRecord::Relation:0x0.....> (WHERE gender_cd = 1)
 ```
 
