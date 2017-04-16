@@ -24,7 +24,7 @@ module SimpleEnum
 
       record.send(reader).map { |key, value|
         name = record.human_enum_name(enum, key) if record.respond_to?(:human_enum_name)
-        name ||= translate_enum_key(enum, key)
+        name ||= translate_enum_key(record, enum, key)
         [name, encode_as_value ? value : key]
       }
     end
@@ -47,8 +47,13 @@ module SimpleEnum
 
     private
 
-    def translate_enum_key(enum, key)
-      defaults = [:"enums.#{enum}.#{key}", key.to_s.humanize]
+    def translate_enum_key(record, enum, key)
+      defaults = [
+        :"#{record.i18n_scope}.enums.#{record.model_name.i18n_key}.#{enum}.#{key}",
+        :"#{record.i18n_scope}.enums.#{record.model_name.i18n_key}.#{enum}.#{key}_html",
+        :"enums.#{enum}.#{key}",
+        key.to_s.humanize
+      ]
       I18n.translate defaults.shift, default: defaults, count: 1
     end
   end
