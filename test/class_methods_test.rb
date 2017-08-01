@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class ClassMethodsTest < MiniTest::Unit::TestCase
+class ClassMethodsTest < Minitest::Test
   def setup
     reload_db
   end

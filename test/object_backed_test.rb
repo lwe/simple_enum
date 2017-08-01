@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class ObjectBackedTest < MiniTest::Unit::TestCase
+class ObjectBackedTest < Minitest::Test
   def setup
     reload_db :genders => true    
   end

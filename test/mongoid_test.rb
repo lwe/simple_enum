@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class MongoidTest < MiniTest::Unit::TestCase
+class MongoidTest < Minitest::Test
   def setup
     @default_options = SimpleEnum.default_options
     reload_db

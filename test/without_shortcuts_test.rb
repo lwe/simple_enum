@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class WithoutShortcutsTest < MiniTest::Unit::TestCase  
+class WithoutShortcutsTest < Minitest::Test  
   def setup
     reload_db
     

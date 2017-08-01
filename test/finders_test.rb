@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class FindersTest < MiniTest::Unit::TestCase
+class FindersTest < Minitest::Test
   def setup
     reload_db
   end

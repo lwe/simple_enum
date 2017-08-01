@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class ArrayConversionsTest < MiniTest::Unit::TestCase
+class ArrayConversionsTest < Minitest::Test
   def setup
     reload_db :genders => true
   end

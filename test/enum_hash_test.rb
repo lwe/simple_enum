@@ -1,7 +1,7 @@
 require 'test_helper'
 require 'simple_enum/enum_hash'
 
-class EnumHashTest < MiniTest::Unit::TestCase
+class EnumHashTest < Minitest::Test
 
   def test_create_new_enumhash_instance_from_array_of_symbols
     genders = SimpleEnum::EnumHash.new [:male, :female]

@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class POROTest < MiniTest::Unit::TestCase
+class POROTest < Minitest::Test
   class MyPORO
     include SimpleEnum
 

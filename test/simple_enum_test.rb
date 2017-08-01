@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class SimpleEnumTest < MiniTest::Unit::TestCase
+class SimpleEnumTest < Minitest::Test
   def setup
     reload_db
   end

@@ -8,7 +8,7 @@ Gem::Specification.new do |s|
   s.summary     = "Simple enum-like field support for models."
   s.description = "Provides enum-like fields for ActiveRecord, ActiveModel and Mongoid models."
 
-  s.required_ruby_version     = ">= 1.8.7"
+  s.required_ruby_version     = ">= 2.2.2"
   s.required_rubygems_version = ">= 1.3.6"
 
   s.authors  = ["Lukas Westermann"]
@@ -21,10 +21,10 @@ Gem::Specification.new do |s|
 
   s.license          = 'MIT'
 
-  s.add_dependency "activesupport", '>= 3.0.0'
+  s.add_dependency "activesupport", '= 5.0.4'
 
   s.add_development_dependency 'rake', '>= 0.9.2'
-  s.add_development_dependency 'minitest', '~> 2.0'
+  s.add_development_dependency 'minitest'
   s.add_development_dependency 'activerecord', '>= 3.0.0'
-  s.add_development_dependency 'mongoid', '~> 2.0'
+  s.add_development_dependency 'mongoid', '= 6.0.3'
 end
