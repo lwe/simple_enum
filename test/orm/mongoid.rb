@@ -32,15 +32,14 @@ def anonymous_dummy(&block)
   Class.new do
     include Mongoid::Document
     include SimpleEnum::Mongoid
-    self.collection_name = 'dummies'
-    instance_eval &block
+    store_in collection: 'dummies'
+    instance_eval(&block)
   end
 end
 
 def extend_computer(current_i18n_name = "Computer", &block)
   Class.new(Computer) do
-    self.collection_name = 'computers'
-    instance_eval &block
+    instance_eval(&block)
     instance_eval <<-RUBY
       def self.model_name; MockName.mock!(#{current_i18n_name.inspect}) end
     RUBY
@@ -49,8 +48,7 @@ end
 
 def extend_dummy(current_i18n_name = "Dummy", &block)
   Class.new(Dummy) do
-    self.collection_name = 'dummies'
-    instance_eval &block
+    instance_eval(&block)
     instance_eval <<-RUBY
       def self.model_name; MockName.mock!(#{current_i18n_name.inspect}) end
     RUBY
@@ -66,8 +64,8 @@ def named_dummy(class_name, &block)
       include Mongoid::Document
       include SimpleEnum::Mongoid
 
-      self.collection_name = 'dummies'
-      instance_eval &block
+      store_in collection: 'dummies'
+      instance_eval(&block)
     end
 
     klass
@@ -78,6 +76,7 @@ end
 class Dummy
   include Mongoid::Document
   include SimpleEnum::Mongoid
+  store_in collection: 'dummies'
 
   as_enum :gender, [:male, :female]
   as_enum :word, { :alpha => 'alpha', :beta => 'beta', :gamma => 'gamma'}
@@ -104,6 +103,7 @@ end
 class Computer
   include Mongoid::Document
   include SimpleEnum::Mongoid
+  store_in collection: 'computers'
 
   field :name, :type => String
 
