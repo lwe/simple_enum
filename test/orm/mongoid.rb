@@ -8,7 +8,8 @@ end
 def setup_db
   # create database connection
   Mongoid.configure do |config|
-    config.master = Mongo::Connection.new('localhost').db("simple-enum-test-suite")
+    config.load_configuration(clients: { default: { database: 'simple_enum_test_suite',
+                                                    hosts: ['localhost:27017'] } })
     config.use_utc = true
     config.include_root_in_json = true
   end
