@@ -84,6 +84,7 @@ class Dummy
   as_enum :role, [:admin, :member, :anon], :strings => true
   as_enum :numeric, [:"100", :"3.14"], :strings => true
   as_enum :nilish, [:nil], :strings => true
+  field :name, :type => String
 
   before_save :check_typed
 
