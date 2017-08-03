@@ -286,7 +286,7 @@ class SimpleEnumTest < Minitest::Test
 
   def test_argument_error_is_raised_when_using_enum_name_eq_column_name
     begin
-      invalid_dummy = anonymous_dummy do
+      anonymous_dummy do
         as_enum :gender_cd, [:male, :female], :column => "gender_cd"
       end
       assert false, "no error raised"

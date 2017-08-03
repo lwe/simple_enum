@@ -38,9 +38,9 @@ class ObjectBackedTest < Minitest::Test
     with_db_obj = anonymous_dummy do
       as_enum :gender, genders
     end
-    
-    d = with_db_obj.where(:name => 'Bella').first
-    
+
+    with_db_obj.where(:name => 'Bella').first
+
     assert_respond_to with_db_obj, :female
     assert_respond_to with_db_obj, :male
     assert_equal 0, with_db_obj.male
