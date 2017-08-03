@@ -27,7 +27,7 @@ class MongoidTest < Minitest::Test
 
     gender_field = klass.new.fields['gender_cd']
     refute_nil gender_field
-    assert_equal 1, gender_field.default
+    assert_equal 1, gender_field.options[:default]
     assert_equal klass.fields['verify'].class, gender_field.class
     assert_equal :female, klass.new.gender
   end
