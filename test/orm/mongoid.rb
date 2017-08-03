@@ -20,8 +20,8 @@ end
 def reload_db(options = {})
 
   # clear collections except system
-  Mongoid.master.collections.select do |collection|
-    collection.name !~ /system/
+  Mongoid.default_client.collections.reject do |collection|
+    collection.name =~ /system/
   end.each(&:drop)
 
   fill_db(options)
