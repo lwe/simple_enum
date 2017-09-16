@@ -255,6 +255,8 @@ the following extensions can be used:
   [simple_enum-multiple](https://github.com/bbtfr/simple_enum-multiple)
 - **Persistence values**, i.e. store values in the DB:
   [simple_enum-persistence](https://github.com/bbtfr/simple_enum-persistence)
+- **Scopes**, scopes helper for ActiveRecord enum attributes:
+  [simple_enum-scopes](https://github.com/aovertus/simple_enum-scopes)
 
 ## Best practices
 
