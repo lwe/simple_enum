@@ -25,7 +25,6 @@ module SimpleEnum
       def selected?(object, key = nil)
         current = read_before_type_cast(object)
         return current && current == enum[key] if key
-        current
       end
 
       def changed?(object)
