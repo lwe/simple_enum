@@ -223,6 +223,38 @@ describe SimpleEnum::Attribute do
         subject { klass.gender_females }
         it_behaves_like 'delegates to accessor#scope', 1
       end
+
+      context 'and pluralize scopes option is set to false' do
+        fake_active_record(:klass) {
+          as_enum :gender, [:male, :female], with: [:scope], prefix: true, pluralize_scopes: false
+        }
+
+        context '.gender_male' do
+          subject { klass.gender_male }
+          it_behaves_like 'delegates to accessor#scope', 0
+        end
+
+        context '.gender_female' do
+          subject { klass.gender_female }
+          it_behaves_like 'delegates to accessor#scope', 1
+        end
+      end
+    end
+
+    context 'when pluralize scopes option is set to false' do
+      fake_active_record(:klass) {
+        as_enum :gender, [:male, :female], with: [:scope], pluralize_scopes: false
+      }
+
+      context '.male' do
+        subject { klass.male }
+        it_behaves_like 'delegates to accessor#scope', 0
+      end
+
+      context '.female' do
+        subject { klass.female }
+        it_behaves_like 'delegates to accessor#scope', 1
+      end
     end
 
     context 'without scope method' do
