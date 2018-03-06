@@ -102,6 +102,36 @@ User.genders.values_at(:male, :female)  # => [0, 1] (since 2.1.0)
 User.females                            # => #<ActiveRecord::Relation:0x0.....> (WHERE gender_cd = 1)
 ```
 
+By default, scope names are generated as pluralized forms of the defined enum values e.g.
+
+```ruby
+class Booking < ActiveRecord::Base
+  as_enum :status, active: 1, cancelled: 2, pending: 3
+end
+```
+
+would generate the following:
+```ruby
+Booking.actives     # => #<ActiveRecord::Relation:0x0.....> (WHERE status_cd = 1)
+Booking.cancelleds  # => #<ActiveRecord::Relation:0x0.....> (WHERE status_cd = 2)
+Booking.pendings    # => #<ActiveRecord::Relation:0x0.....> (WHERE status_cd = 3)
+```
+
+By setting `pluralize_scopes: false` will not generate pluralized versions of scopes e.g.
+
+```ruby
+class Booking < ActiveRecord::Base
+  as_enum :status, active: 1, cancelled: 2, pending: 3, pluralize_scopes: false
+end
+```
+
+would generate the following:
+```ruby
+Booking.active     # => #<ActiveRecord::Relation:0x0.....> (WHERE status_cd = 1)
+Booking.cancelled  # => #<ActiveRecord::Relation:0x0.....> (WHERE status_cd = 2)
+Booking.pending    # => #<ActiveRecord::Relation:0x0.....> (WHERE status_cd = 3)
+```
+
 ### Wait, there's more!
 
 - Too tired of always adding the integer values? Try:
@@ -223,9 +253,9 @@ so expect them to change in future versions of SimpleEnum.
   translate_enum user, :gender # => "Frau" # assuming :de and translations exist
   te user, :gender # translate_enum is also aliased to te
   ```
-  
+
   Provide translations in the i18n yaml file like:
-  
+
   ```ruby
     de:
       enums:
@@ -233,13 +263,13 @@ so expect them to change in future versions of SimpleEnum.
           female: 'Frau'
           male: 'Mann'
   ```
-  
+
 - Build a select tag with a translated dropdown and symbol as value:
 
   ```ruby
   select :user, :gender, enum_option_pairs(User, :gender)
   ```
-  
+
 - ...and one with the index as value:
 
   ```ruby

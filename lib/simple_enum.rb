@@ -33,6 +33,9 @@ module SimpleEnum
   mattr_accessor :field
   @@field = {}
 
+  mattr_accessor :pluralize_scopes
+  @@pluralize_scopes = true
+
   def self.configure
     yield(self)
   end

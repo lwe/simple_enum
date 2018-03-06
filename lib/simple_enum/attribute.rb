@@ -17,7 +17,7 @@ module SimpleEnum
     EXTENSIONS = []
 
     def as_enum(name, values, options = {})
-      options.assert_valid_keys(:source, :prefix, :with, :accessor, :map)
+      options.assert_valid_keys(:source, :prefix, :with, :accessor, :map, :pluralize_scopes)
 
       hash     = SimpleEnum::Hasher.map(values, options)
       enum     = SimpleEnum::Enum.new(name, hash)
@@ -25,10 +25,7 @@ module SimpleEnum
 
       generate_enum_class_accessors_for(enum, accessor)
       generate_enum_instance_accessors_for(enum, accessor)
-
-      Array.wrap(options.fetch(:with, SimpleEnum.with)).each do |feature|
-        send "generate_enum_#{feature}_methods_for", enum, accessor
-      end
+      generate_additional_enum_methods_for(enum, accessor, options)
 
       EXTENSIONS.uniq.each do |extension|
         send "generate_enum_#{extension}_extension_for", enum, accessor
@@ -57,6 +54,20 @@ module SimpleEnum
       end
     end
 
+    def generate_additional_enum_methods_for(enum, accessor, options)
+      with_options = Array.wrap(options.fetch(:with, SimpleEnum.with))
+      scope_option = with_options.delete(:scope)
+
+      with_options.each do |feature|
+        send "generate_enum_#{feature}_methods_for", enum, accessor
+      end
+
+      if scope_option
+        pluralize_scopes = options.fetch(:pluralize_scopes, SimpleEnum.pluralize_scopes)
+        generate_enum_scope_methods_for(enum, accessor, pluralize_scopes)
+      end
+    end
+
     def generate_enum_dirty_methods_for(enum, accessor)
       simple_enum_module.module_eval do
         define_method("#{accessor}_changed?") { accessor.changed?(self) }
@@ -73,11 +84,12 @@ module SimpleEnum
       end
     end
 
-    def generate_enum_scope_methods_for(enum, accessor)
+    def generate_enum_scope_methods_for(enum, accessor, pluralize_scopes)
       return unless respond_to?(:scope)
 
       enum.each_pair do |key, value|
-        scope "#{accessor.prefix}#{key.pluralize}", -> { accessor.scope(self, value) }
+        scope_key = pluralize_scopes ? key.pluralize : key
+        scope "#{accessor.prefix}#{scope_key}", -> { accessor.scope(self, value) }
       end
     end
   end
