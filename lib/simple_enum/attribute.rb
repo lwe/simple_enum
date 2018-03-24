@@ -56,13 +56,13 @@ module SimpleEnum
 
     def generate_additional_enum_methods_for(enum, accessor, options)
       with_options = Array.wrap(options.fetch(:with, SimpleEnum.with))
-      scope_option = with_options.delete(:scope)
+      scope_option, feature_options = with_options.partition { |option| option == :scope }
 
-      with_options.each do |feature|
+      feature_options.each do |feature|
         send "generate_enum_#{feature}_methods_for", enum, accessor
       end
 
-      if scope_option
+      unless scope_option.empty?
         pluralize_scopes = options.fetch(:pluralize_scopes, SimpleEnum.pluralize_scopes)
         generate_enum_scope_methods_for(enum, accessor, pluralize_scopes)
       end
