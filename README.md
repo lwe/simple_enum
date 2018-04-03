@@ -106,7 +106,7 @@ By default, scope names are generated as pluralized forms of the defined enum va
 
 ```ruby
 class Booking < ActiveRecord::Base
-  as_enum :status, active: 1, cancelled: 2, pending: 3
+  as_enum :status, %i{active cancelled pending}
 end
 ```
 
@@ -121,7 +121,7 @@ By setting `pluralize_scopes: false` will not generate pluralized versions of sc
 
 ```ruby
 class Booking < ActiveRecord::Base
-  as_enum :status, active: 1, cancelled: 2, pending: 3, pluralize_scopes: false
+  as_enum :status, %i{active cancelled pending}, pluralize_scopes: false
 end
 ```
 
