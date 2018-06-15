@@ -1,6 +1,7 @@
 SimpleEnum
 ==========
 
+[![Gem Version](https://badge.fury.io/rb/simple_enum.svg)](https://badge.fury.io/rb/simple_enum)
 [![Build Status](https://travis-ci.org/lwe/simple_enum.svg)](https://travis-ci.org/lwe/simple_enum)
 [![Code Climate](https://codeclimate.com/github/lwe/simple_enum.svg)](https://codeclimate.com/github/lwe/simple_enum)
 
