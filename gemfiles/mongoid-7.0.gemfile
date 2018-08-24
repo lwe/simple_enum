@@ -1,7 +1,6 @@
 source "http://rubygems.org"
 
-gem 'activesupport', '~> 5.1.0'
-gem 'activerecord', '~> 5.1.0'
+gem 'mongoid', '~> 7.0'
 
 # some development deps
 gem 'activerecord-jdbcsqlite3-adapter', platform: :jruby
