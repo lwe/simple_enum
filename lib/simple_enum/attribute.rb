@@ -87,9 +87,11 @@ module SimpleEnum
     def generate_enum_scope_methods_for(enum, accessor, pluralize_scopes)
       return unless respond_to?(:scope)
 
+      klass = self
+
       enum.each_pair do |key, value|
         scope_key = pluralize_scopes ? key.pluralize : key
-        scope "#{accessor.prefix}#{scope_key}", -> { accessor.scope(self, value) }
+        scope "#{accessor.prefix}#{scope_key}", -> { accessor.scope(klass, value) }
       end
     end
   end

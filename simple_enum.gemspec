@@ -23,7 +23,7 @@ Gem::Specification.new do |s|
 
   s.add_dependency 'activesupport', '>= 4.0.0'
 
-  s.add_development_dependency 'rake', '>= 10.1.0'
+  s.add_development_dependency 'rake', '>= 10.1.0', '< 12.3.0'
   s.add_development_dependency 'activerecord', '>= 4.0.0'
   s.add_development_dependency 'mongoid', '>= 4.0.0'
   s.add_development_dependency 'rspec', '~> 2.14'
