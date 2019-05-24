@@ -95,6 +95,14 @@ describe SimpleEnum::Attribute do
       expect(subject).to_not respond_to(:gender_was)
     end
 
+    it 'does not respond to #saved_change_to_gender?' do
+      expect(subject).to_not respond_to(:saved_change_to_gender?)
+    end
+
+    it 'does not responds to #gender_before_last_save' do
+      expect(subject).to_not respond_to(:gender_before_last_save)
+    end
+
     context 'with: :dirty' do
       fake_model(:klass_with_dirty) { as_enum :gender, %w{male female}, with: [:dirty] }
       subject { klass_with_dirty.new }
@@ -104,9 +112,19 @@ describe SimpleEnum::Attribute do
         expect(subject.gender_changed?).to be_truthy
       end
 
-      it 'delegates #gender_was to accesso' do
+      it 'delegates #gender_was to accessor' do
         expect(accessor).to receive(:was).with(subject) { :female }
         expect(subject.gender_was).to eq :female
+      end
+
+      it 'delegates #saved_change_to_gender? to accessor' do
+        expect(accessor).to receive(:changed?).with(subject) { true }
+        expect(subject.saved_change_to_gender?).to be_truthy
+      end
+
+      it 'delegates #gender_before_last_save to accessor' do
+        expect(accessor).to receive(:was).with(subject) { :female }
+        expect(subject.gender_before_last_save).to eq :female
       end
     end
   end
