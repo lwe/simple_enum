@@ -72,6 +72,9 @@ module SimpleEnum
       simple_enum_module.module_eval do
         define_method("#{accessor}_changed?") { accessor.changed?(self) }
         define_method("#{accessor}_was")      { accessor.was(self) }
+
+        alias_method "saved_change_to_#{accessor}?", "#{accessor}_changed?"
+        alias_method "#{accessor}_before_last_save", "#{accessor}_was"
       end
     end
 
