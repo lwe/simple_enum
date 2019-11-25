@@ -4,7 +4,7 @@ module SimpleEnum
   module Accessors
     class WhinyAccessor < Accessor
       def write(object, key)
-        raise ArgumentError, "#{key} is not a valid enum value for #{enum}" if key && !enum.include?(key)
+        raise ArgumentError, "#{key} is not a valid enum value for #{enum}" if key.present? && !enum.include?(key)
         super
       end
     end
