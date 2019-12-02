@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class PrefixesTest < MiniTest::Unit::TestCase
+class PrefixesTest < Minitest::Test
   def setup
     reload_db
   end

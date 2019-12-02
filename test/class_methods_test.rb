@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class ClassMethodsTest < MiniTest::Unit::TestCase
+class ClassMethodsTest < Minitest::Test
   def setup
     reload_db
   end
@@ -35,8 +35,6 @@ class ClassMethodsTest < MiniTest::Unit::TestCase
   end
 
   def test_generation_of_value_shortcuts_on_class
-    g = Dummy.new
-
     assert_equal 0, Dummy.male
     assert_equal 1, Dummy.female
     assert_equal 'alpha', Dummy.alpha

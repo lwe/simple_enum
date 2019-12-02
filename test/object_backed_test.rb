@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class ObjectBackedTest < MiniTest::Unit::TestCase
+class ObjectBackedTest < Minitest::Test
   def setup
     reload_db :genders => true    
   end
@@ -18,9 +18,10 @@ class ObjectBackedTest < MiniTest::Unit::TestCase
     with_object = anonymous_dummy do
       as_enum :gender, { simple_obj.new('Male') => 0, simple_obj.new('Female') => 1 }      
     end
-        
-    d = with_object.where(:name => 'Anna').first
-    
+
+    d = with_object.where(:name => 'Anna')
+    d = d.where('_type' => nil) if mongoid?
+    d = d.first
     assert_same simple_obj, d.gender.class
     assert_equal 'Female', d.gender.name
     assert_same true, d.female?
@@ -38,9 +39,9 @@ class ObjectBackedTest < MiniTest::Unit::TestCase
     with_db_obj = anonymous_dummy do
       as_enum :gender, genders
     end
-    
-    d = with_db_obj.where(:name => 'Bella').first
-    
+
+    with_db_obj.where(:name => 'Bella').first
+
     assert_respond_to with_db_obj, :female
     assert_respond_to with_db_obj, :male
     assert_equal 0, with_db_obj.male

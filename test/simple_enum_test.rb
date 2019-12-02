@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class SimpleEnumTest < MiniTest::Unit::TestCase
+class SimpleEnumTest < Minitest::Test
   def setup
     reload_db
   end
@@ -15,7 +15,7 @@ class SimpleEnumTest < MiniTest::Unit::TestCase
   end
 
   def test_enum_definitions_local_to_model
-    assert_equal nil, Computer.enum_definitions[:gender]
+    assert_nil Computer.enum_definitions[:gender]
   end
 
   def test_getting_the_correct_integer_values_when_setting_to_symbol
@@ -57,8 +57,8 @@ class SimpleEnumTest < MiniTest::Unit::TestCase
   def test_setting_value_to_nil_when_enum_has_nil_as_symbol_and_strings_is_true
     d = Dummy.new
     d.nilish = nil
-    assert_equal(nil, d.nilish)
-    assert_equal(nil, d.nilish_cd)
+    assert_nil(d.nilish)
+    assert_nil(d.nilish_cd)
   end
 
   def test_setting_value_as_key_in_constructor
@@ -286,7 +286,7 @@ class SimpleEnumTest < MiniTest::Unit::TestCase
 
   def test_argument_error_is_raised_when_using_enum_name_eq_column_name
     begin
-      invalid_dummy = anonymous_dummy do
+      anonymous_dummy do
         as_enum :gender_cd, [:male, :female], :column => "gender_cd"
       end
       assert false, "no error raised"

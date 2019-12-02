@@ -1,3 +1,5 @@
+require 'active_model'
+
 module ActiveModel
   module Validations
     class AsEnumValidator < ActiveModel::Validator
@@ -9,11 +11,8 @@ module ActiveModel
         super
       end
 
-      def setup(klass)
-        @klass = klass
-      end
-
       def validate(record)
+        @klass ||= record.class
         attributes.each do |attribute|
           enum_def = @klass.enum_definitions[attribute]
           raw_value = record.send(enum_def[:column])

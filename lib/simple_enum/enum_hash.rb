@@ -10,7 +10,7 @@ module SimpleEnum
     def self.symbolize(sym)
       return sym.to_enum_sym if sym.respond_to?(:to_enum_sym)
       return sym.to_sym if sym.respond_to?(:to_sym)
-      return sym.name.to_s.parameterize('_').to_sym if sym.respond_to?(:name)
+      return sym.name.to_s.parameterize(separator: '_').to_sym if sym.respond_to?(:name)
       sym.to_param.to_sym if sym.present? && sym.respond_to?(:to_param)
       sym unless sym.blank?
     end
