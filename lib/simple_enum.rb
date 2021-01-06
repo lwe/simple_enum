@@ -12,7 +12,11 @@ require 'active_support'
 
 require 'simple_enum/version'
 require 'simple_enum/attribute'
-require 'simple_enum/translation'
+begin
+  require 'simple_enum/translation'
+rescue SyntaxError
+  require 'simple_enum/translation_ruby19'
+end
 require 'simple_enum/view_helpers'
 
 # Base module which gets included in <tt>ActiveRecord::Base</tt>. See documentation
