@@ -16,7 +16,7 @@ module SimpleEnum
     # Registered registrator methods from extensions
     EXTENSIONS = []
 
-    def as_enum(name, values, options = {})
+    def as_enum(name, values, **options)
       options.assert_valid_keys(:source, :prefix, :with, :accessor, :map, :pluralize_scopes)
 
       hash     = SimpleEnum::Hasher.map(values, options)
