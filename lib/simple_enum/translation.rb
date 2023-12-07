@@ -2,7 +2,7 @@ require 'i18n'
 
 module SimpleEnum
   module Translation
-    def human_enum_name(enum, key, options = {})
+    def human_enum_name(enum, key, **options)
       return '' unless key.present?
 
       defaults = lookup_ancestors.map do |klass|
@@ -15,7 +15,7 @@ module SimpleEnum
       defaults << key.to_s.humanize
 
       options.reverse_merge! count: 1, default: defaults
-      I18n.translate(defaults.shift, options)
+      I18n.translate(defaults.shift, **options)
     end
   end
 end
